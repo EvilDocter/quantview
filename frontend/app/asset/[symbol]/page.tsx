@@ -680,7 +680,13 @@ export default function AssetPage() {
               <div
                 className="absolute inset-0 rounded-full"
                 style={{
-                  background: `conic-gradient(#ffffff ${(signal?.confidence || 0) * 3.6}deg, rgba(255,255,255,0.06) 0deg)`,
+                  background: `conic-gradient(${
+                    signal?.signal === "BUY"
+                      ? "#22c55e"
+                      : signal?.signal === "SELL"
+                      ? "#ef4444"
+                      : "#ffffff"
+                  } ${(signal?.confidence || 0) * 3.6}deg, rgba(255,255,255,0.06) 0deg)`,
                 }}
               />
 
@@ -737,7 +743,13 @@ export default function AssetPage() {
 
               <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-neutral-800 via-neutral-400 to-white"
+                  className={`h-full rounded-full transition-all duration-1000 ${
+                    signal?.signal === "BUY"
+                      ? "bg-gradient-to-r from-green-500/50 to-green-400"
+                      : signal?.signal === "SELL"
+                      ? "bg-gradient-to-r from-red-500/50 to-red-400"
+                      : "bg-gradient-to-r from-neutral-800 via-neutral-400 to-white"
+                  }`}
                   style={{
                     width: `${formattedRsi}%`,
                   }}
@@ -784,7 +796,13 @@ export default function AssetPage() {
                 {[35, 52, 44, 70, 58, 80, 65, 90].map((bar, idx) => (
                   <div
                     key={idx}
-                    className="flex-1 rounded-t-xl bg-gradient-to-t from-neutral-600 to-neutral-200 animate-pulse"
+                    className={`flex-1 rounded-t-xl animate-pulse ${
+                      signal?.signal === "BUY"
+                        ? "bg-gradient-to-t from-green-600 to-green-300"
+                        : signal?.signal === "SELL"
+                        ? "bg-gradient-to-t from-red-600 to-red-300"
+                        : "bg-gradient-to-t from-neutral-600 to-neutral-200"
+                    }`}
                     style={{
                       height: `${bar}%`,
                       animationDelay: `${idx * 0.1}s`,
@@ -874,9 +892,9 @@ export default function AssetPage() {
             <div 
               className={`absolute top-0 left-0 w-[280px] h-[280px] rounded-full border-[18px] transition-all duration-1000 ${
                 signal?.signal === "BUY" 
-                  ? "border-white/10 border-b-transparent border-r-transparent"
+                  ? "border-green-500/30 border-b-transparent border-r-transparent shadow-[0_0_30px_rgba(34,197,94,0.15)]"
                   : signal?.signal === "SELL"
-                  ? "border-white/10 border-b-transparent border-l-transparent"
+                  ? "border-red-500/30 border-b-transparent border-l-transparent shadow-[0_0_30px_rgba(239,68,68,0.15)]"
                   : "border-white/10 border-b-transparent"
               }`}
               style={{
@@ -890,7 +908,13 @@ export default function AssetPage() {
             
             {/* Rotating Arrow Indicator */}
             <div 
-              className="absolute bottom-0 w-2.5 h-[115px] origin-bottom bg-gradient-to-t from-cyan-400 to-blue-500 rounded-t-full transition-transform duration-1000"
+              className={`absolute bottom-0 w-2.5 h-[115px] origin-bottom ${
+                signal?.signal === "BUY"
+                  ? "bg-gradient-to-t from-green-500 to-emerald-400 shadow-[0_0_15px_rgba(34,197,94,0.5)]"
+                  : signal?.signal === "SELL"
+                  ? "bg-gradient-to-t from-red-500 to-pink-400 shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+                  : "bg-gradient-to-t from-neutral-600 to-neutral-400"
+              } rounded-t-full transition-transform duration-1000`}
               style={{
                 transform: `translateX(-50%) rotate(${gaugeRotation}deg)`,
                 left: "50%"
@@ -1732,7 +1756,13 @@ export default function AssetPage() {
 
                       <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500"
+                          className={`h-full rounded-full transition-all duration-1000 bg-gradient-to-r ${
+                            signal?.signal === "BUY"
+                              ? "from-green-500 via-emerald-400 to-emerald-600"
+                              : signal?.signal === "SELL"
+                              ? "from-red-500 via-pink-400 to-red-600"
+                              : "from-neutral-700 via-neutral-500 to-neutral-600"
+                          }`}
                           style={{
                             width: `${point.confidence}%`,
                           }}
@@ -1753,234 +1783,251 @@ export default function AssetPage() {
         </div>
       )}
       {/* AI Projection Engine */}
-      {assetData?.ai_projection && (
-        <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#161616]/90 backdrop-blur-3xl p-6 md:p-8 space-y-8 shadow-[0_0_120px_rgba(34,197,94,0.10)]">
+      {assetData?.ai_projection && (() => {
+        const direction = assetData.ai_projection.projected_move?.direction || "NEUTRAL";
+        const isBuy = direction === "BUY";
+        const isSell = direction === "SELL";
 
-          <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.03),transparent_35%)]" />
+        const accentColorClass = isBuy ? "text-green-400" : isSell ? "text-red-400" : "text-neutral-300";
+        const bgGlowClass = isBuy 
+          ? "bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.12),transparent_70%)]" 
+          : isSell 
+          ? "bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.12),transparent_70%)]" 
+          : "bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03),transparent_70%)]";
+        const glowCircleColor = isBuy ? "bg-green-500" : isSell ? "bg-red-500" : "bg-white";
+        const titleGradientClass = isBuy ? "from-white via-green-200 to-emerald-400" : isSell ? "from-white via-red-200 to-red-400" : "from-white via-neutral-200 to-neutral-400";
+        const preferredDirectionGlow = isBuy 
+          ? "shadow-[0_0_50px_rgba(34,197,94,0.2)] border-green-500/30" 
+          : isSell 
+          ? "shadow-[0_0_50px_rgba(239,68,68,0.2)] border-red-500/30" 
+          : "shadow-[0_0_50px_rgba(255,255,255,0.02)] border-white/10";
 
-          <div className="absolute -top-32 right-0 w-80 h-80 rounded-full blur-3xl opacity-20 bg-green-500" />
-          <div className="absolute -bottom-32 left-0 w-80 h-80 rounded-full blur-3xl opacity-20 bg-cyan-500" />
+        return (
+          <div className={`relative overflow-hidden rounded-[36px] border ${isBuy ? "border-green-500/20 shadow-[0_0_120px_rgba(34,197,94,0.08)]" : isSell ? "border-red-500/20 shadow-[0_0_120px_rgba(239,68,68,0.08)]" : "border-white/10 shadow-[0_0_120px_rgba(255,255,255,0.02)]"} bg-[#161616]/90 backdrop-blur-3xl p-6 md:p-8 space-y-8`}>
 
-          <div className="relative z-10 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
+            <div className={`absolute inset-0 opacity-50 pointer-events-none ${bgGlowClass}`} />
 
-            <div>
-              <div className="flex items-center gap-3 flex-wrap mb-4">
-                <span className="px-3 py-1 rounded-full border border-green-500/20 bg-white/10 text-white text-[11px] uppercase tracking-[0.25em] font-semibold">
-                  AI PROJECTION ENGINE
-                </span>
+            <div className={`absolute -top-32 right-0 w-80 h-80 rounded-full blur-3xl opacity-20 ${glowCircleColor} pointer-events-none`} />
+            <div className="absolute -bottom-32 left-0 w-80 h-80 rounded-full blur-3xl opacity-5 bg-white pointer-events-none" />
 
-                <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-white/10 text-white text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
-                  LIVE FORECAST
-                </span>
+            <div className="relative z-10 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
+
+              <div>
+                <div className="flex items-center gap-3 flex-wrap mb-4">
+                  <span className={`px-3 py-1 rounded-full border ${isBuy ? "border-green-500/30 text-green-400" : isSell ? "border-red-500/30 text-red-400" : "border-white/10 text-white"} bg-white/5 text-[11px] uppercase tracking-[0.25em] font-semibold`}>
+                    AI PROJECTION ENGINE
+                  </span>
+
+                  <span className="px-3 py-1 rounded-full border border-white/10 bg-white/5 text-white text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
+                    LIVE FORECAST
+                  </span>
+                </div>
+
+                <h2 className={`text-3xl md:text-4xl font-black tracking-tight bg-gradient-to-r ${titleGradientClass} bg-clip-text text-transparent`}>
+                  Institutional Projection Matrix
+                </h2>
+
+                <p className="text-sm md:text-base text-gray-400 mt-3 max-w-3xl leading-relaxed">
+                  AI-generated breakout targets, institutional liquidity zones, directional probability analysis, and realtime market projection intelligence.
+                </p>
               </div>
 
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight bg-gradient-to-r from-white via-green-200 to-cyan-300 bg-clip-text text-transparent">
-                Institutional Projection Matrix
-              </h2>
-
-              <p className="text-sm md:text-base text-gray-400 mt-3 max-w-3xl leading-relaxed">
-                AI-generated breakout targets, institutional liquidity zones, directional probability analysis, and realtime market projection intelligence.
-              </p>
-            </div>
-
-            <div className="rounded-3xl border border-green-500/20 bg-white/10 px-6 py-5 backdrop-blur-2xl shadow-[0_0_50px_rgba(34,197,94,0.12)]">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-white mb-2">
-                Preferred Direction
-              </p>
-
-              <div className={`text-3xl font-black ${
-                assetData.ai_projection.projected_move?.direction === "BUY"
-                  ? "text-white"
-                  : assetData.ai_projection.projected_move?.direction === "SELL"
-                  ? "text-neutral-400"
-                  : "text-neutral-300"
-              }`}>
-                {assetData.ai_projection.projected_move?.direction}
-              </div>
-            </div>
-
-          </div>
-
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-
-            <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
-              <div className="relative z-10 space-y-3">
-                <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
-                  AI Target Price
+              <div className={`rounded-3xl border bg-white/5 px-6 py-5 backdrop-blur-2xl transition-all duration-300 ${preferredDirectionGlow}`}>
+                <p className="text-[11px] uppercase tracking-[0.25em] text-gray-400 mb-2">
+                  Preferred Direction
                 </p>
 
-                <div className="text-4xl font-black text-white">
-                  {assetData.ai_projection.projected_move?.target_price}
+                <div className={`text-3xl font-black ${accentColorClass}`}>
+                  {direction}
                 </div>
-              </div>
-            </div>
-
-            <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
-              <div className="relative z-10 space-y-3">
-                <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
-                  Breakout Probability
-                </p>
-
-                <div className="text-4xl font-black text-white">
-                  {assetData.ai_projection.breakout_projection?.breakout_probability}%
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
-              <div className="relative z-10 space-y-3">
-                <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
-                  Volatility State
-                </p>
-
-                <div className="text-2xl font-black text-neutral-200 leading-tight">
-                  {assetData.ai_projection.breakout_projection?.volatility_state}
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
-              <div className="relative z-10 space-y-3">
-                <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
-                  Projected Move
-                </p>
-
-                <div className="text-4xl font-black text-neutral-300">
-                  {assetData.ai_projection.projected_move?.move_percent}%
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <div className="relative z-10 grid grid-cols-1 xl:grid-cols-2 gap-6">
-
-            <div className="rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6 overflow-hidden relative">
-
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
-
-              <div className="relative z-10 space-y-6">
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
-                      Institutional Zones
-                    </p>
-
-                    <h3 className="text-2xl font-black text-white mt-3">
-                      {assetData.ai_projection.institutional_zones?.dominant_zone}
-                    </h3>
-                  </div>
-
-                  <div className="w-14 h-14 rounded-2xl bg-white/10 border border-blue-500/20 flex items-center justify-center text-white text-2xl">
-                    ◈
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                  <div className="rounded-3xl border border-green-500/20 bg-green-500/5 p-5 space-y-3">
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
-                      Accumulation Zone
-                    </p>
-
-                    <div className="text-xl font-black text-white">
-                      {assetData.ai_projection.institutional_zones?.accumulation_zone?.low}
-                    </div>
-
-                    <div className="text-sm text-gray-400">
-                      to {assetData.ai_projection.institutional_zones?.accumulation_zone?.high}
-                    </div>
-                  </div>
-
-                  <div className="rounded-3xl border border-red-500/20 bg-red-500/5 p-5 space-y-3">
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
-                      Distribution Zone
-                    </p>
-
-                    <div className="text-xl font-black text-neutral-400">
-                      {assetData.ai_projection.institutional_zones?.distribution_zone?.low}
-                    </div>
-
-                    <div className="text-sm text-gray-400">
-                      to {assetData.ai_projection.institutional_zones?.distribution_zone?.high}
-                    </div>
-                  </div>
-
-                </div>
-
               </div>
 
             </div>
 
-            <div className="rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6 overflow-hidden relative">
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
 
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
-
-              <div className="relative z-10 space-y-6">
-
-                <div>
+              <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
+                <div className="relative z-10 space-y-3">
                   <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
-                    AI Probability Engine
+                    AI Target Price
                   </p>
 
-                  <div className="text-4xl font-black text-white mt-3">
-                    {assetData.ai_projection.probability_map?.bullish}%
+                  <div className={`text-4xl font-black ${accentColorClass}`}>
+                    {assetData.ai_projection.projected_move?.target_price}
                   </div>
                 </div>
+              </div>
 
-                <div className="space-y-5">
+              <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
+                <div className="relative z-10 space-y-3">
+                  <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
+                    Breakout Probability
+                  </p>
 
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-gray-500 uppercase tracking-wide">
-                      <span>Bullish Probability</span>
-                      <span>{assetData.ai_projection.probability_map?.bullish}%</span>
+                  <div className={`text-4xl font-black ${accentColorClass}`}>
+                    {assetData.ai_projection.breakout_projection?.breakout_probability}%
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
+                <div className="relative z-10 space-y-3">
+                  <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
+                    Volatility State
+                  </p>
+
+                  <div className="text-2xl font-black text-neutral-200 leading-tight">
+                    {assetData.ai_projection.breakout_projection?.volatility_state}
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
+                <div className="relative z-10 space-y-3">
+                  <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
+                    Projected Move
+                  </p>
+
+                  <div className="text-4xl font-black text-neutral-300">
+                    {assetData.ai_projection.projected_move?.move_percent}%
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div className="relative z-10 grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+              <div className="rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6 overflow-hidden relative">
+
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
+
+                <div className="relative z-10 space-y-6">
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
+                        Institutional Zones
+                      </p>
+
+                      <h3 className={`text-2xl font-black ${accentColorClass} mt-3`}>
+                        {assetData.ai_projection.institutional_zones?.dominant_zone}
+                      </h3>
                     </div>
 
-                    <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-green-400 to-emerald-500"
-                        style={{
-                          width: `${assetData.ai_projection.probability_map?.bullish || 0}%`,
-                        }}
-                      />
+                    <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white text-2xl">
+                      ◈
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-gray-500 uppercase tracking-wide">
-                      <span>Bearish Probability</span>
-                      <span>{assetData.ai_projection.probability_map?.bearish}%</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <div className={`rounded-3xl border transition-all duration-300 p-5 space-y-3 ${isBuy ? "border-green-500/30 bg-green-500/5 shadow-[0_0_30px_rgba(34,197,94,0.1)]" : "border-white/5 bg-white/[0.01]"}`}>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
+                        Accumulation Zone
+                      </p>
+
+                      <div className="text-xl font-black text-white">
+                        {assetData.ai_projection.institutional_zones?.accumulation_zone?.low}
+                      </div>
+
+                      <div className="text-sm text-gray-400">
+                        to {assetData.ai_projection.institutional_zones?.accumulation_zone?.high}
+                      </div>
                     </div>
 
-                    <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-red-400 to-pink-500"
-                        style={{
-                          width: `${assetData.ai_projection.probability_map?.bearish || 0}%`,
-                        }}
-                      />
+                    <div className={`rounded-3xl border transition-all duration-300 p-5 space-y-3 ${isSell ? "border-red-500/30 bg-red-500/5 shadow-[0_0_30px_rgba(239,68,68,0.1)]" : "border-white/5 bg-white/[0.01]"}`}>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
+                        Distribution Zone
+                      </p>
+
+                      <div className="text-xl font-black text-white">
+                        {assetData.ai_projection.institutional_zones?.distribution_zone?.low}
+                      </div>
+
+                      <div className="text-sm text-gray-400">
+                        to {assetData.ai_projection.institutional_zones?.distribution_zone?.high}
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6 overflow-hidden relative">
+
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
+
+                <div className="relative z-10 space-y-6">
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
+                        AI Probability Engine
+                      </p>
+
+                      <div className={`text-4xl font-black ${accentColorClass} mt-3`}>
+                        {isBuy ? assetData.ai_projection.probability_map?.bullish : isSell ? assetData.ai_projection.probability_map?.bearish : assetData.ai_projection.probability_map?.neutral}%
+                      </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-gray-500 uppercase tracking-wide">
-                      <span>Neutral Probability</span>
-                      <span>{assetData.ai_projection.probability_map?.neutral}%</span>
+                  <div className="space-y-5">
+
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-gray-500 uppercase tracking-wide">
+                        <span>Bullish Probability</span>
+                        <span>{assetData.ai_projection.probability_map?.bullish}%</span>
+                      </div>
+
+                      <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-green-400 to-emerald-500"
+                          style={{
+                            width: `${assetData.ai_projection.probability_map?.bullish || 0}%`,
+                          }}
+                        />
+                      </div>
                     </div>
 
-                    <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-yellow-400 to-orange-500"
-                        style={{
-                          width: `${assetData.ai_projection.probability_map?.neutral || 0}%`,
-                        }}
-                      />
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-gray-500 uppercase tracking-wide">
+                        <span>Bearish Probability</span>
+                        <span>{assetData.ai_projection.probability_map?.bearish}%</span>
+                      </div>
+
+                      <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-red-400 to-pink-500"
+                          style={{
+                            width: `${assetData.ai_projection.probability_map?.bearish || 0}%`,
+                          }}
+                        />
+                      </div>
                     </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-gray-500 uppercase tracking-wide">
+                        <span>Neutral Probability</span>
+                        <span>{assetData.ai_projection.probability_map?.neutral}%</span>
+                      </div>
+
+                      <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-amber-400 to-yellow-500"
+                          style={{
+                            width: `${assetData.ai_projection.probability_map?.neutral || 0}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+
                   </div>
 
                 </div>
@@ -1990,9 +2037,8 @@ export default function AssetPage() {
             </div>
 
           </div>
-
-        </div>
-      )}
+        );
+      })()}
       {/* Economic Calendar */}
       <div id="live-timeline-section" className="bg-[#121212] border border-white/5 rounded-2xl p-5 space-y-5 overflow-hidden">
 

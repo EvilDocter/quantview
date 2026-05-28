@@ -1068,8 +1068,8 @@ export default function Home() {
                           <div>
                             <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Realtime Spot Price</p>
                             <p className={`text-2xl md:text-3xl font-black mt-1 font-mono tracking-tighter transition-colors duration-300 ${
-                              priceTrend[item.symbol] === "up" ? "text-white" :
-                              priceTrend[item.symbol] === "down" ? "text-neutral-400" : "text-slate-200"
+                              priceTrend[item.symbol] === "up" ? "text-emerald-400" :
+                              priceTrend[item.symbol] === "down" ? "text-red-500" : "text-slate-200"
                             }`}>
                               {priceData?.price || "--"}
                             </p>

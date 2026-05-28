@@ -9,3 +9,4 @@ ta
 openai
 python-dotenv
 git+https://github.com/rongardF/tvdatafeed.git
+vaderSentiment

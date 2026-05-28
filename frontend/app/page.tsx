@@ -93,24 +93,13 @@ export default function Home() {
   const [socialData, setSocialData] = useState<any>(null);
   const [expandedSignals, setExpandedSignals] = useState<string[]>([]);
   
-  // MT5 Broker State parameters
-  const [mt5AccountId, setMt5AccountId] = useState("");
-  const [mt5Token, setMt5Token] = useState("");
+  // cTrader & Shared Broker State parameters
   const [mt5Volume, setMt5Volume] = useState(0.01);
   const [mt5BrokerConnected, setMt5BrokerConnected] = useState(false);
   const [mt5AccountData, setMt5AccountData] = useState<any>(null);
   const [mt5Positions, setMt5Positions] = useState<any[]>([]);
   const [mt5Logs, setMt5Logs] = useState<any[]>([]);
   const [isAutoTradingActive, setIsAutoTradingActive] = useState(false);
-  
-  // Programmatic Cloud Provisioning States
-  const [linkMethod, setLinkMethod] = useState<"manual" | "cloud">("cloud");
-  const [mt5Login, setMt5Login] = useState("");
-  const [mt5Password, setMt5Password] = useState("");
-  const [mt5Server, setMt5Server] = useState("");
-  const [mt5MetaToken, setMt5MetaToken] = useState("");
-  const [isProvisioning, setIsProvisioning] = useState(false);
-  const [showMt5Help, setShowMt5Help] = useState(false);
 
   // cTrader State
   const [ctAccessToken, setCtAccessToken] = useState("");
@@ -119,7 +108,6 @@ export default function Home() {
   const [ctConnecting, setCtConnecting] = useState(false);
   const [ctAccounts, setCtAccounts] = useState<any[]>([]);
   const [ctFetchingAccounts, setCtFetchingAccounts] = useState(false);
-  const [brokerTab, setBrokerTab] = useState<"ctrader" | "mt5manual" | "mt5cloud">("ctrader");
   
   // Settings Panel States
   const [aiRiskTolerance, setAiRiskTolerance] = useState<"conservative" | "moderate" | "aggressive">(() => {
@@ -131,17 +119,17 @@ export default function Home() {
   
   // Local Broker credentials loader
   useEffect(() => {
-    const savedId = localStorage.getItem("quantview_mt5_account_id") || "DEMO-ACCOUNT";
-    const savedToken = localStorage.getItem("quantview_mt5_token") || "DEMO-TOKEN";
+    const savedId = localStorage.getItem("quantview_ct_account_id");
+    const savedToken = localStorage.getItem("quantview_ct_token");
     const savedVol = localStorage.getItem("quantview_mt5_volume") || "0.01";
     
-    setMt5AccountId(savedId);
-    setMt5Token(savedToken);
+    if (savedToken) setCtAccessToken(savedToken);
+    if (savedId) setCtAccountId(savedId);
     setMt5Volume(Number(savedVol));
     
     if (savedId && savedToken) {
       // Attempt automated reconnect
-      reconnectBroker(savedId, savedToken);
+      reconnectBroker();
     }
   }, []);
   
@@ -153,86 +141,11 @@ export default function Home() {
     localStorage.setItem("quantview_selected_category", market);
   };
   
-  // Connect to live MetaAPI MT5 server
-  const connectBroker = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!mt5AccountId.trim() || !mt5Token.trim()) return;
-    
-    setLoadingStatus("Connecting to MetaAPI MT5 Broker Server...");
-    try {
-      const res = await fetch(`${BACKEND_URL}/market/mt5/connect`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          accountId: mt5AccountId.trim(),
-          token: mt5Token.trim(),
-          volume: mt5Volume
-        })
-      });
-      
-      const json = await res.json();
-      if (res.ok && json.success) {
-        setMt5BrokerConnected(true);
-        setMt5AccountData(json.account);
-        localStorage.setItem("quantview_mt5_account_id", mt5AccountId.trim());
-        localStorage.setItem("quantview_mt5_token", mt5Token.trim());
-        localStorage.setItem("quantview_mt5_volume", mt5Volume.toString());
-        playSound("connect");
-        fetchBrokerStats();
-      } else {
-        alert(json.detail || "Failed to link MetaTrader account. Please verify credentials.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("FastAPI backend connection error.");
-    }
-  };
+
   
-  const provisionBroker = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!mt5Login.trim() || !mt5Password.trim() || !mt5Server.trim() || !mt5MetaToken.trim()) {
-      alert("Please fill in all cloud provisioning fields!");
-      return;
-    }
-    setIsProvisioning(true);
-    playSound("toggle");
+  const reconnectBroker = async () => {
     try {
-      const res = await fetch(`${BACKEND_URL}/market/mt5/provision`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: mt5MetaToken.trim(),
-          login: mt5Login.trim(),
-          password: mt5Password.trim(),
-          server: mt5Server.trim()
-        })
-      });
-      
-      const json = await res.json();
-      if (res.ok && json.success) {
-        setMt5AccountId(json.accountId);
-        setMt5Token(mt5MetaToken.trim());
-        setMt5BrokerConnected(true);
-        localStorage.setItem("quantview_mt5_account_id", json.accountId);
-        localStorage.setItem("quantview_mt5_token", mt5MetaToken.trim());
-        localStorage.setItem("quantview_mt5_volume", mt5Volume.toString());
-        playSound("connect");
-        alert("Success! Your live MT5 account has been programmatically provisioned and linked in the cloud!");
-        fetchBrokerStats();
-      } else {
-        alert(json.detail || json.error || "Failed to provision MT5 Cloud Bridge. Please verify credentials.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("FastAPI backend connection error.");
-    } finally {
-      setIsProvisioning(false);
-    }
-  };
-  
-  const reconnectBroker = async (id: string, token: string) => {
-    try {
-      const res = await fetch(`${BACKEND_URL}/market/mt5/account`);
+      const res = await fetch(`${BACKEND_URL}/market/ctrader/account`);
       const json = await res.json();
       if (res.ok && json.connected) {
         setMt5BrokerConnected(true);
@@ -249,7 +162,7 @@ export default function Home() {
   const fetchBrokerStats = async () => {
     try {
       // 1. Fetch live metrics
-      const accRes = await fetch(`${BACKEND_URL}/market/mt5/account`);
+      const accRes = await fetch(`${BACKEND_URL}/market/ctrader/account`);
       const accJson = await accRes.json();
       if (accRes.ok && accJson.success) {
         setMt5AccountData(accJson.account);
@@ -257,14 +170,14 @@ export default function Home() {
       }
       
       // 2. Fetch positions
-      const posRes = await fetch(`${BACKEND_URL}/market/mt5/positions`);
+      const posRes = await fetch(`${BACKEND_URL}/market/ctrader/positions`);
       const posJson = await posRes.json();
       if (posRes.ok) {
         setMt5Positions(posJson);
       }
       
       // 3. Fetch trade logs
-      const logRes = await fetch(`${BACKEND_URL}/market/mt5/logs`);
+      const logRes = await fetch(`${BACKEND_URL}/market/ctrader/logs`);
       const logJson = await logRes.json();
       if (logRes.ok) {
         setMt5Logs(logJson);
@@ -274,7 +187,7 @@ export default function Home() {
     }
   };
   
-  // Continuous sync loop for Live MT5 Account - Ticks every 5 seconds (syncs live to phone MT5!)
+  // Continuous sync loop for Live cTrader Account
   useEffect(() => {
     if (!mt5BrokerConnected) return;
     fetchBrokerStats();
@@ -285,7 +198,7 @@ export default function Home() {
   const toggleAutoTrading = async () => {
     const nextState = !isAutoTradingActive;
     try {
-      const res = await fetch(`${BACKEND_URL}/market/mt5/toggle-auto`, {
+      const res = await fetch(`${BACKEND_URL}/market/ctrader/toggle-auto`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ active: nextState })
@@ -302,7 +215,7 @@ export default function Home() {
   
   const closePosition = async (positionId: string) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/market/mt5/close`, {
+      const res = await fetch(`${BACKEND_URL}/market/ctrader/close`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ positionId })
@@ -322,7 +235,7 @@ export default function Home() {
   const manualTrade = async (action: "BUY" | "SELL") => {
     const activeSymbol = selectedSymbol || displayedAssets[0] || "XAU/USD";
     try {
-      const res = await fetch(`${BACKEND_URL}/market/mt5/trade`, {
+      const res = await fetch(`${BACKEND_URL}/market/ctrader/trade`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -356,7 +269,7 @@ export default function Home() {
       "Mapping active Forex and Commodity indices...",
       "Initializing Llama-3.3-70B quantitative reasoning models...",
       "Synergizing calculated Break of Structure (BOS) buffers...",
-      "Establishing secure local MetaAPI broker handshake...",
+      "Establishing secure cTrader API broker handshake...",
       "Institutional QuantView AI Terminal active."
     ];
     
@@ -682,7 +595,7 @@ export default function Home() {
           <div className="p-4 flex-1 space-y-1.5 overflow-y-auto">
             <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold px-3 mb-3">DESK TERMINALS</p>
             {[
-              { id: "trader", label: "Auto Trader Bot", icon: <Bot className="w-4 h-4 shrink-0" />, badge: isAutoTradingActive ? <span className="ml-auto w-2 h-2 rounded-full bg-green-400 animate-ping" /> : null },
+              { id: "trader", label: "Auto Trader Bot", icon: <Bot className="w-4 h-4 shrink-0" />, badge: null },
               { id: "analyser", label: "AI Analyser", icon: <Brain className="w-4 h-4 shrink-0" />, badge: null },
               { id: "watchlist", label: "Watchlist Grid", icon: <Star className="w-4 h-4 shrink-0" />, badge: watchlist.length > 0 ? <span className="ml-auto text-xs px-2 py-0.5 rounded-md bg-purple-500/20 text-neutral-200 border border-neutral-500/20">{watchlist.length}</span> : null },
               { id: "settings", label: "Settings Panel", icon: <Settings className="w-4 h-4 shrink-0" />, badge: null },
@@ -729,34 +642,17 @@ export default function Home() {
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-neutral-500/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-[120px] pointer-events-none" />
 
-        {/* TAB 1: AUTO TRADER BOT */}
         {activeTab === "trader" && (
           <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar z-10">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/5 pb-5">
               <div>
                 <h1 className="text-3xl font-black tracking-tight text-white bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
-                  Auto Trading Bot
+                  cTrader Terminal
                 </h1>
                 <p className="text-sm text-slate-400 mt-1">
-                  Secure local MT5 broker link with Llama-3.3-70B quantitative execution
+                  Secure local cTrader broker link with real-time execution
                 </p>
               </div>
-              
-              {mt5BrokerConnected && (
-                <div className="flex items-center gap-3 bg-white/[0.02] border border-white/5 p-2 rounded-2xl">
-                  <span className="text-xs font-semibold text-slate-400 px-3">Autopilot Switch</span>
-                  <button
-                    onClick={toggleAutoTrading}
-                    className={`px-5 py-3 rounded-xl transition-all duration-300 font-bold text-xs uppercase flex items-center gap-2 ${
-                      isAutoTradingActive
-                        ? "bg-green-600 hover:bg-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.4)]"
-                        : "bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.3)]"
-                    }`}
-                  >
-                    <span>{isAutoTradingActive ? "🟢 Trading Active" : "🧠 Start Auto Trading"}</span>
-                  </button>
-                </div>
-              )}
             </div>
 
             {!mt5BrokerConnected ? (
@@ -768,239 +664,90 @@ export default function Home() {
                   </div>
                   <h2 className="text-xl font-bold text-white tracking-tight">Connect Trading Account</h2>
                   <p className="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
-                    Choose your broker integration. cTrader is recommended — free API, no credits needed.
+                    Integrate your cTrader broker account. Enter your OAuth2 access token to connect.
                   </p>
                 </div>
 
-                {/* Broker Tab Selector */}
-                <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/5">
-                  <button type="button"
-                    onClick={() => setBrokerTab("ctrader")}
-                    className={`flex-1 py-2.5 text-[9px] font-bold uppercase tracking-wider rounded-xl transition-all ${
-                      brokerTab === "ctrader" ? "bg-emerald-600 text-white shadow-lg" : "text-slate-400 hover:text-white"
-                    }`}>
-                    cTrader
-                  </button>
-                  <button type="button"
-                    onClick={() => setBrokerTab("mt5manual")}
-                    className={`flex-1 py-2.5 text-[9px] font-bold uppercase tracking-wider rounded-xl transition-all ${
-                      brokerTab === "mt5manual" ? "bg-purple-600 text-white shadow-lg" : "text-slate-400 hover:text-white"
-                    }`}>
-                    MT5 Manual
-                  </button>
-                  <button type="button"
-                    onClick={() => setBrokerTab("mt5cloud")}
-                    className={`flex-1 py-2.5 text-[9px] font-bold uppercase tracking-wider rounded-xl transition-all ${
-                      brokerTab === "mt5cloud" ? "bg-purple-600 text-white shadow-lg" : "text-slate-400 hover:text-white"
-                    }`}>
-                    MT5 Cloud
-                  </button>
-                </div>
+                {/* ── cTrader Form ─────────────────────────────────────────── */}
+                <div className="space-y-4">
+                  <div className="p-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/15 text-emerald-300 text-[10px] leading-relaxed space-y-1">
+                    <p className="font-bold flex items-center gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-white" />
+                      Free — No Credits Required
+                    </p>
+                    <ol className="list-decimal pl-4 space-y-1 text-slate-400">
+                      <li>Open an account with IC Markets, Pepperstone, or any cTrader broker</li>
+                      <li>Go to <a href="https://openapi.ctrader.com/apps" target="_blank" rel="noreferrer" className="text-white underline font-bold">openapi.ctrader.com/apps</a> → create a free app</li>
+                      <li>Visit the auth URL, approve access → paste your <strong>Access Token</strong> below</li>
+                    </ol>
+                  </div>
 
-                {/* ── cTrader Tab ─────────────────────────────────────────── */}
-                {brokerTab === "ctrader" && (
-                  <div className="space-y-4">
-                    <div className="p-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/15 text-emerald-300 text-[10px] leading-relaxed space-y-1">
-                      <p className="font-bold flex items-center gap-1.5">
-                        <Check className="w-3.5 h-3.5 text-white" />
-                        Free — No Credits Required
-                      </p>
-                      <ol className="list-decimal pl-4 space-y-1 text-slate-400">
-                        <li>Open an account with IC Markets, Pepperstone, or any cTrader broker</li>
-                        <li>Go to <a href="https://openapi.ctrader.com/apps" target="_blank" rel="noreferrer" className="text-white underline font-bold">openapi.ctrader.com/apps</a> → create a free app → get <strong>Client ID</strong></li>
-                        <li>Visit the auth URL, approve access → paste your <strong>Access Token</strong> below</li>
-                      </ol>
-                    </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] uppercase tracking-wider text-white font-bold">cTrader Access Token</label>
+                    <input
+                      type="password"
+                      value={ctAccessToken}
+                      onChange={e => setCtAccessToken(e.target.value.trim())}
+                      placeholder="Paste your OAuth2 Access Token"
+                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition-all text-xs"
+                    />
+                  </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-white font-bold">cTrader Access Token</label>
-                      <input
-                        type="password"
-                        value={ctAccessToken}
-                        onChange={e => setCtAccessToken(e.target.value.trim())}
-                        placeholder="Paste your OAuth2 Access Token"
-                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition-all text-xs"
-                      />
-                    </div>
-
-                    {/* Fetch accounts button */}
-                    <button
-                      type="button"
-                      disabled={!ctAccessToken || ctFetchingAccounts}
-                      onClick={async () => {
-                        setCtFetchingAccounts(true);
-                        try {
-                          const res = await fetch(`${BACKEND_URL}/market/ctrader/accounts/by-token?access_token=${encodeURIComponent(ctAccessToken)}`);
-                          const json = await res.json();
-                          if (json.success && json.accounts?.length) {
-                            setCtAccounts(json.accounts);
-                            setCtAccountId(String(json.accounts[0].accountId || json.accounts[0].ctidTraderAccountId || ""));
-                          } else {
-                            alert("No accounts found — check your token.");
-                          }
-                        } catch(e) { alert("Connection error."); }
-                        finally { setCtFetchingAccounts(false); }
-                      }}
-                      className="w-full py-3 rounded-2xl bg-emerald-700/50 hover:bg-emerald-600/60 text-emerald-200 text-[10px] font-bold uppercase tracking-wider transition-all disabled:opacity-40"
-                    >
-                      {ctFetchingAccounts ? (
-                        <span className="flex items-center justify-center gap-1.5">
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          Fetching accounts…
-                        </span>
-                      ) : (
-                        "Fetch My cTrader Accounts"
-                      )}
-                    </button>
-
-                    {ctAccounts.length > 0 && (
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-wider text-white font-bold">Select Account</label>
-                        <select
-                          value={ctAccountId}
-                          onChange={e => setCtAccountId(e.target.value)}
-                          className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-emerald-500 transition-all text-xs"
-                        >
-                          {ctAccounts.map((acc: any) => {
-                            const id = acc.accountId || acc.ctidTraderAccountId || acc.id;
-                            const label = acc.name || acc.brokerName || `Account ${id}`;
-                            return <option key={id} value={String(id)}>{label} ({id})</option>;
-                          })}
-                        </select>
-                      </div>
-                    )}
-
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-white font-bold">Trading Volume (Lots)</label>
-                      <input
-                        type="number" step="0.01" min="0.01"
-                        value={ctVolume}
-                        onChange={e => setCtVolume(Number(e.target.value))}
-                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-emerald-500 transition-all text-xs"
-                      />
-                    </div>
-
-                    <button
-                      type="button"
-                      disabled={!ctAccessToken || !ctAccountId || ctConnecting}
-                      onClick={async () => {
-                        setCtConnecting(true);
-                        try {
-                          const res = await fetch(`${BACKEND_URL}/market/ctrader/connect`, {
+                  <button
+                    type="button"
+                    disabled={!ctAccessToken || ctConnecting}
+                    onClick={async () => {
+                      setCtConnecting(true);
+                      try {
+                        // 1. Fetch accounts
+                        const resAcc = await fetch(`${BACKEND_URL}/market/ctrader/accounts/by-token?access_token=${encodeURIComponent(ctAccessToken)}`);
+                        const jsonAcc = await resAcc.json();
+                        if (jsonAcc.success && jsonAcc.accounts?.length) {
+                          const firstAccount = jsonAcc.accounts[0];
+                          const accountId = String(firstAccount.accountId || firstAccount.ctidTraderAccountId || "");
+                          
+                          // 2. Connect
+                          const resConn = await fetch(`${BACKEND_URL}/market/ctrader/connect`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ access_token: ctAccessToken, account_id: ctAccountId, volume: ctVolume }),
+                            body: JSON.stringify({ access_token: ctAccessToken, account_id: accountId, volume: 0.01 }),
                           });
-                          const json = await res.json();
-                          if (res.ok && json.success) {
+                          const jsonConn = await resConn.json();
+                          if (resConn.ok && jsonConn.success) {
                             setMt5BrokerConnected(true);
-                            setMt5AccountData(json.account);
+                            setMt5AccountData(jsonConn.account);
                             localStorage.setItem("quantview_ct_token", ctAccessToken);
-                            localStorage.setItem("quantview_ct_account_id", ctAccountId);
+                            localStorage.setItem("quantview_ct_account_id", accountId);
                           } else {
-                            alert(json.detail || json.error || "Connection failed");
+                            alert(jsonConn.detail || jsonConn.error || "Connection failed");
                           }
-                        } catch(e) { alert("Backend connection error."); }
-                        finally { setCtConnecting(false); }
-                      }}
-                      className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all disabled:opacity-40"
-                    >
-                      {ctConnecting ? (
-                        <span className="flex items-center justify-center gap-1.5">
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          Connecting…
-                        </span>
-                      ) : (
-                        "Connect cTrader Account"
-                      )}
-                    </button>
-                  </div>
-                )}
-
-                {/* ── MT5 Manual Tab ──────────────────────────────────────── */}
-                {brokerTab === "mt5manual" && (
-                  <form onSubmit={connectBroker} className="space-y-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">MetaAPI Account ID</label>
-                      <input type="text" required value={mt5AccountId} onChange={e => setMt5AccountId(e.target.value.trim())}
-                        placeholder="e.g. a6d4982c-674b-4b28-8742…"
-                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">MetaAPI Auth Token</label>
-                      <input type="password" required value={mt5Token} onChange={e => setMt5Token(e.target.value.trim())}
-                        placeholder="Enter Auth Token"
-                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">Trading Lot Size</label>
-                      <input type="number" step="0.01" required value={mt5Volume} onChange={e => setMt5Volume(Number(e.target.value))}
-                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-purple-500 transition-all text-xs" />
-                    </div>
-                    <button type="submit" className="w-full py-4 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all">
-                      Link Manual Cloud Terminal
-                    </button>
-                  </form>
-                )}
-
-                {/* ── MT5 Cloud Tab ────────────────────────────────────────── */}
-                {brokerTab === "mt5cloud" && (
-                  <form onSubmit={provisionBroker} className="space-y-4">
-                    <div className="p-3 rounded-2xl bg-purple-500/5 border border-purple-500/10 text-purple-300 text-[10px] leading-relaxed flex items-start gap-1.5">
-                      <Info className="w-3.5 h-3.5 text-neutral-200 shrink-0 mt-0.5" />
-                      <span>
-                        <strong>Requires MetaAPI credits (~$9/mo).</strong> Enters your broker credentials and we deploy a cloud terminal.
+                        } else {
+                          alert("No accounts found — check your token.");
+                        }
+                      } catch(e) { alert("Backend connection error."); }
+                      finally { setCtConnecting(false); }
+                    }}
+                    className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all disabled:opacity-40"
+                  >
+                    {ctConnecting ? (
+                      <span className="flex items-center justify-center gap-1.5">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Connecting…
                       </span>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">MetaAPI Auth Token</label>
-                      <input type="password" required value={mt5MetaToken} onChange={e => setMt5MetaToken(e.target.value.trim())}
-                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">MT5 Login ID</label>
-                        <input type="text" required value={mt5Login} onChange={e => setMt5Login(e.target.value.trim())}
-                          className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">Server Name</label>
-                        <input type="text" required value={mt5Server} onChange={e => setMt5Server(e.target.value.trim())}
-                          className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">MT5 Password</label>
-                      <input type="password" required value={mt5Password} onChange={e => setMt5Password(e.target.value.trim())}
-                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">Volume (Lots)</label>
-                      <input type="number" step="0.01" required value={mt5Volume} onChange={e => setMt5Volume(Number(e.target.value))}
-                        className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-purple-500 transition-all text-xs" />
-                    </div>
-                    <button type="submit" disabled={isProvisioning}
-                      className="w-full py-4 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
-                      {isProvisioning ? (
-                        <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          Creating Cloud Bridge…
-                        </>
-                      ) : (
-                        "Deploy & Connect Real MT5"
-                      )}
-                    </button>
-                  </form>
-                )}
+                    ) : (
+                      "Connect cTrader Account"
+                    )}
+                  </button>
+                </div>
               </div>
             ) : (
-              // Live MT5 dashboard
+              // Live cTrader dashboard
               <div className="space-y-6 animate-in fade-in duration-300">
                 {/* Broker account stats (Balance, Equity, Margin) */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div className="rounded-[28px] border border-white/5 bg-[#161616]/80 p-6 relative overflow-hidden backdrop-blur-md">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-neutral-500/10 rounded-full blur-2xl" />
-                    <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">MT5 Account Balance</p>
+                    <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">cTrader Account Balance</p>
                     <h3 className="text-3xl font-black text-white mt-2 font-mono">
                       ${Number(mt5AccountData?.balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </h3>
@@ -1016,7 +763,7 @@ export default function Home() {
                       ${Number(mt5AccountData?.equity || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </h3>
                     <p className="text-[10px] text-white font-semibold mt-1 uppercase tracking-wide">
-                      Broker: {mt5AccountData?.broker || "MetaTrader Demo"}
+                      Broker: {mt5AccountData?.broker || "cTrader Demo"}
                     </p>
                   </div>
 
@@ -1032,12 +779,12 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Active Open positions (Synchronized in real-time with phone!) */}
+                {/* Active Open positions */}
                 <div className="rounded-[32px] border border-white/5 bg-[#161616] p-6 space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-lg font-bold text-white">Active MT5 Positions</h3>
-                      <p className="text-xs text-slate-400">Ticks live and syncs seamlessly with your phone's MT5 app</p>
+                      <h3 className="text-lg font-bold text-white">Active cTrader Positions</h3>
+                      <p className="text-xs text-slate-400">Ticks live and syncs seamlessly with your cTrader app</p>
                     </div>
                     <span className="px-3 py-1 rounded-full bg-neutral-500/10 text-neutral-200 border border-neutral-500/20 text-[10px] uppercase tracking-wider font-bold">
                       {mt5Positions.length} Open Positions
@@ -1046,7 +793,7 @@ export default function Home() {
 
                   {mt5Positions.length === 0 ? (
                     <div className="py-12 text-center text-slate-500 text-sm border border-dashed border-white/10 rounded-2xl">
-                      No active trades currently running on your MT5 account.
+                      No active trades currently running on your cTrader account.
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1092,69 +839,43 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Ledger Logs Console */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Manual Execute console */}
-                  <div className="rounded-[32px] border border-white/5 bg-[#161616] p-6 space-y-4 lg:col-span-1">
-                    <h3 className="text-md font-bold text-white">Quick Trade Desk</h3>
-                    <p className="text-xs text-slate-400">Trigger standard execution orders directly from terminal screen</p>
-                    
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center bg-black/20 p-3.5 rounded-xl border border-white/5">
-                        <span className="text-xs text-slate-400">Active Symbol</span>
-                        <span className="text-xs font-black text-white">{selectedSymbol || displayedAssets[0] || "XAU/USD"}</span>
-                      </div>
-                      <div className="flex justify-between items-center bg-black/20 p-3.5 rounded-xl border border-white/5">
-                        <span className="text-xs text-slate-400">Volume (Lots)</span>
-                        <span className="text-xs font-black text-white">{mt5Volume} Lots</span>
-                      </div>
+                {/* Quick Trade Desk (manual execution) */}
+                <div className="rounded-[32px] border border-white/5 bg-[#161616] p-6 space-y-4">
+                  <h3 className="text-md font-bold text-white">Quick Trade Desk</h3>
+                  <p className="text-xs text-slate-400">Trigger standard execution orders directly from terminal screen</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex justify-between items-center bg-black/20 p-3.5 rounded-xl border border-white/5">
+                      <span className="text-xs text-slate-400">Active Symbol</span>
+                      <span className="text-xs font-black text-white">{selectedSymbol || displayedAssets[0] || "XAU/USD"}</span>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-3 pt-2">
-                      <button
-                        onClick={() => manualTrade("BUY")}
-                        className="py-4 bg-green-600/10 border border-green-500/20 hover:bg-green-500/20 text-white font-black text-xs uppercase rounded-2xl transition-all shadow-[0_0_30px_rgba(34,197,94,0.05)]"
-                      >
-                        Buy Long
-                      </button>
-                      <button
-                        onClick={() => manualTrade("SELL")}
-                        className="py-4 bg-red-600/10 border border-red-500/20 hover:bg-red-500/20 text-neutral-400 font-black text-xs uppercase rounded-2xl transition-all shadow-[0_0_30px_rgba(239,68,68,0.05)]"
-                      >
-                        Sell Short
-                      </button>
+                    <div className="flex justify-between items-center bg-black/20 p-3.5 rounded-xl border border-white/5">
+                      <span className="text-xs text-slate-400">Volume (Lots)</span>
+                      <span className="text-xs font-black text-white">{mt5Volume} Lots</span>
                     </div>
                   </div>
 
-                  {/* Logs Console Window */}
-                  <div className="rounded-[32px] border border-white/5 bg-[#161616] p-6 space-y-4 lg:col-span-2">
-                    <h3 className="text-md font-bold text-white">Autobot Trade Ledger</h3>
-                    <p className="text-xs text-slate-400">Continuous execution activity and broker logs</p>
-
-                    <div className="h-[210px] overflow-y-auto bg-black/40 border border-white/5 rounded-2xl p-4 font-mono text-[10px] text-slate-400 space-y-2 custom-scrollbar">
-                      {mt5Logs.length === 0 ? (
-                        <div className="h-full flex items-center justify-center text-slate-600">
-                          Waiting for execution events...
-                        </div>
-                      ) : (
-                        mt5Logs.map((log, idx) => (
-                          <div key={idx} className="flex gap-2 border-b border-white/5 pb-1">
-                            <span className="text-neutral-200 shrink-0">[{log.timestamp}]</span>
-                            <span className={log.message.includes("Autobot") ? "text-purple-300 font-bold" : ""}>
-                              {log.message}
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button
+                      onClick={() => manualTrade("BUY")}
+                      className="py-4 bg-green-600/10 border border-green-500/20 hover:bg-green-500/20 text-white font-black text-xs uppercase rounded-2xl transition-all shadow-[0_0_30px_rgba(34,197,94,0.05)]"
+                    >
+                      Buy Long
+                    </button>
+                    <button
+                      onClick={() => manualTrade("SELL")}
+                      className="py-4 bg-red-600/10 border border-red-500/20 hover:bg-red-500/20 text-neutral-400 font-black text-xs uppercase rounded-2xl transition-all shadow-[0_0_30px_rgba(239,68,68,0.05)]"
+                    >
+                      Sell Short
+                    </button>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-end">
                   <button
                     onClick={() => {
-                      localStorage.removeItem("quantview_mt5_account_id");
-                      localStorage.removeItem("quantview_mt5_token");
+                      localStorage.removeItem("quantview_ct_account_id");
+                      localStorage.removeItem("quantview_ct_token");
                       setMt5BrokerConnected(false);
                       setMt5AccountData(null);
                       setMt5Positions([]);
@@ -1162,7 +883,7 @@ export default function Home() {
                     }}
                     className="px-4 py-2 bg-red-950/20 border border-red-500/10 hover:bg-red-900/20 text-neutral-400 text-xs font-bold uppercase rounded-xl transition-all"
                   >
-                    Disconnect MT5 Broker Link
+                    Disconnect cTrader Broker Link
                   </button>
                 </div>
               </div>
@@ -1560,66 +1281,7 @@ export default function Home() {
 
             <div className="max-w-2xl bg-[#161616] border border-white/5 rounded-[32px] p-8 space-y-8 animate-in fade-in duration-300">
               
-              {/* Risk Tolerance selector */}
-              <div className="space-y-3.5">
-                <div>
-                  <h3 className="text-md font-bold text-white">Llama-3 Risk Tolerance</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Determines the AI's trade execution confidence thresholds</p>
-                </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { id: "conservative", name: "Conservative", desc: "Confidence ≥ 90%", color: "text-white border-green-500/25 bg-green-500/5" },
-                    { id: "moderate", name: "Moderate (Standard)", desc: "Confidence ≥ 80%", color: "text-neutral-200 border-purple-500/25 bg-purple-500/5" },
-                    { id: "aggressive", name: "Aggressive", desc: "Confidence ≥ 70%", color: "text-neutral-400 border-red-500/25 bg-red-500/5" }
-                  ].map((risk) => (
-                    <button
-                      key={risk.id}
-                      onClick={() => handleRiskChange(risk.id as any)}
-                      className={`flex flex-col p-4 rounded-2xl border text-left transition-all ${
-                        aiRiskTolerance === risk.id
-                          ? `${risk.color} ring-1 ring-purple-500`
-                          : "border-white/5 bg-black/20 text-slate-400 hover:border-white/10"
-                      }`}
-                    >
-                      <span className="font-bold text-sm text-white">{risk.name}</span>
-                      <span className="text-[10px] mt-1 opacity-80">{risk.desc}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* General Auto execution metrics */}
-              <div className="space-y-4 pt-4 border-t border-white/5">
-                <h3 className="text-md font-bold text-white">Execution Parameters</h3>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">Standard lot size</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={mt5Volume}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setMt5Volume(val);
-                        localStorage.setItem("quantview_mt5_volume", val.toString());
-                      }}
-                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white text-xs"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">Volatility Multiplier</label>
-                    <input
-                      type="text"
-                      disabled
-                      placeholder="ATR x1.5 Stop, ATR x2.0 Target"
-                      className="w-full px-4 py-3 rounded-2xl bg-black/10 border border-white/5 text-slate-500 text-xs select-none"
-                    />
-                  </div>
-                </div>
-              </div>
 
               {/* Developer stats */}
               <div className="space-y-3 pt-4 border-t border-white/5">

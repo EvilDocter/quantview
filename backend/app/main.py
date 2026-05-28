@@ -6,7 +6,6 @@ import asyncio
 from app.api.routes_market import router as market_router
 from app.api.routes_news import router as news_router
 from app.api.routes_social import router as social_router
-from app.api.routes_mt5 import router as mt5_router
 from app.api.routes_ctrader import router as ctrader_router
 from app.services.data_provider import TwelveDataProvider
 from app.services.indicator_service import IndicatorService
@@ -129,48 +128,7 @@ async def live_market_engine():
                 })
 
 
-                # Background AI Autobot Execution Desk
-                try:
-                    from app.api.routes_mt5 import load_config, add_log
-                    from app.services.mt5_service import MT5Service
-                    
-                    config = load_config()
-                    if config.get("isAutoTradingActive", False) and config.get("accountId") and config.get("token"):
-                        if signal.get("signal") in ["BUY", "SELL"] and signal.get("confidence", 50) >= 80:
-                            clean_symbol = symbol.replace("/", "").replace("_", "")
-                            positions = MT5Service.get_active_positions(config["accountId"], config["token"])
-                            
-                            has_position = any(p["symbol"] == clean_symbol for p in positions)
-                            if not has_position:
-                                tp_sl_info = {}
-                                atr = volatility.get("value", 0.0)
-                                if atr > 0.0:
-                                    if signal["signal"] == "BUY":
-                                        tp_sl_info["take_profit"] = current_price + (atr * 2.0)
-                                        tp_sl_info["stop_loss"] = current_price - (atr * 1.5)
-                                    else:
-                                        tp_sl_info["take_profit"] = current_price - (atr * 2.0)
-                                        tp_sl_info["stop_loss"] = current_price + (atr * 1.5)
-                                        
-                                lot_size = config.get("volume", 0.01)
-                                res = MT5Service.execute_trade_order(
-                                    config["accountId"],
-                                    config["token"],
-                                    symbol,
-                                    signal["signal"],
-                                    lot_size,
-                                    tp_sl_info.get("stop_loss"),
-                                    tp_sl_info.get("take_profit")
-                                )
-                                if res.get("success", False):
-                                    add_log(
-                                        f"🤖 Autobot executed {signal['signal']} order for {symbol} ({lot_size} Lots) via Llama-3 recommendation",
-                                        symbol
-                                    )
-                                else:
-                                    print(f"Autobot order failed: {res.get('error')}")
-                except Exception as auto_err:
-                    pass
+
 
             print(f"Live engine updated {len(LIVE_CACHE)} assets")
 
@@ -216,7 +174,6 @@ app.add_middleware(
 app.include_router(market_router, prefix="/market")
 app.include_router(news_router, prefix="/market")
 app.include_router(social_router, prefix="/market")
-app.include_router(mt5_router, prefix="/market")
 app.include_router(ctrader_router, prefix="/market")
 
 import httpx

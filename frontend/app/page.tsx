@@ -86,6 +86,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [signals, setSignals] = useState<Record<string, any>>({});
   const [marketPrices, setMarketPrices] = useState<Record<string, any>>({});
+  const [priceTrend, setPriceTrend] = useState<Record<string, "up" | "down" | "neutral">>({});
+  const prevPricesRef = useRef<Record<string, number>>({});
   const wsRef = useRef<WebSocket | null>(null);
   const [news, setNews] = useState<any[]>([]);
   const [socialData, setSocialData] = useState<any>(null);
@@ -539,10 +541,29 @@ export default function Home() {
         const assets = parsed.assets || {};
         const formatted: any = {};
         const liveSignals: Record<string, any> = {};
+        const newTrends: Record<string, "up" | "down" | "neutral"> = {};
 
         Object.entries(assets).forEach(([symbol, asset]: any) => {
           liveSignals[symbol] = asset?.signal || {};
           const price = Number(asset?.price || 0);
+          const oldPrice = prevPricesRef.current[symbol] || 0;
+          
+          if (oldPrice > 0 && price > 0) {
+            if (price > oldPrice) {
+              newTrends[symbol] = "up";
+            } else if (price < oldPrice) {
+              newTrends[symbol] = "down";
+            } else {
+              newTrends[symbol] = priceTrend[symbol] || "neutral";
+            }
+          } else {
+            newTrends[symbol] = "neutral";
+          }
+          
+          if (price > 0) {
+            prevPricesRef.current[symbol] = price;
+          }
+
           formatted[symbol] = {
             rawPrice: price,
             price: price > 0 ? price.toLocaleString(undefined, {
@@ -557,6 +578,7 @@ export default function Home() {
           };
         });
 
+        setPriceTrend(prev => ({ ...prev, ...newTrends }));
         setMarketPrices(formatted);
         setSignals(liveSignals);
       } catch (err) {
@@ -1324,8 +1346,9 @@ export default function Home() {
                         <div className="flex justify-between items-center bg-black/40 p-4 rounded-2xl border border-white/5 relative">
                           <div>
                             <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Realtime Spot Price</p>
-                            <p className={`text-2xl md:text-3xl font-black mt-1 font-mono tracking-tighter ${
-                              isPositive ? "text-emerald-400" : "text-red-400"
+                            <p className={`text-2xl md:text-3xl font-black mt-1 font-mono tracking-tighter transition-colors duration-300 ${
+                              priceTrend[item.symbol] === "up" ? "text-emerald-400" :
+                              priceTrend[item.symbol] === "down" ? "text-red-400" : "text-slate-200"
                             }`}>
                               {priceData?.price || "--"}
                             </p>

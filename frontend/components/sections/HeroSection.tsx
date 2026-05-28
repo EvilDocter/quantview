@@ -72,19 +72,6 @@ export function HeroSection() {
           Realtime AI-powered market analysis, liquidity mapping, and predictive trading infrastructure built for elite traders.
         </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="flex flex-col sm:flex-row items-center gap-4"
-        >
-          <button className="px-8 py-4 rounded-full bg-slate-50 text-slate-950 font-bold tracking-wide hover:scale-105 hover:bg-white transition-all shadow-[0_0_40px_rgba(255,255,255,0.3)]">
-            Launch Terminal
-          </button>
-          <button className="px-8 py-4 rounded-full border border-white/10 bg-white/5 text-white font-bold tracking-wide hover:bg-white/10 transition-all backdrop-blur-md">
-            Explore AI Features
-          </button>
-        </motion.div>
       </motion.div>
 
       {/* Floating UI Elements (Parallax) */}

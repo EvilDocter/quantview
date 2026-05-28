@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Brain, Settings, TrendingUp, TrendingDown, Scale, Star, MousePointerClick, Lock, Unlock } from "lucide-react";
 
@@ -166,6 +166,9 @@ export default function AssetPage() {
     ];
 
   const [assetData, setAssetData] = useState<any>(null);
+  const [priceTrend, setPriceTrend] = useState<"up" | "down" | "neutral">("neutral");
+  const prevPriceRef = useRef<number>(0);
+  const [visibleNewsCount, setVisibleNewsCount] = useState(3);
   const [isLoading, setIsLoading] = useState(true);
   const [chartLocked, setChartLocked] = useState(true);
   const [fetchFailed, setFetchFailed] = useState(false);
@@ -230,6 +233,19 @@ export default function AssetPage() {
         const json = await res.json();
 
         if (!isMounted) return;
+
+        const price = Number(json.price || 0);
+        const oldPrice = prevPriceRef.current;
+        if (oldPrice > 0 && price > 0) {
+          if (price > oldPrice) {
+            setPriceTrend("up");
+          } else if (price < oldPrice) {
+            setPriceTrend("down");
+          }
+        }
+        if (price > 0) {
+          prevPriceRef.current = price;
+        }
 
         setFetchFailed(false);
         setAssetData(json);
@@ -343,6 +359,17 @@ export default function AssetPage() {
                   <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tight leading-none bg-gradient-to-r from-white via-blue-100 to-cyan-300 bg-clip-text text-transparent">
                     {symbol}
                   </h1>
+                  {assetData?.price !== undefined && (
+                    <div className="flex items-center gap-2 mt-3">
+                      <span className="text-xs uppercase tracking-[0.2em] text-slate-400 font-semibold">Spot Price:</span>
+                      <span className={`text-2xl sm:text-3xl font-black font-mono transition-colors duration-300 ${
+                        priceTrend === "up" ? "text-emerald-400" :
+                        priceTrend === "down" ? "text-red-400" : "text-slate-200"
+                      }`}>
+                        {assetData.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-4 flex-wrap">
@@ -2214,174 +2241,172 @@ export default function AssetPage() {
 
       </div>
       {/* Macro News Intelligence */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start auto-rows-max">
-        <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4 space-y-3 h-auto self-start">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Macro News Intelligence</h2>
-              <p className="text-sm text-gray-400 mt-1">
-                Institutional-grade macroeconomic intelligence and ForexFactory narratives
-              </p>
-            </div>
-            <span className="text-xs px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-              LIVE NEWS
-            </span>
-          </div>
+      {(() => {
+        const redFolderNews = news.filter((item: any) => item.sentiment === "Bearish" || item.impact === "HIGH");
+        const yellowFolderNews = news.filter((item: any) => item.sentiment === "Neutral" && item.impact !== "HIGH");
+        const greenFolderNews = news.filter((item: any) => item.sentiment === "Bullish" && item.impact !== "HIGH");
+        const hasMoreNews = redFolderNews.length > visibleNewsCount || 
+                            yellowFolderNews.length > visibleNewsCount || 
+                            greenFolderNews.length > visibleNewsCount;
 
-          {news.map((item: any, idx: number) => (
-            <a
-              key={idx}
-              href={item.link || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`group relative overflow-hidden block rounded-[28px] border backdrop-blur-2xl transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(139,92,246,0.12)] animate-in fade-in slide-in-from-bottom-8 duration-700 ${
-                item.impact === "HIGH"
-                  ? "bg-red-500/[0.04] border-red-500/25 hover:shadow-[0_0_60px_rgba(239,68,68,0.22)]"
-                  : item.sentiment === "Bullish"
-                  ? "bg-green-500/[0.04] border-green-500/25 hover:shadow-[0_0_60px_rgba(34,197,94,0.18)]"
-                  : item.sentiment === "Bearish"
-                  ? "bg-red-500/[0.04] border-red-500/25 hover:shadow-[0_0_60px_rgba(239,68,68,0.18)]"
-                  : "bg-[#0B0F1A]/95 border-white/5 hover:border-purple-500/30"
-              }`}
-              style={{ 
-                animationDelay: `${idx * 100}ms`,
-                animationFillMode: "both"
-              }}
-            >
-              <div
-                className={`absolute inset-0 opacity-50 pointer-events-none ${
-                  item.impact === "HIGH"
-                    ? "bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.18),transparent_45%)]"
-                    : item.sentiment === "Bullish"
-                    ? "bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.16),transparent_45%)]"
-                    : item.sentiment === "Bearish"
-                    ? "bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.16),transparent_45%)]"
-                    : "bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.14),transparent_45%)]"
-                }`}
-              />
-              <div className="relative z-10 flex flex-col gap-5 p-6">
-                <div className="space-y-3 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span
-                      className={`px-2 py-1 rounded-full text-[10px] font-semibold border ${
-                        item.sentiment === "Bullish"
-                          ? "bg-green-500/10 text-green-400 border-green-500/20"
-                          : item.sentiment === "Bearish"
-                          ? "bg-red-500/10 text-red-400 border-red-500/20"
-                          : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-                      }`}
-                    >
-                      {item.sentiment}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {item.source || "Finance News"}
-                    </span>
-                    <span
-                      className={`px-2 py-1 rounded-full text-[10px] font-semibold border ${
-                        item.impact === "HIGH"
-                          ? "bg-red-500/10 text-red-400 border-red-500/20"
-                          : "bg-blue-500/10 text-blue-400 border-blue-500/20"
-                      }`}
-                    >
-                      {item.impact || "LOW"} IMPACT
-                    </span>
-                    <span className="text-xs text-gray-600">•</span>
-                    <span className="text-xs text-gray-500">
-                      {item.published
-                        ? new Date(item.published).toLocaleString()
-                        : "Recently"}
-                    </span>
-                  </div>
-                  <h3 className="text-sm md:text-base font-semibold text-white leading-relaxed break-words whitespace-normal">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-gray-400 leading-relaxed break-words whitespace-normal line-clamp-3">
-                    {item.summary}
-                  </p>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-
-                    <div className="rounded-2xl border border-[#1F2937] bg-black/20 backdrop-blur-xl p-4 space-y-2">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
-                        Macro Theme
-                      </p>
-
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-2.5 h-2.5 rounded-full ${
-                            item.macro_theme?.includes("Inflation")
-                              ? "bg-red-400"
-                              : item.macro_theme?.includes("Policy")
-                              ? "bg-yellow-400"
-                              : item.macro_theme?.includes("Recession")
-                              ? "bg-orange-400"
-                              : "bg-blue-400"
-                          }`}
-                        />
-
-                        <p className="text-sm font-semibold text-white">
-                          {item.macro_theme || "Macro Update"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="rounded-2xl border border-[#1F2937] bg-black/20 backdrop-blur-xl p-4 space-y-3">
-                      <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-gray-500">
-                        <span>Risk Level</span>
-                        <span>{item.risk_level || 0}%</span>
-                      </div>
-
-                      <div className="w-full h-2 rounded-full bg-[#1F2937] overflow-hidden">
-                        <div
-                          className={`h-full rounded-full ${
-                            item.risk_level >= 80
-                              ? "bg-red-400"
-                              : item.risk_level >= 60
-                              ? "bg-yellow-400"
-                              : "bg-green-400"
-                          }`}
-                          style={{
-                            width: `${item.risk_level || 0}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <div className="rounded-2xl border border-[#1F2937] bg-black/20 backdrop-blur-xl p-5 space-y-3">
-
-                    <div className="flex items-center justify-between">
-                      <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500">
-                        AI Macro Narrative
-                      </p>
-
-                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                    </div>
-
-                    <p className="text-sm text-gray-300 leading-relaxed">
-                      {item.ai_summary}
-                    </p>
-
-                  </div>
-                </div>
-                <div className="flex items-center justify-between pt-2 border-t border-white/5">
-
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                    Institutional Feed Active
-                  </div>
-
-                  <div className="text-blue-400 text-sm font-medium group-hover:translate-x-1 transition-transform duration-300">
-                    Open Intelligence ↗
-                  </div>
-
-                </div>
+        const renderNewsCard = (item: any, idx: number) => (
+          <a
+            key={idx}
+            href={item.link || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`group relative overflow-hidden block rounded-[24px] border backdrop-blur-2xl transition-all duration-300 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg ${
+              item.impact === "HIGH"
+                ? "bg-red-500/[0.04] border-red-500/20 hover:border-red-500/40"
+                : item.sentiment === "Bullish"
+                ? "bg-green-500/[0.04] border-green-500/20 hover:border-green-500/40"
+                : item.sentiment === "Bearish"
+                ? "bg-red-500/[0.04] border-red-500/20 hover:border-red-500/40"
+                : "bg-white/[0.01] border-white/5 hover:border-purple-500/30"
+            }`}
+          >
+            <div className="relative z-10 flex flex-col gap-4 p-5">
+              <div className="flex items-center gap-2 flex-wrap text-[10px]">
+                <span
+                  className={`px-2 py-0.5 rounded-full font-bold border ${
+                    item.sentiment === "Bullish"
+                      ? "bg-green-500/10 text-green-400 border-green-500/20"
+                      : item.sentiment === "Bearish"
+                      ? "bg-red-500/10 text-red-400 border-red-500/20"
+                      : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                  }`}
+                >
+                  {item.sentiment}
+                </span>
+                <span className="text-gray-500 font-semibold">{item.source || "Finance News"}</span>
+                <span
+                  className={`px-2 py-0.5 rounded-full font-bold border ${
+                    item.impact === "HIGH"
+                      ? "bg-red-500/10 text-red-400 border-red-500/20"
+                      : "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                  }`}
+                >
+                  {item.impact || "LOW"}
+                </span>
               </div>
-            </a>
-          ))}
-        </div>
-      </div>
+              
+              <h3 className="text-sm font-bold text-white group-hover:text-purple-400 transition-colors line-clamp-2">
+                {item.title}
+              </h3>
+              
+              <p className="text-xs text-gray-400 leading-relaxed line-clamp-3">
+                {item.summary}
+              </p>
+
+              {item.ai_summary && (
+                <div className="rounded-xl border border-white/5 bg-black/30 p-3.5 space-y-1.5 mt-1">
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-bold">
+                    AI Macro Narrative
+                  </p>
+                  <p className="text-xs text-gray-300 leading-relaxed font-light">
+                    {item.ai_summary}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-3 border-t border-white/5 text-[10px]">
+                <span className="text-gray-500 font-medium">
+                  {item.published ? new Date(item.published).toLocaleDateString() : "Recent"}
+                </span>
+                <span className="text-blue-400 font-bold group-hover:translate-x-1 transition-transform">
+                  Open ↗
+                </span>
+              </div>
+            </div>
+          </a>
+        );
+
+        return (
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/5 pb-4">
+              <div>
+                <h2 className="text-2xl font-black tracking-tight text-white bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+                  Macro News Intelligence
+                </h2>
+                <p className="text-sm text-gray-400 mt-1">
+                  Institutional-grade macroeconomic intelligence grouped by market impact folders
+                </p>
+              </div>
+              <span className="text-xs px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 w-fit font-bold">
+                LIVE IMPACT ROTATION
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+              {/* Column 1: Red Folder News */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 px-2 pb-2 border-b border-red-500/20">
+                  <span className="w-3 h-3 rounded bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+                  <h3 className="text-sm font-bold text-red-400 uppercase tracking-widest">Red Folder (High Risk)</h3>
+                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/15">
+                    {redFolderNews.length}
+                  </span>
+                </div>
+                {redFolderNews.length === 0 ? (
+                  <div className="p-6 text-center text-xs text-gray-500 border border-dashed border-white/5 rounded-2xl">
+                    No high risk events currently.
+                  </div>
+                ) : (
+                  redFolderNews.slice(0, visibleNewsCount).map((item: any, idx: number) => renderNewsCard(item, idx))
+                )}
+              </div>
+
+              {/* Column 2: Yellow Folder News */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 px-2 pb-2 border-b border-yellow-500/20">
+                  <span className="w-3 h-3 rounded bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                  <h3 className="text-sm font-bold text-yellow-400 uppercase tracking-widest">Yellow Folder (Medium Risk)</h3>
+                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/15">
+                    {yellowFolderNews.length}
+                  </span>
+                </div>
+                {yellowFolderNews.length === 0 ? (
+                  <div className="p-6 text-center text-xs text-gray-500 border border-dashed border-white/5 rounded-2xl">
+                    No medium risk events currently.
+                  </div>
+                ) : (
+                  yellowFolderNews.slice(0, visibleNewsCount).map((item: any, idx: number) => renderNewsCard(item, idx))
+                )}
+              </div>
+
+              {/* Column 3: Green Folder News */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 px-2 pb-2 border-b border-green-500/20">
+                  <span className="w-3 h-3 rounded bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+                  <h3 className="text-sm font-bold text-green-400 uppercase tracking-widest">Green Folder (Low Risk)</h3>
+                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/15">
+                    {greenFolderNews.length}
+                  </span>
+                </div>
+                {greenFolderNews.length === 0 ? (
+                  <div className="p-6 text-center text-xs text-gray-500 border border-dashed border-white/5 rounded-2xl">
+                    No low risk events currently.
+                  </div>
+                ) : (
+                  greenFolderNews.slice(0, visibleNewsCount).map((item: any, idx: number) => renderNewsCard(item, idx))
+                )}
+              </div>
+            </div>
+
+            {hasMoreNews && (
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={() => setVisibleNewsCount((prev) => prev + 3)}
+                  className="px-6 py-3 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-400 font-bold text-xs uppercase tracking-widest transition-all"
+                >
+                  View More News
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
 
     {/* Related Assets */}
     <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#071120]/90 backdrop-blur-3xl p-6 md:p-8 space-y-8 shadow-[0_0_120px_rgba(168,85,247,0.10)]">

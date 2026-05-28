@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #020617; /* Slate 950 */
+  --background: #0f0f0f; /* Matveyan background */
   --foreground: #f8fafc; /* Slate 50 */
   
   /* Accent Colors */
@@ -26,7 +26,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Smooth, dark noise background blending */
-  background-image: radial-gradient(circle at 50% 0%, #081120 0%, #020617 100%);
+  background-image: radial-gradient(circle at 50% 0%, #1e1e1e 0%, #0f0f0f 100%);
   background-attachment: fixed;
 }
 
@@ -91,4 +91,25 @@ body {
   .custom-scrollbar {
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* Lenis smooth scrolling integration classes */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }

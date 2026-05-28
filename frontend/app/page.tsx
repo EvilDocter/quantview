@@ -662,7 +662,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-cyan-500/30">
+    <div className="flex flex-col min-h-screen bg-[#0f0f0f] text-slate-200 font-sans selection:bg-cyan-500/30">
       
       {/* 1. HERO SECTION */}
       <HeroSection />

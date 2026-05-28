@@ -3,12 +3,20 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Brain, Settings, TrendingUp, TrendingDown, Scale, Star, MousePointerClick, Lock, Unlock } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function AssetPage() {
   const router = useRouter();
   const params = useParams<{ symbol: string }>();
   const rawSymbol = params?.symbol ? decodeURIComponent(params.symbol) : "EUR/USD";
   const symbol = rawSymbol.includes("-") && !rawSymbol.includes("/") ? rawSymbol.replace("-", "/") : rawSymbol;
+
+  const scrollReveal = {
+    initial: { opacity: 0, y: 30 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-100px" },
+    transition: { duration: 0.6, ease: "easeOut" as any }
+  };
 
   const getTradingViewSymbol = (raw: string) => {
     const clean = raw.replace("/", "");
@@ -169,6 +177,7 @@ export default function AssetPage() {
   const [priceTrend, setPriceTrend] = useState<"up" | "down" | "neutral">("neutral");
   const prevPriceRef = useRef<number>(0);
   const [visibleNewsCount, setVisibleNewsCount] = useState(3);
+  const [visibleEventsCount, setVisibleEventsCount] = useState(3);
   const [isLoading, setIsLoading] = useState(true);
   const [chartLocked, setChartLocked] = useState(true);
   const [fetchFailed, setFetchFailed] = useState(false);
@@ -302,7 +311,7 @@ export default function AssetPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white p-3 md:p-6 space-y-6 overflow-x-hidden">
+    <div className="min-h-screen bg-[#0f0f0f] text-white p-3 md:p-6 space-y-6 overflow-x-hidden">
       {isLoading && (
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/30 text-blue-400 text-sm backdrop-blur-md">
           Loading market data...
@@ -607,7 +616,7 @@ export default function AssetPage() {
       )}
 
       {/* Signal Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+      <motion.div {...scrollReveal} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
 
         <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[#0B1120]/90 backdrop-blur-2xl p-6 shadow-[0_0_60px_rgba(59,130,246,0.10)]">
 
@@ -795,11 +804,11 @@ export default function AssetPage() {
 
         </div>
 
-      </div>
+      </motion.div>
 
       {/* AI Reasoning Container */}
       {signal?.is_real_ai && signal?.ai_reasoning && (
-        <div className="relative overflow-hidden rounded-[30px] border border-blue-500/20 bg-[#0B1120]/90 backdrop-blur-2xl p-6 md:p-8 shadow-[0_0_60px_rgba(59,130,246,0.15)] group transition-all hover:border-blue-400/40">
+        <motion.div {...scrollReveal} className="relative overflow-hidden rounded-[30px] border border-blue-500/20 bg-[#0B1120]/90 backdrop-blur-2xl p-6 md:p-8 shadow-[0_0_60px_rgba(59,130,246,0.15)] group transition-all hover:border-blue-400/40">
           <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.15),transparent_70%)] group-hover:opacity-60 transition-opacity" />
           
           <div className="relative z-10 flex flex-col md:flex-row md:items-start gap-6">
@@ -822,11 +831,11 @@ export default function AssetPage() {
               </h3>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Bullish Bearish Speedometer */}
-      <div className="bg-[#111827] border border-[#1F2937] rounded-2xl p-6 space-y-6 overflow-hidden">
+      <motion.div {...scrollReveal} className="bg-[#111827] border border-[#1F2937] rounded-2xl p-6 space-y-6 overflow-hidden">
 
         <div className="flex items-center justify-between flex-wrap gap-3">
 
@@ -855,34 +864,44 @@ export default function AssetPage() {
               ? "Bearish Momentum"
               : "Neutral Momentum"}
           </div>
-
         </div>
 
-        <div className="relative flex items-center justify-center py-8 overflow-hidden">
+        <div className="flex flex-col items-center justify-center p-6 bg-black/40 rounded-[24px] border border-white/5 relative overflow-hidden">
+          
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12),transparent_70%)] pointer-events-none" />
 
-          <div className="relative w-[320px] h-[180px]">
-
-            <div
-              className="absolute inset-0 rounded-t-full"
+          {/* Semi-circle Gauge Container */}
+          <div className="relative w-[280px] h-[140px] overflow-hidden flex items-end justify-center mt-6">
+            
+            {/* Speedometer Background Track */}
+            <div className="absolute top-0 left-0 w-[280px] h-[280px] rounded-full border-[18px] border-white/5" />
+            
+            {/* Active Colored Bias Fill */}
+            <div 
+              className={`absolute top-0 left-0 w-[280px] h-[280px] rounded-full border-[18px] transition-all duration-1000 ${
+                signal?.signal === "BUY" 
+                  ? "border-green-500/30 border-b-transparent border-r-transparent"
+                  : signal?.signal === "SELL"
+                  ? "border-red-500/30 border-b-transparent border-l-transparent"
+                  : "border-yellow-500/30 border-b-transparent"
+              }`}
               style={{
-                background:
-                  "conic-gradient(from 180deg, #ef4444 0deg, #facc15 90deg, #22c55e 180deg)",
-                clipPath: "inset(0 0 50% 0)",
+                transform: `rotate(${gaugeRotation}deg)`,
+                transformOrigin: 'center center'
               }}
             />
 
+            {/* Needle indicator pin */}
             <div className="absolute left-1/2 bottom-0 w-[220px] h-[110px] bg-[#111827] rounded-t-full -translate-x-1/2" />
-
-            <div
-              className="absolute left-1/2 bottom-[18px] origin-bottom transition-transform duration-700 ease-out"
+            
+            {/* Rotating Arrow Indicator */}
+            <div 
+              className="absolute bottom-0 w-2.5 h-[115px] origin-bottom bg-gradient-to-t from-cyan-400 to-blue-500 rounded-t-full transition-transform duration-1000"
               style={{
                 transform: `translateX(-50%) rotate(${gaugeRotation}deg)`,
+                left: "50%"
               }}
-            >
-              <div className="w-1 h-28 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.8)]" />
-            </div>
-
-            <div className="absolute left-1/2 bottom-[10px] w-5 h-5 bg-white rounded-full -translate-x-1/2 shadow-[0_0_20px_rgba(255,255,255,0.9)]" />
+            />
 
             <div className="absolute left-0 bottom-0 text-red-400 text-sm font-semibold">
               Bearish
@@ -906,7 +925,7 @@ export default function AssetPage() {
 
         </div>
 
-      </div>
+      </motion.div>
       {/* Volatility Analytics */}
       {volatility && (
         <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#0B1120]/90 backdrop-blur-2xl p-6 md:p-8 space-y-8 shadow-[0_0_80px_rgba(59,130,246,0.08)]">
@@ -1981,7 +2000,7 @@ export default function AssetPage() {
         </div>
       )}
       {/* Economic Calendar */}
-      <div className="bg-[#111827] border border-[#1F2937] rounded-2xl p-5 space-y-5 overflow-hidden">
+      <div id="live-timeline-section" className="bg-[#111827] border border-[#1F2937] rounded-2xl p-5 space-y-5 overflow-hidden">
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
@@ -2009,221 +2028,116 @@ export default function AssetPage() {
 
         <div className="relative space-y-6 before:absolute before:left-[30px] before:top-0 before:h-full before:w-[2px] before:bg-gradient-to-b before:from-red-500/40 before:via-yellow-500/30 before:to-blue-500/20">
 
-          {economicEvents.map((event: any, idx: number) => {
-            const isHigh = event.impact === "HIGH";
-            const isMedium = event.impact === "MEDIUM";
+          {(() => {
+            const sortedEvents = [...economicEvents].sort((a: any, b: any) => {
+              const impactOrder: Record<string, number> = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+              const valA = impactOrder[a.impact?.toUpperCase()] || 0;
+              const valB = impactOrder[b.impact?.toUpperCase()] || 0;
+              return valB - valA;
+            });
+            return sortedEvents.slice(0, visibleEventsCount).map((event: any, idx: number) => {
+              const isHigh = event.impact === "HIGH";
+              const isMedium = event.impact === "MEDIUM";
 
-            return (
-              <div
-                key={idx}
-                className={`relative ml-16 rounded-3xl border overflow-hidden backdrop-blur-xl shadow-2xl transition-all duration-500 hover:scale-[1.015] hover:-translate-y-1 ${
-                  isHigh
-                    ? "bg-red-500/5 border-red-500/20"
-                    : isMedium
-                    ? "bg-yellow-500/5 border-yellow-500/20"
-                    : "bg-[#0B0F1A] border-[#1F2937]"
-                }`}
-              >
-
+              return (
                 <div
-                  className={`absolute -left-[52px] top-10 w-6 h-6 rounded-full border-4 shadow-[0_0_30px_rgba(255,255,255,0.3)] ${
+                  key={idx}
+                  className={`relative ml-16 rounded-3xl border overflow-hidden backdrop-blur-xl shadow-2xl transition-all duration-500 hover:scale-[1.015] hover:-translate-y-1 ${
                     isHigh
-                      ? "bg-red-400 border-red-300"
+                      ? "bg-red-500/5 border-red-500/20"
                       : isMedium
-                      ? "bg-yellow-400 border-yellow-300"
-                      : "bg-blue-400 border-blue-300"
+                      ? "bg-yellow-500/5 border-yellow-500/20"
+                      : "bg-[#0B0F1A] border-[#1F2937]"
                   }`}
-                />
+                >
 
-                <div
-                  className={`absolute inset-0 opacity-40 pointer-events-none ${
-                    isHigh
-                      ? "bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.18),transparent_45%)]"
-                      : isMedium
-                      ? "bg-[radial-gradient(circle_at_top_right,rgba(250,204,21,0.18),transparent_45%)]"
-                      : "bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]"
-                  }`}
-                />
+                  <div
+                    className={`absolute -left-[52px] top-10 w-6 h-6 rounded-full border-4 shadow-[0_0_30px_rgba(255,255,255,0.3)] ${
+                      isHigh
+                        ? "bg-red-400 border-red-300"
+                        : isMedium
+                        ? "bg-yellow-400 border-yellow-300"
+                        : "bg-blue-400 border-blue-300"
+                    }`}
+                  />
 
-                <div className="relative z-10 flex items-start justify-between gap-4 p-6">
+                  <div
+                    className={`absolute inset-0 opacity-40 pointer-events-none ${
+                      isHigh
+                        ? "bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.18),transparent_45%)]"
+                        : isMedium
+                        ? "bg-[radial-gradient(circle_at_top_right,rgba(250,204,21,0.18),transparent_45%)]"
+                        : "bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]"
+                    }`}
+                  />
 
-                  <div className="space-y-3 flex-1">
+                  <div className="relative z-10 flex items-start justify-between gap-4 p-6">
 
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="space-y-3 flex-1">
 
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                        {event.currency}
-                      </span>
+                      <div className="flex items-center gap-2 flex-wrap">
 
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-                          isHigh
-                            ? "bg-red-500/10 text-red-400 border-red-500/20"
-                            : isMedium
-                            ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-                            : "bg-green-500/10 text-green-400 border-green-500/20"
-                        }`}
-                      >
-                        {event.impact} IMPACT
-                      </span>
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                          {event.currency}
+                        </span>
 
-                    </div>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                            isHigh
+                              ? "bg-red-500/10 text-red-400 border-red-500/20"
+                              : isMedium
+                              ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                              : "bg-green-500/10 text-green-400 border-green-500/20"
+                          }`}
+                        >
+                          {event.impact} IMPACT
+                        </span>
 
-                    <div className="space-y-3">
+                      </div>
 
-                      <div>
+                      <div className="space-y-1">
                         <h3 className="text-lg font-semibold text-white leading-relaxed">
                           {event.event}
                         </h3>
-
-                        <p className="text-sm text-gray-500 mt-2">
+                        <p className="text-xs text-gray-500">
                           Scheduled macroeconomic release affecting {symbol}
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-
-                        <div
-                          className={`rounded-xl border p-3 ${
-                            event.market_bias === "BULLISH"
-                              ? "bg-green-500/5 border-green-500/20"
-                              : event.market_bias === "BEARISH"
-                              ? "bg-red-500/5 border-red-500/20"
-                              : "bg-yellow-500/5 border-yellow-500/20"
-                          }`}
-                        >
-                          <p className="text-xs text-gray-500 mb-1">
-                            AI Market Bias
-                          </p>
-
-                          <p
-                            className={`text-sm font-semibold ${
-                              event.market_bias === "BULLISH"
-                                ? "text-green-400"
-                                : event.market_bias === "BEARISH"
-                                ? "text-red-400"
-                                : "text-yellow-400"
-                            }`}
-                          >
-                            {event.market_bias}
-                          </p>
-                        </div>
-
-                        <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-3">
-                          <p className="text-xs text-gray-500 mb-1">
-                            Expected Volatility
-                          </p>
-
-                          <p className="text-sm font-semibold text-blue-400">
-                            {event.volatility_expectation}
-                          </p>
-                        </div>
-
-                        <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 p-3">
-                          <p className="text-xs text-gray-500 mb-1">
-                            Event Risk Score
-                          </p>
-
-                          <p className="text-sm font-semibold text-purple-400">
-                            {event.risk_score}/100
-                          </p>
-                        </div>
-
-                      </div>
-
-                      <div className="rounded-xl border border-[#1F2937] bg-[#111827] p-4 space-y-3">
-
-                        <div className="flex items-center justify-between text-xs text-gray-500">
-                          <span>AI Event Risk Gauge</span>
-                          <span>{event.risk_score}%</span>
-                        </div>
-
-                        <div className="w-full h-3 rounded-full bg-[#1F2937] overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${
-                              event.risk_score >= 80
-                                ? "bg-red-400"
-                                : event.risk_score >= 60
-                                ? "bg-yellow-400"
-                                : "bg-green-400"
-                            }`}
-                            style={{
-                              width: `${event.risk_score || 0}%`,
-                            }}
-                          />
-                        </div>
-
-                        <div className="text-sm text-gray-300 leading-relaxed">
-                          {event.ai_summary}
-                        </div>
-
-                      </div>
-
                     </div>
 
-                    <div className="grid grid-cols-3 gap-3 pt-2">
+                    <div className="text-right shrink-0">
 
-                      <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-3">
-                        <p className="text-xs text-gray-500 mb-1">
-                          Previous
-                        </p>
-                        <p className="text-sm font-semibold text-gray-300">
-                          {event.previous || "—"}
-                        </p>
+                      <div className="text-xs text-gray-500 mb-2">
+                        EVENT TIME
                       </div>
 
-                      <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-3">
-                        <p className="text-xs text-gray-500 mb-1">
-                          Forecast
-                        </p>
-                        <p className="text-sm font-semibold text-blue-400">
-                          {event.forecast || "—"}
-                        </p>
+                      <div className="text-sm font-semibold text-white">
+                        {event.time || "TBD"}
                       </div>
 
-                      <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-3">
-                        <p className="text-xs text-gray-500 mb-1">
-                          Actual
+                      <div className="mt-4 w-3 h-3 rounded-full animate-pulse bg-orange-400 ml-auto" />
+
+                      <div className="mt-5 space-y-2">
+
+                        <p className="text-xs text-gray-500 uppercase tracking-wide">
+                          Affected Markets
                         </p>
-                        <p className="text-sm font-semibold text-green-400">
-                          {event.actual || "Pending"}
-                        </p>
-                      </div>
 
-                    </div>
+                        <div className="flex flex-wrap justify-end gap-2 max-w-[220px] ml-auto">
 
-                  </div>
+                          {(event.affected_assets || []).map(
+                            (asset: string, assetIdx: number) => (
+                              <span
+                                key={assetIdx}
+                                className="px-2 py-1 rounded-lg text-[10px] font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
+                              >
+                                {asset}
+                              </span>
+                            )
+                          )}
 
-                  <div className="text-right shrink-0">
-
-                    <div className="text-xs text-gray-500 mb-2">
-                      EVENT TIME
-                    </div>
-
-                    <div className="text-sm font-semibold text-white">
-                      {event.time || "TBD"}
-                    </div>
-
-                    <div className="mt-4 w-3 h-3 rounded-full animate-pulse bg-orange-400 ml-auto" />
-
-                    <div className="mt-5 space-y-2">
-
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">
-                        Affected Markets
-                      </p>
-
-                      <div className="flex flex-wrap justify-end gap-2 max-w-[220px] ml-auto">
-
-                        {(event.affected_assets || []).map(
-                          (asset: string, assetIdx: number) => (
-                            <span
-                              key={assetIdx}
-                              className="px-2 py-1 rounded-lg text-[10px] font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
-                            >
-                              {asset}
-                            </span>
-                          )
-                        )}
+                        </div>
 
                       </div>
 
@@ -2232,14 +2146,48 @@ export default function AssetPage() {
                   </div>
 
                 </div>
-
-              </div>
-            );
-          })}
+              );
+            });
+          })()}
 
         </div>
 
+        {economicEvents.length > 3 && (
+          <div className="flex justify-center gap-4 pt-4 border-t border-white/5">
+            {visibleEventsCount < economicEvents.length ? (
+              <button
+                onClick={() => setVisibleEventsCount((prev) => prev + 3)}
+                className="px-6 py-3 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-400 font-bold text-xs uppercase tracking-widest transition-all"
+              >
+                View More Events
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setVisibleEventsCount(3);
+                  document.getElementById("live-timeline-section")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="px-6 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-bold text-xs uppercase tracking-widest transition-all"
+              >
+                Show Less Events
+              </button>
+            )}
+          </div>
+        )}
+
       </div>
+
+      {visibleEventsCount > 3 && (
+        <button
+          onClick={() => {
+            setVisibleEventsCount(3);
+            document.getElementById("live-timeline-section")?.scrollIntoView({ behavior: "smooth" });
+          }}
+          className="fixed bottom-24 right-6 z-50 bg-[#0f0f0f]/90 hover:bg-red-500/10 border border-red-500/30 text-red-400 font-bold text-xs uppercase tracking-widest px-4 py-3 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all flex items-center gap-2 backdrop-blur-md"
+        >
+          <span>✕ Show Less Events</span>
+        </button>
+      )}
       {/* Macro News Intelligence */}
       {(() => {
         const redFolderNews = news.filter((item: any) => item.sentiment === "Bearish" || item.impact === "HIGH");

@@ -8,4 +8,4 @@ websockets
 ta
 openai
 python-dotenv
-tvdatafeed
+git+https://github.com/rongardF/tvdatafeed.git

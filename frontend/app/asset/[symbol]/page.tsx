@@ -354,7 +354,7 @@ export default function AssetPage() {
                     <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-[11px] uppercase tracking-[0.25em] font-semibold">
                       {getAssetType(symbol)} MARKET
                     </span>
-                    <span className="px-3 py-1 rounded-full border border-purple-500/20 bg-purple-500/10 text-purple-400 text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
+                    <span className="px-3 py-1 rounded-full border border-neutral-500/20 bg-neutral-500/10 text-neutral-200 text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
                       AI ACTIVE
                     </span>
                   </div>
@@ -379,8 +379,8 @@ export default function AssetPage() {
                   <div
                     className={`px-4 py-2 rounded-2xl text-sm font-semibold border backdrop-blur-xl shadow-lg ${
                       isLiveAsset
-                        ? "bg-green-500/10 text-green-400 border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.18)]"
-                        : "bg-yellow-500/10 text-yellow-400 border-yellow-500/30 shadow-[0_0_30px_rgba(250,204,21,0.18)]"
+                        ? "bg-green-500/10 text-green-400 border-green-500/30 shadow-[0_0_30px_rgba(255,255,255,0.05)]"
+                        : "bg-yellow-500/10 text-yellow-400 border-yellow-500/30 shadow-[0_0_30px_rgba(255,255,255,0.05)]"
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -455,8 +455,8 @@ export default function AssetPage() {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 xl:col-span-7 w-full">
-              <div className="rounded-[24px] border border-white/10 bg-[#0A101C]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group hover:border-green-500/30 transition-colors">
-                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_50%)] group-hover:opacity-40 transition-opacity" />
+              <div className="rounded-[24px] border border-white/10 bg-[#161616]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group hover:border-green-500/30 transition-colors">
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_50%)] group-hover:opacity-40 transition-opacity" />
                 <div className="relative z-10">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2 font-semibold">
                     Market Bias
@@ -473,8 +473,8 @@ export default function AssetPage() {
                 </div>
               </div>
 
-              <div className="rounded-[24px] border border-white/10 bg-[#0A101C]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group hover:border-blue-500/30 transition-colors">
-                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_50%)] group-hover:opacity-40 transition-opacity" />
+              <div className="rounded-[24px] border border-white/10 bg-[#161616]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group hover:border-blue-500/30 transition-colors">
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_50%)] group-hover:opacity-40 transition-opacity" />
                 <div className="relative z-10">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2 font-semibold">
                     AI Confidence
@@ -485,19 +485,19 @@ export default function AssetPage() {
                 </div>
               </div>
 
-              <div className="rounded-[24px] border border-white/10 bg-[#0A101C]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group hover:border-purple-500/30 transition-colors">
-                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_50%)] group-hover:opacity-40 transition-opacity" />
+              <div className="rounded-[24px] border border-white/10 bg-[#161616]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group hover:border-neutral-500/30 transition-colors">
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_50%)] group-hover:opacity-40 transition-opacity" />
                 <div className="relative z-10">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2 font-semibold">
                     Momentum
                   </p>
-                  <div className="text-2xl sm:text-3xl font-black text-purple-400 tracking-tight drop-shadow-[0_0_10px_rgba(168,85,247,0.3)]">
+                  <div className="text-2xl sm:text-3xl font-black text-neutral-200 tracking-tight drop-shadow-[0_0_10px_rgba(168,85,247,0.3)]">
                     {formattedRsi}
                   </div>
                 </div>
               </div>
               
-              <div className="rounded-[24px] border border-white/10 bg-[#0A101C]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group transition-colors">
+              <div className="rounded-[24px] border border-white/10 bg-[#161616]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group transition-colors">
                 <div className="relative z-10">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2 font-semibold">
                     Market State
@@ -529,7 +529,7 @@ export default function AssetPage() {
                 href={n.link || "#"} 
                 target="_blank" 
                 rel="noreferrer"
-                className="inline-flex items-center text-xs text-slate-400 hover:text-purple-400 mx-6 transition-colors gap-2"
+                className="inline-flex items-center text-xs text-slate-400 hover:text-neutral-200 mx-6 transition-colors gap-2"
               >
                 <span className={`w-2 h-2 rounded-full shrink-0 ${
                   n.sentiment === "Bullish" ? "bg-emerald-400" :
@@ -546,7 +546,7 @@ export default function AssetPage() {
                 href={n.link || "#"} 
                 target="_blank" 
                 rel="noreferrer"
-                className="inline-flex items-center text-xs text-slate-400 hover:text-purple-400 mx-6 transition-colors gap-2"
+                className="inline-flex items-center text-xs text-slate-400 hover:text-neutral-200 mx-6 transition-colors gap-2"
               >
                 <span className={`w-2 h-2 rounded-full shrink-0 ${
                   n.sentiment === "Bullish" ? "bg-emerald-400" :
@@ -612,15 +612,15 @@ export default function AssetPage() {
       {/* Signal Cards */}
       <motion.div {...scrollReveal} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
 
-        <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[#0B1120]/90 backdrop-blur-2xl p-6 shadow-[0_0_60px_rgba(59,130,246,0.10)]">
+        <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[#161616]/90 backdrop-blur-2xl p-6 shadow-[0_0_60px_rgba(255,255,255,0.02)]">
 
           <div
             className={`absolute inset-0 opacity-50 ${
               signal?.signal === "BUY"
-                ? "bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_40%)]"
+                ? "bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_40%)]"
                 : signal?.signal === "SELL"
-                ? "bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.18),transparent_40%)]"
-                : "bg-[radial-gradient(circle_at_top_right,rgba(250,204,21,0.18),transparent_40%)]"
+                ? "bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_40%)]"
+                : "bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_40%)]"
             }`}
           />
 
@@ -671,11 +671,11 @@ export default function AssetPage() {
 
         <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6">
 
-          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_40%)]" />
+          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_40%)]" />
 
           <div className="relative z-10 flex items-center justify-center h-full">
 
-            <div className="relative w-52 h-52 rounded-full overflow-hidden flex items-center justify-center border border-purple-500/20 shadow-[0_0_60px_rgba(168,85,247,0.14)]">
+            <div className="relative w-52 h-52 rounded-full overflow-hidden flex items-center justify-center border border-neutral-500/20 shadow-[0_0_60px_rgba(255,255,255,0.03)]">
 
               <div
                 className="absolute inset-0 rounded-full"
@@ -695,7 +695,7 @@ export default function AssetPage() {
                   {signal?.confidence || 0}%
                 </div>
 
-                <div className="text-xs text-purple-400">
+                <div className="text-xs text-neutral-200">
                   AI Probability
                 </div>
               </div>
@@ -708,7 +708,7 @@ export default function AssetPage() {
 
         <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6">
 
-          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_40%)]" />
+          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_40%)]" />
 
           <div className="relative z-10 space-y-8">
 
@@ -752,7 +752,7 @@ export default function AssetPage() {
 
         <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6">
 
-          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_40%)]" />
+          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_40%)]" />
 
           <div className="relative z-10 flex flex-col justify-between h-full">
 
@@ -802,8 +802,8 @@ export default function AssetPage() {
 
       {/* AI Reasoning Container */}
       {signal?.is_real_ai && signal?.ai_reasoning && (
-        <motion.div {...scrollReveal} className="relative overflow-hidden rounded-[30px] border border-blue-500/20 bg-[#0B1120]/90 backdrop-blur-2xl p-6 md:p-8 shadow-[0_0_60px_rgba(59,130,246,0.15)] group transition-all hover:border-blue-400/40">
-          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.15),transparent_70%)] group-hover:opacity-60 transition-opacity" />
+        <motion.div {...scrollReveal} className="relative overflow-hidden rounded-[30px] border border-blue-500/20 bg-[#161616]/90 backdrop-blur-2xl p-6 md:p-8 shadow-[0_0_60px_rgba(255,255,255,0.04)] group transition-all hover:border-blue-400/40">
+          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04),transparent_70%)] group-hover:opacity-60 transition-opacity" />
           
           <div className="relative z-10 flex flex-col md:flex-row md:items-start gap-6">
             <div className="w-16 h-16 shrink-0 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
@@ -862,7 +862,7 @@ export default function AssetPage() {
 
         <div className="flex flex-col items-center justify-center p-6 bg-black/40 rounded-[24px] border border-white/5 relative overflow-hidden">
           
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12),transparent_70%)] pointer-events-none" />
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03),transparent_70%)] pointer-events-none" />
 
           {/* Semi-circle Gauge Container */}
           <div className="relative w-[280px] h-[140px] overflow-hidden flex items-end justify-center mt-6">
@@ -922,8 +922,8 @@ export default function AssetPage() {
       </motion.div>
       {/* Volatility Analytics */}
       {volatility && (
-        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#0B1120]/90 backdrop-blur-2xl p-6 md:p-8 space-y-8 shadow-[0_0_80px_rgba(59,130,246,0.08)]">
-          <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(34,197,94,0.16),transparent_35%)]" />
+        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#161616]/90 backdrop-blur-2xl p-6 md:p-8 space-y-8 shadow-[0_0_80px_rgba(59,130,246,0.08)]">
+          <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.03),transparent_35%)]" />
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
@@ -962,7 +962,7 @@ export default function AssetPage() {
 
             <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 space-y-4 hover:scale-[1.02] transition-transform duration-500">
               <p className="text-sm text-gray-400">Movement Intensity</p>
-              <h2 className="text-xl font-bold text-purple-400">
+              <h2 className="text-xl font-bold text-neutral-200">
                 {typeof volatility?.value === "number"
                   ? `${volatility.value.toFixed(1)}%`
                   : "12.0%"}
@@ -1032,15 +1032,15 @@ export default function AssetPage() {
       )}
 
       {/* Main Chart */}
-      <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#071120]/90 backdrop-blur-3xl p-4 md:p-6 space-y-6 shadow-[0_0_120px_rgba(59,130,246,0.10)]">
+      <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#161616]/90 backdrop-blur-3xl p-4 md:p-6 space-y-6 shadow-[0_0_120px_rgba(255,255,255,0.02)]">
 
         <div
           className={`absolute inset-0 opacity-50 pointer-events-none ${
             signal?.signal === "BUY"
-              ? "bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.14),transparent_35%)]"
+              ? "bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.03),transparent_35%)]"
               : signal?.signal === "SELL"
-              ? "bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.14),transparent_35%)]"
-              : "bg-[radial-gradient(circle_at_top_right,rgba(250,204,21,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.14),transparent_35%)]"
+              ? "bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.03),transparent_35%)]"
+              : "bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.03),transparent_35%)]"
           }`}
         />
 
@@ -1057,7 +1057,7 @@ export default function AssetPage() {
                 LIVE CHART INTELLIGENCE
               </span>
 
-              <span className="px-3 py-1 rounded-full border border-purple-500/20 bg-purple-500/10 text-purple-400 text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
+              <span className="px-3 py-1 rounded-full border border-neutral-500/20 bg-neutral-500/10 text-neutral-200 text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
                 AI OVERLAY ACTIVE
               </span>
 
@@ -1078,7 +1078,7 @@ export default function AssetPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsLayoutModalOpen(true)}
-              className="px-6 py-4 rounded-2xl border border-purple-500/20 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-all duration-300 text-sm font-semibold backdrop-blur-xl hover:scale-[1.02] shadow-[0_0_40px_rgba(168,85,247,0.12)] flex items-center gap-2"
+              className="px-6 py-4 rounded-2xl border border-neutral-500/20 bg-neutral-500/10 text-neutral-200 hover:bg-purple-500/20 transition-all duration-300 text-sm font-semibold backdrop-blur-xl hover:scale-[1.02] shadow-[0_0_40px_rgba(168,85,247,0.12)] flex items-center gap-2"
             >
               <Settings className="w-4 h-4" /> Link Pine Script
             </button>
@@ -1090,7 +1090,7 @@ export default function AssetPage() {
                   "_blank"
                 );
               }}
-              className="px-6 py-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-all duration-300 text-sm font-semibold backdrop-blur-xl hover:scale-[1.02] shadow-[0_0_40px_rgba(59,130,246,0.12)]"
+              className="px-6 py-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-all duration-300 text-sm font-semibold backdrop-blur-xl hover:scale-[1.02] shadow-[0_0_40px_rgba(255,255,255,0.03)]"
             >
               Open TradingView
             </button>
@@ -1101,7 +1101,7 @@ export default function AssetPage() {
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
 
           <div className="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.16),transparent_45%)]" />
+            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.03),transparent_45%)]" />
             <div className="relative z-10">
               <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 mb-3">
                 AI Bias
@@ -1120,7 +1120,7 @@ export default function AssetPage() {
           </div>
 
           <div className="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.16),transparent_45%)]" />
+            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.03),transparent_45%)]" />
             <div className="relative z-10">
               <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 mb-3">
                 Momentum Energy
@@ -1133,7 +1133,7 @@ export default function AssetPage() {
           </div>
 
           <div className="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.16),transparent_45%)]" />
+            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.03),transparent_45%)]" />
             <div className="relative z-10">
               <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 mb-3">
                 AI Confidence
@@ -1146,7 +1146,7 @@ export default function AssetPage() {
           </div>
 
           <div className="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(250,204,21,0.16),transparent_45%)]" />
+            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.03),transparent_45%)]" />
             <div className="relative z-10">
               <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 mb-3">
                 Market Feed
@@ -1161,7 +1161,7 @@ export default function AssetPage() {
 
         </div>
 
-        <div className="relative z-10 h-[420px] md:h-[700px] w-full rounded-[32px] overflow-hidden border border-white/10 bg-[#020617] shadow-[0_0_100px_rgba(59,130,246,0.08)]">
+        <div className="relative z-10 h-[420px] md:h-[700px] w-full rounded-[32px] overflow-hidden border border-white/10 bg-[#0f0f0f] shadow-[0_0_100px_rgba(59,130,246,0.08)]">
 
           {/* Unlock Overlay for Smooth Page Scroll on Hover */}
           {chartLocked && (
@@ -1237,9 +1237,9 @@ export default function AssetPage() {
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4">
 
           <div className="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_45%)]" />
+            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
             <div className="relative z-10 space-y-3">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-purple-400 font-bold">
+              <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-200 font-bold">
                 Smart Money Concepts
               </p>
 
@@ -1281,7 +1281,7 @@ export default function AssetPage() {
           </div>
 
           <div className="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.18),transparent_45%)]" />
+            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
             <div className="relative z-10 space-y-3">
               <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                 Macro Risk Layer
@@ -1298,7 +1298,7 @@ export default function AssetPage() {
           </div>
 
           <div className="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]" />
+            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
             <div className="relative z-10 space-y-3">
               <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                 AI Projection
@@ -1321,8 +1321,8 @@ export default function AssetPage() {
       {/* Market Pulse */}
       {/* Institutional Positioning */}
       {positioning && (
-        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#0B1120]/90 backdrop-blur-2xl p-6 md:p-8 space-y-8 shadow-[0_0_80px_rgba(59,130,246,0.08)]">
-          <div className="absolute inset-0 pointer-events-none opacity-60 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.16),transparent_30%)]" />
+        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#161616]/90 backdrop-blur-2xl p-6 md:p-8 space-y-8 shadow-[0_0_80px_rgba(59,130,246,0.08)]">
+          <div className="absolute inset-0 pointer-events-none opacity-60 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.03),transparent_30%)]" />
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
@@ -1405,11 +1405,11 @@ export default function AssetPage() {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-4">
-                    <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 p-4">
+                    <div className="rounded-xl border border-neutral-500/20 bg-purple-500/5 p-4">
                       <p className="text-xs text-gray-500 mb-2">
                         Smart Money Bias
                       </p>
-                      <p className="text-sm font-semibold text-purple-400 leading-relaxed">
+                      <p className="text-sm font-semibold text-neutral-200 leading-relaxed">
                         {positioning.smart_money_bias}
                       </p>
                     </div>
@@ -1491,8 +1491,8 @@ export default function AssetPage() {
 
       {/* Market Pulse */}
       {marketPulse && (
-        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#0B1120]/90 backdrop-blur-2xl p-6 md:p-8 space-y-8 shadow-[0_0_80px_rgba(168,85,247,0.08)]">
-          <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.16),transparent_35%)]" />
+        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#161616]/90 backdrop-blur-2xl p-6 md:p-8 space-y-8 shadow-[0_0_80px_rgba(168,85,247,0.08)]">
+          <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.03),transparent_35%)]" />
           <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h2 className="text-2xl font-semibold tracking-tight">
@@ -1567,9 +1567,9 @@ export default function AssetPage() {
 
       {/* AI Intelligence Terminal */}
       {assetData?.ai_analysis && (
-        <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#071120]/90 backdrop-blur-3xl p-6 md:p-8 space-y-8 shadow-[0_0_120px_rgba(59,130,246,0.10)]">
+        <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#161616]/90 backdrop-blur-3xl p-6 md:p-8 space-y-8 shadow-[0_0_120px_rgba(255,255,255,0.02)]">
 
-          <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.16),transparent_35%)]" />
+          <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.03),transparent_35%)]" />
 
           <div className="absolute -top-32 right-0 w-80 h-80 rounded-full blur-3xl opacity-20 bg-cyan-500" />
           <div className="absolute -bottom-32 left-0 w-80 h-80 rounded-full blur-3xl opacity-20 bg-purple-500" />
@@ -1584,14 +1584,14 @@ export default function AssetPage() {
                   AI INTELLIGENCE CORE
                 </span>
 
-                <span className="px-3 py-1 rounded-full border border-purple-500/20 bg-purple-500/10 text-purple-400 text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
+                <span className="px-3 py-1 rounded-full border border-neutral-500/20 bg-neutral-500/10 text-neutral-200 text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
                   LIVE ANALYSIS
                 </span>
 
               </div>
 
               <div>
-                <h2 className="text-3xl md:text-4xl font-black tracking-tight bg-gradient-to-r from-white via-cyan-200 to-purple-300 bg-clip-text text-transparent">
+                <h2 className="text-3xl md:text-4xl font-black tracking-tight bg-gradient-to-r from-white via-cyan-200 to-neutral-400 bg-clip-text text-transparent">
                   Institutional AI Intelligence
                 </h2>
 
@@ -1602,7 +1602,7 @@ export default function AssetPage() {
 
             </div>
 
-            <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/10 px-6 py-5 backdrop-blur-2xl shadow-[0_0_50px_rgba(59,130,246,0.12)]">
+            <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/10 px-6 py-5 backdrop-blur-2xl shadow-[0_0_50px_rgba(255,255,255,0.03)]">
               <p className="text-[11px] uppercase tracking-[0.25em] text-cyan-400 mb-2">
                 Market Regime
               </p>
@@ -1617,7 +1617,7 @@ export default function AssetPage() {
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
 
             <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
               <div className="relative z-10 space-y-3">
                 <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                   Smart Money Flow
@@ -1630,7 +1630,7 @@ export default function AssetPage() {
             </div>
 
             <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
               <div className="relative z-10 space-y-3">
                 <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                   Event Risk
@@ -1643,20 +1643,20 @@ export default function AssetPage() {
             </div>
 
             <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
               <div className="relative z-10 space-y-3">
                 <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                   Liquidity State
                 </p>
 
-                <div className="text-2xl font-black text-purple-400 leading-tight">
+                <div className="text-2xl font-black text-neutral-200 leading-tight">
                   {assetData.ai_analysis.liquidity_state?.state}
                 </div>
               </div>
             </div>
 
             <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
               <div className="relative z-10 space-y-3">
                 <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                   Breakout Probability
@@ -1674,7 +1674,7 @@ export default function AssetPage() {
 
             <div className="rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6 overflow-hidden relative">
 
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
               <div className="relative z-10 space-y-5">
 
@@ -1689,7 +1689,7 @@ export default function AssetPage() {
                     </h3>
                   </div>
 
-                  <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-2xl shadow-[0_0_30px_rgba(59,130,246,0.12)]">
+                  <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-2xl shadow-[0_0_30px_rgba(255,255,255,0.03)]">
                     ◎
                   </div>
                 </div>
@@ -1706,7 +1706,7 @@ export default function AssetPage() {
 
             <div className="rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6 overflow-hidden relative">
 
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
               <div className="relative z-10 space-y-6">
 
@@ -1754,9 +1754,9 @@ export default function AssetPage() {
       )}
       {/* AI Projection Engine */}
       {assetData?.ai_projection && (
-        <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#071120]/90 backdrop-blur-3xl p-6 md:p-8 space-y-8 shadow-[0_0_120px_rgba(34,197,94,0.10)]">
+        <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#161616]/90 backdrop-blur-3xl p-6 md:p-8 space-y-8 shadow-[0_0_120px_rgba(34,197,94,0.10)]">
 
-          <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.16),transparent_35%)]" />
+          <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.03),transparent_35%)]" />
 
           <div className="absolute -top-32 right-0 w-80 h-80 rounded-full blur-3xl opacity-20 bg-green-500" />
           <div className="absolute -bottom-32 left-0 w-80 h-80 rounded-full blur-3xl opacity-20 bg-cyan-500" />
@@ -1804,7 +1804,7 @@ export default function AssetPage() {
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
 
             <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
               <div className="relative z-10 space-y-3">
                 <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                   AI Target Price
@@ -1817,7 +1817,7 @@ export default function AssetPage() {
             </div>
 
             <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
               <div className="relative z-10 space-y-3">
                 <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                   Breakout Probability
@@ -1830,20 +1830,20 @@ export default function AssetPage() {
             </div>
 
             <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
               <div className="relative z-10 space-y-3">
                 <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                   Volatility State
                 </p>
 
-                <div className="text-2xl font-black text-purple-400 leading-tight">
+                <div className="text-2xl font-black text-neutral-200 leading-tight">
                   {assetData.ai_projection.breakout_projection?.volatility_state}
                 </div>
               </div>
             </div>
 
             <div className="rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(250,204,21,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
               <div className="relative z-10 space-y-3">
                 <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                   Projected Move
@@ -1861,7 +1861,7 @@ export default function AssetPage() {
 
             <div className="rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6 overflow-hidden relative">
 
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
               <div className="relative z-10 space-y-6">
 
@@ -1919,7 +1919,7 @@ export default function AssetPage() {
 
             <div className="rounded-[32px] border border-white/10 bg-black/20 backdrop-blur-2xl p-6 overflow-hidden relative">
 
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_45%)]" />
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
               <div className="relative z-10 space-y-6">
 
@@ -2058,10 +2058,10 @@ export default function AssetPage() {
                   <div
                     className={`absolute inset-0 opacity-40 pointer-events-none ${
                       isHigh
-                        ? "bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.18),transparent_45%)]"
+                        ? "bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]"
                         : isMedium
-                        ? "bg-[radial-gradient(circle_at_top_right,rgba(250,204,21,0.18),transparent_45%)]"
-                        : "bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]"
+                        ? "bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]"
+                        : "bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]"
                     }`}
                   />
 
@@ -2151,7 +2151,7 @@ export default function AssetPage() {
             {visibleEventsCount < economicEvents.length ? (
               <button
                 onClick={() => setVisibleEventsCount((prev) => prev + 3)}
-                className="px-6 py-3 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-400 font-bold text-xs uppercase tracking-widest transition-all"
+                className="px-6 py-3 rounded-xl bg-neutral-500/10 hover:bg-purple-500/20 border border-neutral-500/20 text-neutral-200 font-bold text-xs uppercase tracking-widest transition-all"
               >
                 View More Events
               </button>
@@ -2204,7 +2204,7 @@ export default function AssetPage() {
                 ? "bg-green-500/[0.04] border-green-500/20 hover:border-green-500/40"
                 : item.sentiment === "Bearish"
                 ? "bg-red-500/[0.04] border-red-500/20 hover:border-red-500/40"
-                : "bg-white/[0.01] border-white/5 hover:border-purple-500/30"
+                : "bg-white/[0.01] border-white/5 hover:border-neutral-500/30"
             }`}
           >
             <div className="relative z-10 flex flex-col gap-4 p-5">
@@ -2232,7 +2232,7 @@ export default function AssetPage() {
                 </span>
               </div>
               
-              <h3 className="text-sm font-bold text-white group-hover:text-purple-400 transition-colors line-clamp-2">
+              <h3 className="text-sm font-bold text-white group-hover:text-neutral-200 transition-colors line-clamp-2">
                 {item.title}
               </h3>
               
@@ -2267,7 +2267,7 @@ export default function AssetPage() {
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/5 pb-4">
               <div>
-                <h2 className="text-2xl font-black tracking-tight text-white bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+                <h2 className="text-2xl font-black tracking-tight text-white bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
                   Macro News Intelligence
                 </h2>
                 <p className="text-sm text-gray-400 mt-1">
@@ -2339,7 +2339,7 @@ export default function AssetPage() {
               <div className="flex justify-center pt-4">
                 <button
                   onClick={() => setVisibleNewsCount((prev) => prev + 3)}
-                  className="px-6 py-3 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-400 font-bold text-xs uppercase tracking-widest transition-all"
+                  className="px-6 py-3 rounded-xl bg-neutral-500/10 hover:bg-purple-500/20 border border-neutral-500/20 text-neutral-200 font-bold text-xs uppercase tracking-widest transition-all"
                 >
                   View More News
                 </button>
@@ -2351,9 +2351,9 @@ export default function AssetPage() {
 
 
     {/* Related Assets */}
-    <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#071120]/90 backdrop-blur-3xl p-6 md:p-8 space-y-8 shadow-[0_0_120px_rgba(168,85,247,0.10)]">
+    <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#161616]/90 backdrop-blur-3xl p-6 md:p-8 space-y-8 shadow-[0_0_120px_rgba(255,255,255,0.02)]">
 
-      <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.18),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.16),transparent_35%)]" />
+      <div className="absolute inset-0 opacity-50 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.03),transparent_35%)]" />
 
       <div className="absolute -top-32 -right-16 w-80 h-80 rounded-full blur-3xl opacity-20 bg-purple-500" />
       <div className="absolute -bottom-32 -left-16 w-80 h-80 rounded-full blur-3xl opacity-20 bg-cyan-500" />
@@ -2368,7 +2368,7 @@ export default function AssetPage() {
               CORRELATION MATRIX
             </span>
 
-            <span className="px-3 py-1 rounded-full border border-purple-500/20 bg-purple-500/10 text-purple-400 text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
+            <span className="px-3 py-1 rounded-full border border-neutral-500/20 bg-neutral-500/10 text-neutral-200 text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
               AI FLOW ACTIVE
             </span>
 
@@ -2388,11 +2388,11 @@ export default function AssetPage() {
 
         <div className="relative z-10 flex items-center gap-3 flex-wrap">
 
-          <div className="px-4 py-2 rounded-2xl border border-purple-500/20 bg-purple-500/10 text-purple-400 text-sm font-semibold backdrop-blur-xl shadow-[0_0_30px_rgba(168,85,247,0.12)]">
+          <div className="px-4 py-2 rounded-2xl border border-neutral-500/20 bg-neutral-500/10 text-neutral-200 text-sm font-semibold backdrop-blur-xl shadow-[0_0_30px_rgba(168,85,247,0.12)]">
             SMART DISCOVERY ACTIVE
           </div>
 
-          <div className="px-4 py-2 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-sm font-semibold backdrop-blur-xl shadow-[0_0_30px_rgba(59,130,246,0.12)]">
+          <div className="px-4 py-2 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-sm font-semibold backdrop-blur-xl shadow-[0_0_30px_rgba(255,255,255,0.03)]">
             LIVE CORRELATIONS
           </div>
 
@@ -2408,9 +2408,9 @@ export default function AssetPage() {
             onClick={() => {
               router.push(`/asset/${encodeURIComponent(asset.replace("/", "-"))}`);
             }}
-            className="group relative overflow-hidden rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 text-left hover:border-cyan-500/30 transition-all duration-500 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(59,130,246,0.14)]"
+            className="group relative overflow-hidden rounded-[30px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 text-left hover:border-cyan-500/30 transition-all duration-500 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(255,255,255,0.03)]"
           >
-            <div className="absolute inset-0 opacity-40 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.16),transparent_45%)]" />
+            <div className="absolute inset-0 opacity-40 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.03),transparent_45%)]" />
             <div className="relative z-10 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="relative w-16 h-16 rounded-2xl bg-white/95 p-3 shrink-0 overflow-hidden border border-white/20 shadow-[0_0_30px_rgba(255,255,255,0.12)]">
@@ -2434,7 +2434,7 @@ export default function AssetPage() {
                   </p>
                 </div>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-xl shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_30px_rgba(59,130,246,0.12)]">
+              <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-xl shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_30px_rgba(255,255,255,0.03)]">
                 ↗
               </div>
             </div>
@@ -2458,7 +2458,7 @@ export default function AssetPage() {
                   </div>
                 </div>
               </div>
-              <div className="rounded-2xl border border-purple-500/20 bg-purple-500/5 p-4 backdrop-blur-xl">
+              <div className="rounded-2xl border border-neutral-500/20 bg-purple-500/5 p-4 backdrop-blur-xl">
                 <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-3">
                   <span>Institutional Rotation</span>
                   <span>LIVE</span>
@@ -2484,7 +2484,7 @@ export default function AssetPage() {
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4">
 
         <div className="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_45%)]" />
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
           <div className="relative z-10 space-y-3">
             <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
               Risk-On Flow
@@ -2501,7 +2501,7 @@ export default function AssetPage() {
         </div>
 
         <div className="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(250,204,21,0.18),transparent_45%)]" />
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
           <div className="relative z-10 space-y-3">
             <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
               Safe Haven Rotation
@@ -2518,7 +2518,7 @@ export default function AssetPage() {
         </div>
 
         <div className="rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 overflow-hidden relative">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]" />
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
           <div className="relative z-10 space-y-3">
             <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
               AI Correlation Engine
@@ -2539,7 +2539,7 @@ export default function AssetPage() {
       {/* Premium Pine Script / Layout Modal */}
       {isLayoutModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md transition-all duration-300">
-          <div className="relative w-full max-w-lg overflow-hidden rounded-[32px] border border-white/10 bg-[#0B1120] p-8 shadow-[0_0_80px_rgba(168,85,247,0.25)] space-y-6">
+          <div className="relative w-full max-w-lg overflow-hidden rounded-[32px] border border-white/10 bg-[#161616] p-8 shadow-[0_0_80px_rgba(168,85,247,0.25)] space-y-6">
             <div className="absolute top-0 right-0 p-6">
               <button
                 onClick={() => setIsLayoutModalOpen(false)}
@@ -2550,7 +2550,7 @@ export default function AssetPage() {
             </div>
 
             <div className="space-y-2">
-              <div className="inline-flex p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+              <div className="inline-flex p-3 rounded-2xl bg-neutral-500/10 border border-neutral-500/20 text-neutral-200">
                 <TrendingUp className="w-6 h-6" />
               </div>
               <h3 className="text-2xl font-bold text-white tracking-tight">
@@ -2564,7 +2564,7 @@ export default function AssetPage() {
 
             <div className="space-y-3.5 text-xs text-gray-300">
               <div className="flex gap-3">
-                <span className="flex items-center justify-center w-5 h-5 shrink-0 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-bold border border-purple-500/20">
+                <span className="flex items-center justify-center w-5 h-5 shrink-0 rounded-full bg-neutral-500/10 text-neutral-200 text-[10px] font-bold border border-neutral-500/20">
                   1
                 </span>
                 <p>
@@ -2573,7 +2573,7 @@ export default function AssetPage() {
               </div>
 
               <div className="flex gap-3">
-                <span className="flex items-center justify-center w-5 h-5 shrink-0 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-bold border border-purple-500/20">
+                <span className="flex items-center justify-center w-5 h-5 shrink-0 rounded-full bg-neutral-500/10 text-neutral-200 text-[10px] font-bold border border-neutral-500/20">
                   2
                 </span>
                 <p>
@@ -2582,7 +2582,7 @@ export default function AssetPage() {
               </div>
 
               <div className="flex gap-3">
-                <span className="flex items-center justify-center w-5 h-5 shrink-0 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-bold border border-purple-500/20">
+                <span className="flex items-center justify-center w-5 h-5 shrink-0 rounded-full bg-neutral-500/10 text-neutral-200 text-[10px] font-bold border border-neutral-500/20">
                   3
                 </span>
                 <p>
@@ -2592,7 +2592,7 @@ export default function AssetPage() {
             </div>
 
             <div className="space-y-2 pt-2">
-              <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">
+              <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">
                 TradingView Chart Layout ID
               </label>
               <input

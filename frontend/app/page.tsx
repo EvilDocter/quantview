@@ -619,13 +619,13 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030712] text-slate-200">
-        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.18),transparent_60%)]" />
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0f0f0f] text-slate-200">
+        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_60%)]" />
         
         <div className="relative z-10 flex flex-col items-center space-y-8 text-center max-w-lg px-6">
           {/* Logo animation */}
           <div className="relative mb-2">
-            <div className="absolute -inset-10 rounded-full bg-purple-500/10 blur-3xl animate-pulse" />
+            <div className="absolute -inset-10 rounded-full bg-neutral-500/10 blur-3xl animate-pulse" />
             <img
               src="/logo.png"
               alt="QuantView Logo"
@@ -634,7 +634,7 @@ export default function Home() {
           </div>
           
           <div className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-purple-400 font-bold">
+            <p className="text-xs uppercase tracking-[0.3em] text-neutral-200 font-bold">
               Cognitive Algorithmic Desk
             </p>
           </div>
@@ -642,7 +642,7 @@ export default function Home() {
           {/* Pulsing loading bar */}
           <div className="w-64 h-1.5 rounded-full bg-slate-900 overflow-hidden border border-white/5 relative">
             <div 
-              className="h-full bg-gradient-to-r from-purple-500 to-cyan-400 transition-all duration-300 rounded-full"
+              className="h-full bg-gradient-to-r from-neutral-600 to-neutral-200 transition-all duration-300 rounded-full"
               style={{ width: `${loadingProgress}%` }}
             />
           </div>
@@ -668,15 +668,15 @@ export default function Home() {
       <HeroSection />
 
       {/* 2. LIVE TERMINAL EXPERIENCE */}
-      <div id="live-terminal" className="relative flex flex-col md:flex-row w-full max-w-[1600px] mx-auto min-h-screen border-t border-white/5 bg-[#030712] z-20 shadow-[0_-40px_100px_rgba(0,0,0,0.8)] pb-[72px] md:pb-0">
+      <div id="live-terminal" className="relative flex flex-col md:flex-row w-full max-w-[1600px] mx-auto min-h-screen border-t border-white/5 bg-[#0f0f0f] z-20 shadow-[0_-40px_100px_rgba(0,0,0,0.8)] pb-[72px] md:pb-0">
         
         {/* DESKTOP Sidebar — hidden on mobile */}
-        <div className="hidden md:flex w-64 bg-[#070B16]/80 backdrop-blur-xl border-r border-white/5 flex-col z-20 shrink-0 sticky top-0 h-screen overflow-y-auto">
+        <div className="hidden md:flex w-64 bg-[#121212]/80 backdrop-blur-xl border-r border-white/5 flex-col z-20 shrink-0 sticky top-0 h-screen overflow-y-auto">
         
           {/* Brand Banner */}
           <div className="p-6 border-b border-white/5 flex flex-col items-start gap-1">
             <img src="/logo.png" alt="QuantView Logo" className="w-40 h-auto" />
-            <p className="text-[9px] uppercase tracking-widest text-purple-400 font-bold pl-1 mt-1">AI Autobot Terminal</p>
+            <p className="text-[9px] uppercase tracking-widest text-neutral-200 font-bold pl-1 mt-1">AI Autobot Terminal</p>
           </div>
 
           <div className="p-4 flex-1 space-y-1.5 overflow-y-auto">
@@ -684,19 +684,19 @@ export default function Home() {
             {[
               { id: "trader", label: "Auto Trader Bot", icon: <Bot className="w-4 h-4 shrink-0" />, badge: isAutoTradingActive ? <span className="ml-auto w-2 h-2 rounded-full bg-green-400 animate-ping" /> : null },
               { id: "analyser", label: "AI Analyser", icon: <Brain className="w-4 h-4 shrink-0" />, badge: null },
-              { id: "watchlist", label: "Watchlist Grid", icon: <Star className="w-4 h-4 shrink-0" />, badge: watchlist.length > 0 ? <span className="ml-auto text-xs px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-400 border border-purple-500/20">{watchlist.length}</span> : null },
+              { id: "watchlist", label: "Watchlist Grid", icon: <Star className="w-4 h-4 shrink-0" />, badge: watchlist.length > 0 ? <span className="ml-auto text-xs px-2 py-0.5 rounded-md bg-purple-500/20 text-neutral-200 border border-neutral-500/20">{watchlist.length}</span> : null },
               { id: "settings", label: "Settings Panel", icon: <Settings className="w-4 h-4 shrink-0" />, badge: null },
             ].map((item) => (
               <button key={item.id} onClick={() => setActiveTab(item.id as any)}
                 className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-300 font-bold text-sm text-left border ${
-                  activeTab === item.id ? "bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.15)]" : "border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
+                  activeTab === item.id ? "bg-neutral-500/10 border-purple-500/30 text-neutral-200 shadow-[0_0_30px_rgba(168,85,247,0.15)]" : "border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
                 }`}>
                 {item.icon}<span>{item.label}</span>{item.badge}
               </button>
             ))}
           </div>
 
-          <div className="p-4 border-t border-white/5 bg-[#050811] flex items-center gap-3 text-xs text-slate-400">
+          <div className="p-4 border-t border-white/5 bg-[#121212] flex items-center gap-3 text-xs text-slate-400">
             <div className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse shrink-0" />
             <div className="truncate">
               <p className="font-bold text-white text-[10px] uppercase tracking-wider">WebSocket Link</p>
@@ -706,7 +706,7 @@ export default function Home() {
         </div>
 
         {/* MOBILE Bottom Navigation Bar */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#070B16]/95 backdrop-blur-2xl border-t border-white/10 flex items-stretch safe-area-inset-bottom">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#121212]/95 backdrop-blur-2xl border-t border-white/10 flex items-stretch safe-area-inset-bottom">
           {[
             { id: "analyser", label: "Markets", icon: <Brain className="w-5 h-5" /> },
             { id: "watchlist", label: "Watchlist", icon: <Star className="w-5 h-5" /> },
@@ -715,7 +715,7 @@ export default function Home() {
           ].map((item) => (
             <button key={item.id} onClick={() => setActiveTab(item.id as any)}
               className={`flex-1 flex flex-col items-center justify-center py-2.5 gap-1 transition-all ${
-                activeTab === item.id ? "text-purple-400" : "text-slate-500"
+                activeTab === item.id ? "text-neutral-200" : "text-slate-500"
               }`}>
               {item.icon}
               <span className="text-[9px] font-bold uppercase tracking-wide">{item.label}</span>
@@ -726,7 +726,7 @@ export default function Home() {
 
       {/* Main workspace (Displays only the active Sidebar SPA Tab) */}
       <div className="flex-1 flex flex-col overflow-hidden relative">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-neutral-500/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
 
         {/* TAB 1: AUTO TRADER BOT */}
@@ -734,7 +734,7 @@ export default function Home() {
           <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar z-10">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/5 pb-5">
               <div>
-                <h1 className="text-3xl font-black tracking-tight text-white bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-black tracking-tight text-white bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
                   Auto Trading Bot
                 </h1>
                 <p className="text-sm text-slate-400 mt-1">
@@ -761,7 +761,7 @@ export default function Home() {
 
             {!mt5BrokerConnected ? (
               // ── Broker Connect Card ──────────────────────────────────────────
-              <div className="max-w-md mx-auto my-10 bg-[#0B1120] border border-white/10 rounded-[32px] p-8 shadow-[0_0_60px_rgba(0,0,0,0.5)] space-y-6">
+              <div className="max-w-md mx-auto my-10 bg-[#161616] border border-white/10 rounded-[32px] p-8 shadow-[0_0_60px_rgba(0,0,0,0.5)] space-y-6">
                 <div className="text-center space-y-2">
                   <div className="inline-flex p-4 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
                     <Zap className="w-8 h-8" />
@@ -921,19 +921,19 @@ export default function Home() {
                 {brokerTab === "mt5manual" && (
                   <form onSubmit={connectBroker} className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">MetaAPI Account ID</label>
+                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">MetaAPI Account ID</label>
                       <input type="text" required value={mt5AccountId} onChange={e => setMt5AccountId(e.target.value.trim())}
                         placeholder="e.g. a6d4982c-674b-4b28-8742…"
                         className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">MetaAPI Auth Token</label>
+                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">MetaAPI Auth Token</label>
                       <input type="password" required value={mt5Token} onChange={e => setMt5Token(e.target.value.trim())}
                         placeholder="Enter Auth Token"
                         className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">Trading Lot Size</label>
+                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">Trading Lot Size</label>
                       <input type="number" step="0.01" required value={mt5Volume} onChange={e => setMt5Volume(Number(e.target.value))}
                         className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-purple-500 transition-all text-xs" />
                     </div>
@@ -947,35 +947,35 @@ export default function Home() {
                 {brokerTab === "mt5cloud" && (
                   <form onSubmit={provisionBroker} className="space-y-4">
                     <div className="p-3 rounded-2xl bg-purple-500/5 border border-purple-500/10 text-purple-300 text-[10px] leading-relaxed flex items-start gap-1.5">
-                      <Info className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                      <Info className="w-3.5 h-3.5 text-neutral-200 shrink-0 mt-0.5" />
                       <span>
                         <strong>Requires MetaAPI credits (~$9/mo).</strong> Enters your broker credentials and we deploy a cloud terminal.
                       </span>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">MetaAPI Auth Token</label>
+                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">MetaAPI Auth Token</label>
                       <input type="password" required value={mt5MetaToken} onChange={e => setMt5MetaToken(e.target.value.trim())}
                         className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">MT5 Login ID</label>
+                        <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">MT5 Login ID</label>
                         <input type="text" required value={mt5Login} onChange={e => setMt5Login(e.target.value.trim())}
                           className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">Server Name</label>
+                        <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">Server Name</label>
                         <input type="text" required value={mt5Server} onChange={e => setMt5Server(e.target.value.trim())}
                           className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
                       </div>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">MT5 Password</label>
+                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">MT5 Password</label>
                       <input type="password" required value={mt5Password} onChange={e => setMt5Password(e.target.value.trim())}
                         className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">Volume (Lots)</label>
+                      <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">Volume (Lots)</label>
                       <input type="number" step="0.01" required value={mt5Volume} onChange={e => setMt5Volume(Number(e.target.value))}
                         className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-purple-500 transition-all text-xs" />
                     </div>
@@ -998,18 +998,18 @@ export default function Home() {
               <div className="space-y-6 animate-in fade-in duration-300">
                 {/* Broker account stats (Balance, Equity, Margin) */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <div className="rounded-[28px] border border-white/5 bg-[#0F172A]/80 p-6 relative overflow-hidden backdrop-blur-md">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl" />
+                  <div className="rounded-[28px] border border-white/5 bg-[#161616]/80 p-6 relative overflow-hidden backdrop-blur-md">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-neutral-500/10 rounded-full blur-2xl" />
                     <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">MT5 Account Balance</p>
                     <h3 className="text-3xl font-black text-white mt-2 font-mono">
                       ${Number(mt5AccountData?.balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </h3>
-                    <p className="text-[10px] text-purple-400 font-semibold mt-1 uppercase tracking-wide">
+                    <p className="text-[10px] text-neutral-200 font-semibold mt-1 uppercase tracking-wide">
                       Currency: {mt5AccountData?.currency || "USD"}
                     </p>
                   </div>
 
-                  <div className="rounded-[28px] border border-white/5 bg-[#0F172A]/80 p-6 relative overflow-hidden backdrop-blur-md">
+                  <div className="rounded-[28px] border border-white/5 bg-[#161616]/80 p-6 relative overflow-hidden backdrop-blur-md">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl" />
                     <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Account Equity</p>
                     <h3 className="text-3xl font-black text-white mt-2 font-mono">
@@ -1020,7 +1020,7 @@ export default function Home() {
                     </p>
                   </div>
 
-                  <div className="rounded-[28px] border border-white/5 bg-[#0F172A]/80 p-6 relative overflow-hidden backdrop-blur-md">
+                  <div className="rounded-[28px] border border-white/5 bg-[#161616]/80 p-6 relative overflow-hidden backdrop-blur-md">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl" />
                     <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Free Margin</p>
                     <h3 className="text-3xl font-black text-emerald-400 mt-2 font-mono">
@@ -1033,13 +1033,13 @@ export default function Home() {
                 </div>
 
                 {/* Active Open positions (Synchronized in real-time with phone!) */}
-                <div className="rounded-[32px] border border-white/5 bg-[#0B1120] p-6 space-y-4">
+                <div className="rounded-[32px] border border-white/5 bg-[#161616] p-6 space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-lg font-bold text-white">Active MT5 Positions</h3>
                       <p className="text-xs text-slate-400">Ticks live and syncs seamlessly with your phone's MT5 app</p>
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 text-[10px] uppercase tracking-wider font-bold">
+                    <span className="px-3 py-1 rounded-full bg-neutral-500/10 text-neutral-200 border border-neutral-500/20 text-[10px] uppercase tracking-wider font-bold">
                       {mt5Positions.length} Open Positions
                     </span>
                   </div>
@@ -1095,7 +1095,7 @@ export default function Home() {
                 {/* Ledger Logs Console */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Manual Execute console */}
-                  <div className="rounded-[32px] border border-white/5 bg-[#0B1120] p-6 space-y-4 lg:col-span-1">
+                  <div className="rounded-[32px] border border-white/5 bg-[#161616] p-6 space-y-4 lg:col-span-1">
                     <h3 className="text-md font-bold text-white">Quick Trade Desk</h3>
                     <p className="text-xs text-slate-400">Trigger standard execution orders directly from terminal screen</p>
                     
@@ -1127,7 +1127,7 @@ export default function Home() {
                   </div>
 
                   {/* Logs Console Window */}
-                  <div className="rounded-[32px] border border-white/5 bg-[#0B1120] p-6 space-y-4 lg:col-span-2">
+                  <div className="rounded-[32px] border border-white/5 bg-[#161616] p-6 space-y-4 lg:col-span-2">
                     <h3 className="text-md font-bold text-white">Autobot Trade Ledger</h3>
                     <p className="text-xs text-slate-400">Continuous execution activity and broker logs</p>
 
@@ -1139,7 +1139,7 @@ export default function Home() {
                       ) : (
                         mt5Logs.map((log, idx) => (
                           <div key={idx} className="flex gap-2 border-b border-white/5 pb-1">
-                            <span className="text-purple-400 shrink-0">[{log.timestamp}]</span>
+                            <span className="text-neutral-200 shrink-0">[{log.timestamp}]</span>
                             <span className={log.message.includes("Autobot") ? "text-purple-300 font-bold" : ""}>
                               {log.message}
                             </span>
@@ -1174,9 +1174,9 @@ export default function Home() {
         {activeTab === "analyser" && (
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Header controls bar */}
-            <div className="flex flex-col gap-3 px-4 md:px-6 py-4 border-b border-white/5 bg-[#070B16]/80 backdrop-blur-xl z-10">
+            <div className="flex flex-col gap-3 px-4 md:px-6 py-4 border-b border-white/5 bg-[#121212]/80 backdrop-blur-xl z-10">
               <div className="flex items-center justify-between">
-                <h1 className="text-lg md:text-xl font-bold tracking-tight text-white bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+                <h1 className="text-lg md:text-xl font-bold tracking-tight text-white bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
                   Market Analyser
                 </h1>
                 <input
@@ -1197,7 +1197,7 @@ export default function Home() {
                     onClick={() => handleMarketChange(market)}
                     className={`shrink-0 px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all border ${
                       selectedMarket === market
-                        ? "bg-purple-500/20 text-purple-400 border-purple-500/20"
+                        ? "bg-purple-500/20 text-neutral-200 border-neutral-500/20"
                         : "text-slate-400 border-white/5 bg-black/30"
                     }`}
                   >
@@ -1212,37 +1212,37 @@ export default function Home() {
               
               {/* Volatility Status ring */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <div className="bg-[#0F172A]/80 border border-white/5 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl" />
+                <div className="bg-[#161616]/80 border border-white/5 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-neutral-500/10 rounded-full blur-2xl" />
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Market Category</p>
                   <h2 className="text-2xl font-black mt-1 text-white">{selectedMarket}</h2>
                 </div>
 
-                <div className="bg-[#0F172A]/80 border border-white/5 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
+                <div className="bg-[#161616]/80 border border-white/5 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl" />
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Analysis Resolution</p>
                   <h2 className="text-2xl font-black mt-1 text-white">5-Minute</h2>
                 </div>
 
-                <div className="bg-[#0F172A]/80 border border-white/5 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
+                <div className="bg-[#161616]/80 border border-white/5 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl" />
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Tracked Symbols</p>
                   <h2 className="text-2xl font-black mt-1 text-white">{sortedData.length} Assets</h2>
                 </div>
 
-                <div className="bg-[#0F172A]/80 border border-white/5 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl" />
+                <div className="bg-[#161616]/80 border border-white/5 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-neutral-500/10 rounded-full blur-2xl" />
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Cognitive Engine</p>
                   <div className="flex items-center gap-2 mt-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-purple-400 animate-ping" />
-                    <h2 className="text-2xl font-black text-purple-400 uppercase">LLAMA-3</h2>
+                    <h2 className="text-2xl font-black text-neutral-200 uppercase">LLAMA-3</h2>
                   </div>
                 </div>
               </div>
 
               {/* Watchlist Quick add overlay */}
               {watchlist.length > 0 && (
-                <div className="bg-[#0B1120]/60 border border-white/5 rounded-3xl p-6 space-y-4 shadow-xl backdrop-blur-md">
+                <div className="bg-[#161616]/60 border border-white/5 rounded-3xl p-6 space-y-4 shadow-xl backdrop-blur-md">
                   <div>
                     <h2 className="text-md font-bold text-white flex items-center gap-2">
                       <span className="text-amber-400">★</span> Pinned Watchlist Shortcuts
@@ -1262,7 +1262,7 @@ export default function Home() {
                           }}
                           className={`flex items-center gap-3.5 px-4.5 py-3 rounded-2xl transition-all duration-300 border ${
                             selectedSymbol === asset
-                              ? "bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.1)]"
+                              ? "bg-neutral-500/10 border-purple-500/30 text-neutral-200 shadow-[0_0_20px_rgba(168,85,247,0.1)]"
                               : "bg-black/30 border-white/5 text-slate-300 hover:bg-black/50"
                           }`}
                         >
@@ -1290,7 +1290,7 @@ export default function Home() {
                   return (
                     <div
                       key={item.symbol}
-                      className="bg-[#0B1120]/80 border border-white/5 rounded-[24px] md:rounded-[32px] p-4 md:p-6 hover:border-purple-500/30 hover:shadow-[0_0_40px_rgba(168,85,247,0.06)] transition-all duration-300 group relative overflow-hidden backdrop-blur-md"
+                      className="bg-[#161616]/80 border border-white/5 rounded-[24px] md:rounded-[32px] p-4 md:p-6 hover:border-neutral-500/30 hover:shadow-[0_0_40px_rgba(255,255,255,0.02)] transition-all duration-300 group relative overflow-hidden backdrop-blur-md"
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.01] to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
@@ -1304,7 +1304,7 @@ export default function Home() {
                               className="w-14 h-14 rounded-full bg-slate-950 object-contain p-1.5 ring-2 ring-slate-800 shadow-xl group-hover:scale-105 transition-transform"
                             />
                             <div>
-                              <p className="text-2xl font-black tracking-tight text-white group-hover:text-purple-400 transition-colors">
+                              <p className="text-2xl font-black tracking-tight text-white group-hover:text-neutral-200 transition-colors">
                                 {item.symbol}
                               </p>
                               <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-bold">
@@ -1335,7 +1335,7 @@ export default function Home() {
                             
                             <button
                               onClick={() => router.push(`/asset/${encodeURIComponent(item.symbol.replace("/", "-"))}`)}
-                              className="px-4 py-2.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-400 font-bold text-xs uppercase transition-all"
+                              className="px-4 py-2.5 rounded-xl bg-neutral-500/10 hover:bg-purple-500/20 border border-neutral-500/20 text-neutral-200 font-bold text-xs uppercase transition-all"
                             >
                               Details Terminal
                             </button>
@@ -1377,7 +1377,7 @@ export default function Home() {
                                   href={n.link} 
                                   target="_blank" 
                                   rel="noreferrer"
-                                  className="inline-flex items-center text-[10px] text-slate-400 hover:text-purple-400 mx-4 transition-colors gap-1.5"
+                                  className="inline-flex items-center text-[10px] text-slate-400 hover:text-neutral-200 mx-4 transition-colors gap-1.5"
                                 >
                                   <span className={`w-1.5 h-1.5 rounded-full ${
                                     n.sentiment === "Bullish" ? "bg-emerald-400" :
@@ -1394,7 +1394,7 @@ export default function Home() {
                                   href={n.link} 
                                   target="_blank" 
                                   rel="noreferrer"
-                                  className="inline-flex items-center text-[10px] text-slate-400 hover:text-purple-400 mx-4 transition-colors gap-1.5"
+                                  className="inline-flex items-center text-[10px] text-slate-400 hover:text-neutral-200 mx-4 transition-colors gap-1.5"
                                 >
                                   <span className={`w-1.5 h-1.5 rounded-full ${
                                     n.sentiment === "Bullish" ? "bg-emerald-400" :
@@ -1411,7 +1411,7 @@ export default function Home() {
                         {/* Toggle Show Signal Parameters */}
                         {expandedSignals.includes(item.symbol) && (
                           <div className="grid grid-cols-2 gap-3 bg-black/20 p-4.5 rounded-2xl border border-white/5 animate-in fade-in duration-200">
-                            <div className="bg-[#090D1A] border border-white/5 rounded-xl p-3">
+                            <div className="bg-[#161616] border border-white/5 rounded-xl p-3">
                               <p className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Llama-3 Signal</p>
                               <h4 className={`text-md font-black mt-1 ${
                                 signalData?.signal === "BUY" ? "text-green-400" : signalData?.signal === "SELL" ? "text-red-400" : "text-yellow-400"
@@ -1420,21 +1420,21 @@ export default function Home() {
                               </h4>
                             </div>
 
-                            <div className="bg-[#090D1A] border border-white/5 rounded-xl p-3">
+                            <div className="bg-[#161616] border border-white/5 rounded-xl p-3">
                               <p className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">AI Confidence</p>
                               <h4 className="text-md font-black mt-1 text-white font-mono">
                                 {signalData?.confidence || 50}%
                               </h4>
                             </div>
 
-                            <div className="bg-[#090D1A] border border-white/5 rounded-xl p-3">
+                            <div className="bg-[#161616] border border-white/5 rounded-xl p-3">
                               <p className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">RSI (Momentum)</p>
                               <h4 className="text-md font-black mt-1 text-cyan-400 font-mono">
                                 {signalData?.rsi !== undefined ? Number(signalData.rsi).toFixed(2) : "0.00"}
                               </h4>
                             </div>
 
-                            <div className="bg-[#090D1A] border border-white/5 rounded-xl p-3">
+                            <div className="bg-[#161616] border border-white/5 rounded-xl p-3">
                               <p className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">MACD Trend</p>
                               <h4 className={`text-md font-black mt-1 ${
                                 signalData?.macd === "Bullish" ? "text-green-400" : signalData?.macd === "Bearish" ? "text-red-400" : "text-slate-400"
@@ -1455,7 +1455,7 @@ export default function Home() {
                             onClick={() => toggleSignals(item.symbol)}
                             className={`px-3 py-2 rounded-xl border text-xs font-bold transition-all ${
                               expandedSignals.includes(item.symbol)
-                                ? "bg-purple-500/20 text-purple-400 border-purple-500/30"
+                                ? "bg-purple-500/20 text-neutral-200 border-purple-500/30"
                                 : "bg-black/40 border-white/10 hover:bg-black/60 text-slate-400"
                             }`}
                           >
@@ -1475,7 +1475,7 @@ export default function Home() {
         {activeTab === "watchlist" && (
           <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar z-10">
             <div>
-              <h1 className="text-3xl font-black tracking-tight text-white bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-black tracking-tight text-white bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
                 Watchlist Charts
               </h1>
               <p className="text-sm text-slate-400 mt-1">
@@ -1498,7 +1498,7 @@ export default function Home() {
                   return (
                     <div 
                       key={symbol}
-                      className="rounded-[32px] border border-white/5 bg-[#0B1120] p-5 space-y-4 h-[440px] flex flex-col justify-between"
+                      className="rounded-[32px] border border-white/5 bg-[#161616] p-5 space-y-4 h-[440px] flex flex-col justify-between"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -1509,7 +1509,7 @@ export default function Home() {
                           />
                           <div>
                             <span className="font-black text-white text-md">{symbol}</span>
-                            <span className="ml-2 text-[9px] uppercase tracking-wider font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-md">
+                            <span className="ml-2 text-[9px] uppercase tracking-wider font-bold bg-neutral-500/10 text-neutral-200 border border-neutral-500/20 px-2 py-0.5 rounded-md">
                               Live Chart
                             </span>
                           </div>
@@ -1529,7 +1529,7 @@ export default function Home() {
                       </div>
 
                       {/* Customized TradingView Mini widget chart */}
-                      <div className="flex-1 w-full rounded-2xl overflow-hidden border border-white/5 bg-[#030712] relative">
+                      <div className="flex-1 w-full rounded-2xl overflow-hidden border border-white/5 bg-[#0f0f0f] relative">
                         <iframe
                           src={`https://s.tradingview.com/widgetembed/?symbol=${encodeURIComponent(cleanTvSymbol)}&interval=5&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=070b16&theme=dark`}
                           width="100%"
@@ -1550,7 +1550,7 @@ export default function Home() {
         {activeTab === "settings" && (
           <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar z-10">
             <div className="border-b border-white/5 pb-5">
-              <h1 className="text-3xl font-black tracking-tight text-white bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-black tracking-tight text-white bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
                 Settings Panel
               </h1>
               <p className="text-sm text-slate-400 mt-1">
@@ -1558,7 +1558,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="max-w-2xl bg-[#0B1120] border border-white/5 rounded-[32px] p-8 space-y-8 animate-in fade-in duration-300">
+            <div className="max-w-2xl bg-[#161616] border border-white/5 rounded-[32px] p-8 space-y-8 animate-in fade-in duration-300">
               
               {/* Risk Tolerance selector */}
               <div className="space-y-3.5">
@@ -1570,7 +1570,7 @@ export default function Home() {
                 <div className="grid grid-cols-3 gap-3">
                   {[
                     { id: "conservative", name: "Conservative", desc: "Confidence ≥ 90%", color: "text-green-400 border-green-500/25 bg-green-500/5" },
-                    { id: "moderate", name: "Moderate (Standard)", desc: "Confidence ≥ 80%", color: "text-purple-400 border-purple-500/25 bg-purple-500/5" },
+                    { id: "moderate", name: "Moderate (Standard)", desc: "Confidence ≥ 80%", color: "text-neutral-200 border-purple-500/25 bg-purple-500/5" },
                     { id: "aggressive", name: "Aggressive", desc: "Confidence ≥ 70%", color: "text-red-400 border-red-500/25 bg-red-500/5" }
                   ].map((risk) => (
                     <button
@@ -1595,7 +1595,7 @@ export default function Home() {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">Standard lot size</label>
+                    <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">Standard lot size</label>
                     <input
                       type="number"
                       step="0.01"
@@ -1610,7 +1610,7 @@ export default function Home() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-wider text-purple-400 font-bold">Volatility Multiplier</label>
+                    <label className="text-[10px] uppercase tracking-wider text-neutral-200 font-bold">Volatility Multiplier</label>
                     <input
                       type="text"
                       disabled
@@ -1631,7 +1631,7 @@ export default function Home() {
                   </div>
                   <div className="flex justify-between">
                     <span>Python API Engine:</span>
-                    <span className="text-purple-400">TwelveData + tvDatafeed sync</span>
+                    <span className="text-neutral-200">TwelveData + tvDatafeed sync</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Llama-3 cognitive latency:</span>

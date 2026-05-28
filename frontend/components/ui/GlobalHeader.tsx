@@ -153,7 +153,7 @@ export function GlobalHeader() {
   return (
     <>
       {/* Global Header Bar */}
-      <header className="fixed top-0 left-0 right-0 z-40 h-16 bg-[#030712]/70 backdrop-blur-md border-b border-white/5 px-6 flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 z-40 h-16 bg-[#0f0f0f]/70 backdrop-blur-md border-b border-white/5 px-6 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <button onClick={() => router.push("/")} className="flex items-center gap-2.5 focus:outline-none">
             <img src="/logo.png" alt="QuantView Logo" className="h-6 w-auto" />
@@ -195,7 +195,7 @@ export function GlobalHeader() {
           {/* Modal Backdrop closer */}
           <div className="absolute inset-0" onClick={() => setIsSearchOpen(false)} />
 
-          <div className="relative w-full max-w-2xl bg-[#090d16] border border-white/10 rounded-2xl shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col max-h-[500px]">
+          <div className="relative w-full max-w-2xl bg-[#161616] border border-white/10 rounded-2xl shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col max-h-[500px]">
             
             {/* Search Header */}
             <div className="p-4 border-b border-white/5 flex items-center gap-3 bg-black/20">
@@ -223,7 +223,7 @@ export function GlobalHeader() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
                     activeTab === tab 
-                      ? "bg-purple-500/20 text-purple-400 border border-purple-500/20 shadow-lg"
+                      ? "bg-purple-500/20 text-neutral-200 border border-neutral-500/20 shadow-lg"
                       : "text-slate-400 hover:text-white"
                   }`}
                 >
@@ -253,7 +253,7 @@ export function GlobalHeader() {
                       />
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-white group-hover:text-purple-400 transition-colors text-sm">
+                          <span className="font-bold text-white group-hover:text-neutral-200 transition-colors text-sm">
                             {item.symbol}
                           </span>
                           <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-white/5 text-slate-500 tracking-wider">

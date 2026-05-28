@@ -26,7 +26,7 @@ export default function LiquidityHeatmap({
 
       <div className="absolute left-[8%] top-[28%] w-[22%] h-[22%] rounded-[40px] border border-red-500/20 bg-red-500/10 backdrop-blur-md shadow-[0_0_80px_rgba(239,68,68,0.16)] overflow-hidden">
 
-        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.22),transparent_45%)]" />
+        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
         <div className="relative z-10 p-5 h-full flex flex-col justify-between">
 
@@ -56,9 +56,9 @@ export default function LiquidityHeatmap({
         </div>
       </div>
 
-      <div className="absolute right-[8%] bottom-[24%] w-[24%] h-[24%] rounded-[40px] border border-green-500/20 bg-green-500/10 backdrop-blur-md shadow-[0_0_80px_rgba(34,197,94,0.16)] overflow-hidden animate-pulse">
+      <div className="absolute right-[8%] bottom-[24%] w-[24%] h-[24%] rounded-[40px] border border-green-500/20 bg-green-500/10 backdrop-blur-md shadow-[0_0_80px_rgba(255,255,255,0.03)] overflow-hidden animate-pulse">
 
-        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.22),transparent_45%)]" />
+        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
         <div className="relative z-10 p-5 h-full flex flex-col justify-between">
 
@@ -96,7 +96,7 @@ export default function LiquidityHeatmap({
 
       <div className="absolute top-[42%] left-[50%] -translate-x-1/2 -translate-y-1/2">
 
-        <div className="relative w-56 h-56 rounded-full border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-2xl flex items-center justify-center shadow-[0_0_120px_rgba(59,130,246,0.18)]">
+        <div className="relative w-56 h-56 rounded-full border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-2xl flex items-center justify-center shadow-[0_0_120px_rgba(255,255,255,0.05)]">
 
           <div className="absolute inset-0 rounded-full border border-cyan-400/20 animate-ping" />
           <div className="absolute inset-6 rounded-full border border-purple-400/20 animate-spin [animation-duration:12s]" />
@@ -124,7 +124,7 @@ export default function LiquidityHeatmap({
       <div className="absolute bottom-[8%] left-[8%] right-[8%] grid grid-cols-1 md:grid-cols-3 gap-4">
 
         <div className="rounded-3xl border border-white/10 bg-black/40 backdrop-blur-2xl p-5 overflow-hidden relative">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.18),transparent_45%)]" />
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
           <div className="relative z-10 space-y-3">
             <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500">
@@ -142,7 +142,7 @@ export default function LiquidityHeatmap({
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-black/40 backdrop-blur-2xl p-5 overflow-hidden relative">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_45%)]" />
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
           <div className="relative z-10 space-y-3">
             <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500">
@@ -161,7 +161,7 @@ export default function LiquidityHeatmap({
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-black/40 backdrop-blur-2xl p-5 overflow-hidden relative">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.18),transparent_45%)]" />
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
           <div className="relative z-10 space-y-3">
             <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500">

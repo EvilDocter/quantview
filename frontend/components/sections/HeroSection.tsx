@@ -23,7 +23,7 @@ export function HeroSection() {
     >
       {/* Background Ambient Glows */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen" />
-      <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[150px] pointer-events-none mix-blend-screen" />
+      <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-neutral-500/10 rounded-full blur-[150px] pointer-events-none mix-blend-screen" />
       
       {/* Subtle Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
@@ -79,7 +79,7 @@ export function HeroSection() {
         style={{ y: y2, scale }}
         className="absolute bottom-0 translate-y-1/2 w-full max-w-6xl px-6 pointer-events-none"
       >
-        <div className="relative w-full aspect-[21/9] rounded-t-[40px] border-t border-x border-white/10 bg-[#060B14]/80 backdrop-blur-2xl shadow-[0_-20px_100px_rgba(6,182,212,0.1)] overflow-hidden flex items-start justify-center p-8">
+        <div className="relative w-full aspect-[21/9] rounded-t-[40px] border-t border-x border-white/10 bg-[#121212]/80 backdrop-blur-2xl shadow-[0_-20px_100px_rgba(6,182,212,0.1)] overflow-hidden flex items-start justify-center p-8">
            {/* Faux Terminal Header */}
            <div className="absolute top-0 left-0 w-full h-12 border-b border-white/5 flex items-center px-6 gap-2 bg-white/[0.01]">
               <div className="w-3 h-3 rounded-full bg-red-500/80" />

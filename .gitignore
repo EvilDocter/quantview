@@ -51,3 +51,9 @@ backend/scratch_*.py
 tempCodeRunnerFile
 tempCodeRunnerFile.c
 tempCodeRunnerFile.py
+
+# Database and SQLite files
+*.db
+*.db-journal
+frontend/prisma/dev.db
+frontend/prisma/dev.db-journal

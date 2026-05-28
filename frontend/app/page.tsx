@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { HeroSection } from "../components/sections/HeroSection";
-import { Bot, Brain, Star, Settings, Zap, Key, Info, Check, Loader2 } from "lucide-react";
+import { Bot, Brain, Star, Settings, Zap, Key, Info, Check, Loader2, User as UserIcon, LogOut } from "lucide-react";
+import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || (typeof window !== "undefined" ? window.location.origin : "http://127.0.0.1:8000");
 
@@ -61,8 +62,14 @@ const playSound = (type: "connect" | "trade" | "close" | "toggle") => {
   }
 };
 
-export default function Home() {
+function TerminalHome() {
   const router = useRouter();
+  
+  const { data: session } = useSession();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
   
   // Persistence state loaders
   const [selectedMarket, setSelectedMarket] = useState<string>(() => {
@@ -607,6 +614,38 @@ export default function Home() {
                 {item.icon}<span>{item.label}</span>{item.badge}
               </button>
             ))}
+          </div>
+
+          {/* User Authentication Panel */}
+          <div className="p-4 border-t border-white/5 bg-[#121212]/40 flex flex-col gap-2">
+            {session?.user ? (
+              <div className="flex items-center justify-between gap-2 bg-white/[0.02] border border-white/5 p-3 rounded-2xl">
+                <div className="flex items-center gap-2.5 truncate">
+                  <div className="w-8 h-8 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center justify-center font-bold text-xs shrink-0 select-none">
+                    {session.user.email?.charAt(0).toUpperCase() || "U"}
+                  </div>
+                  <div className="truncate">
+                    <p className="font-bold text-white text-[10px] uppercase tracking-wider">Active Profile</p>
+                    <p className="text-[9px] text-slate-400 truncate">{session.user.email}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => signOut()}
+                  title="Sign Out"
+                  className="p-2 bg-red-950/20 hover:bg-red-900/20 border border-red-500/25 text-red-400 rounded-xl transition-all"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowLoginModal(true)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(168,85,247,0.2)] transition-all"
+              >
+                <UserIcon className="w-4 h-4" />
+                <span>Access Account</span>
+              </button>
+            )}
           </div>
 
           <div className="p-4 border-t border-white/5 bg-[#121212] flex items-center gap-3 text-xs text-slate-400">
@@ -1311,7 +1350,115 @@ export default function Home() {
         )}
 
       </div>
+      
+      {showLoginModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#161616] border border-white/10 rounded-[32px] p-8 max-w-md w-full mx-4 relative space-y-6 shadow-[0_0_60px_rgba(0,0,0,0.8)] text-slate-200">
+            <button 
+              onClick={() => {
+                setShowLoginModal(false);
+                setMagicLinkSent(false);
+                setLoginEmail("");
+              }}
+              className="absolute top-6 right-6 text-slate-400 hover:text-white text-lg font-bold"
+            >
+              ✕
+            </button>
+            <div className="text-center space-y-2">
+              <div className="inline-flex p-4 rounded-3xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                <Key className="w-8 h-8" />
+              </div>
+              <h2 className="text-2xl font-black text-white tracking-tight">Access Your Account</h2>
+              <p className="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
+                We will send a passwordless magic link to your inbox.
+              </p>
+            </div>
+
+            <form 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setLoginLoading(true);
+                try {
+                  const result = await signIn("email", {
+                    email: loginEmail,
+                    redirect: false,
+                    callbackUrl: window.location.origin
+                  });
+                  if (result?.error) {
+                    alert(result.error);
+                  } else {
+                    setMagicLinkSent(true);
+                  }
+                } catch (err) {
+                  alert("Failed to send magic link.");
+                } finally {
+                  setLoginLoading(false);
+                }
+              }}
+              className="space-y-4"
+            >
+              {!magicLinkSent ? (
+                <>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] uppercase tracking-wider text-white font-bold">Email Address</label>
+                    <input
+                      type="email"
+                      required
+                      value={loginEmail}
+                      onChange={e => setLoginEmail(e.target.value.trim())}
+                      placeholder="you@example.com"
+                      className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all text-xs"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loginLoading}
+                    className="w-full py-4 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+                  >
+                    {loginLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Sending Link...
+                      </>
+                    ) : (
+                      "Send Magic Link"
+                    )}
+                  </button>
+                </>
+              ) : (
+                <div className="text-center py-4 space-y-3">
+                  <div className="inline-flex p-3 rounded-full bg-green-500/10 border border-green-500/20 text-green-400">
+                    <Check className="w-6 h-6" />
+                  </div>
+                  <p className="text-sm font-bold text-white">Check Your Email</p>
+                  <p className="text-xs text-slate-400">A secure login link has been sent to {loginEmail}.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowLoginModal(false);
+                      setMagicLinkSent(false);
+                      setLoginEmail("");
+                    }}
+                    className="mt-4 px-6 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-bold transition-all"
+                  >
+                    Close
+                  </button>
+                </div>
+              )}
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <SessionProvider>
+      <TerminalHome />
+    </SessionProvider>
   );
 }

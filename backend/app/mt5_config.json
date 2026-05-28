@@ -1,0 +1,6 @@
+{
+    "accountId": "DEMO-ACCOUNT",
+    "token": "DEMO-TOKEN",
+    "volume": 0.01,
+    "isAutoTradingActive": false
+}

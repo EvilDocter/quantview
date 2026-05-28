@@ -319,20 +319,14 @@ export default function AssetPage() {
       )}
 
       {/* Header */}
-      <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#071120]/90 backdrop-blur-3xl p-6 md:p-8 lg:p-10 shadow-[0_0_120px_rgba(59,130,246,0.10)]">
+      <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-[#161616]/90 backdrop-blur-3xl p-6 md:p-8 lg:p-10 shadow-[0_0_120px_rgba(255,255,255,0.03)]">
 
         <div
-          className={`absolute inset-0 opacity-60 pointer-events-none ${
-            symbol.includes("BTC") || symbol.includes("ETH")
-              ? "bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.22),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.18),transparent_35%)]"
-              : symbol.includes("XAU")
-              ? "bg-[radial-gradient(circle_at_top_right,rgba(250,204,21,0.22),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(251,191,36,0.16),transparent_35%)]"
-              : "bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.22),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.16),transparent_35%)]"
-          }`}
+          className="absolute inset-0 opacity-40 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.06),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.02),transparent_35%)]"
         />
 
-        <div className="absolute -top-32 -right-20 w-80 h-80 rounded-full blur-3xl opacity-20 bg-blue-500 pointer-events-none" />
-        <div className="absolute -bottom-32 -left-20 w-80 h-80 rounded-full blur-3xl opacity-20 bg-purple-500 pointer-events-none" />
+        <div className="absolute -top-32 -right-20 w-80 h-80 rounded-full blur-3xl opacity-5 bg-white pointer-events-none" />
+        <div className="absolute -bottom-32 -left-20 w-80 h-80 rounded-full blur-3xl opacity-5 bg-white pointer-events-none" />
 
         <div className="relative z-10 flex flex-col gap-8">
           
@@ -365,7 +359,7 @@ export default function AssetPage() {
                     </span>
                   </div>
 
-                  <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tight leading-none bg-gradient-to-r from-white via-blue-100 to-cyan-300 bg-clip-text text-transparent">
+                  <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tight leading-none bg-gradient-to-r from-white via-neutral-200 to-neutral-400 bg-clip-text text-transparent">
                     {symbol}
                   </h1>
                   {assetData?.price !== undefined && (
@@ -524,9 +518,9 @@ export default function AssetPage() {
 
       {/* Scrolling News Marquee */}
       {news && news.length > 0 && (
-        <div className="overflow-hidden bg-[#071120]/80 border border-white/10 rounded-2xl py-3 px-4 relative flex items-center shadow-[0_0_50px_rgba(59,130,246,0.05)] backdrop-blur-3xl">
-          <div className="absolute left-0 w-16 h-full bg-gradient-to-r from-[#020617] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 w-16 h-full bg-gradient-to-l from-[#020617] to-transparent z-10 pointer-events-none" />
+        <div className="overflow-hidden bg-[#161616]/80 border border-white/10 rounded-2xl py-3 px-4 relative flex items-center shadow-[0_0_50px_rgba(255,255,255,0.02)] backdrop-blur-3xl">
+          <div className="absolute left-0 w-16 h-full bg-gradient-to-r from-[#0f0f0f] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 w-16 h-full bg-gradient-to-l from-[#0f0f0f] to-transparent z-10 pointer-events-none" />
           
           <div className="flex whitespace-nowrap animate-marquee">
             {news.map((n: any, idx: number) => (

@@ -4,10 +4,10 @@
   --background: #0f0f0f; /* Matveyan background */
   --foreground: #f8fafc; /* Slate 50 */
   
-  /* Accent Colors */
-  --accent-cyan: #06b6d4;
-  --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
+  /* Classy Grayscale Accent Colors */
+  --accent-cyan: #f1f5f9; /* Slate 100 */
+  --accent-blue: #cbd5e1; /* Slate 300 */
+  --accent-purple: #64748b; /* Slate 500 */
   --accent-emerald: #10b981;
   --accent-gold: #fbbf24;
 }
@@ -25,9 +25,23 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Smooth, dark noise background blending */
-  background-image: radial-gradient(circle at 50% 0%, #1e1e1e 0%, #0f0f0f 100%);
+  /* Smooth, dark noise background blending in black/gray */
+  background-image: radial-gradient(circle at 50% 0%, #171717 0%, #0f0f0f 100%);
   background-attachment: fixed;
+  position: relative;
+}
+
+/* Classy Grid Background Lines */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
 }
 
 /* Custom Scrollbar */
@@ -38,16 +52,16 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #262626;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #404040;
 }
 
 /* Base utility for glassmorphism panels */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(15, 15, 15, 0.6);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -55,7 +69,7 @@ body {
 
 /* Glowing text utility */
 .text-glow {
-  text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
 }
 
 /* Marquee Animations */

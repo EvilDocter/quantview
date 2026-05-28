@@ -4,3 +4,8 @@ requests
 pandas
 numpy
 yfinance
+websockets
+ta
+openai
+python-dotenv
+tvdatafeed

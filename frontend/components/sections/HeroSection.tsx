@@ -22,7 +22,7 @@ export function HeroSection() {
       className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden pt-20 pb-32"
     >
       {/* Background Ambient Glows */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen" />
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-white/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen" />
       <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-neutral-500/10 rounded-full blur-[150px] pointer-events-none mix-blend-screen" />
       
       {/* Subtle Grid Pattern */}

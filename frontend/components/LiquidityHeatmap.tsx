@@ -24,7 +24,7 @@ export default function LiquidityHeatmap({
 
       <div className="absolute bottom-[18%] left-0 right-0 h-[14%] bg-gradient-to-r from-transparent via-green-500/20 to-transparent blur-2xl animate-pulse" />
 
-      <div className="absolute left-[8%] top-[28%] w-[22%] h-[22%] rounded-[40px] border border-red-500/20 bg-red-500/10 backdrop-blur-md shadow-[0_0_80px_rgba(239,68,68,0.16)] overflow-hidden">
+      <div className="absolute left-[8%] top-[28%] w-[22%] h-[22%] rounded-[40px] border border-red-500/20 bg-neutral-600/10 backdrop-blur-md shadow-[0_0_80px_rgba(239,68,68,0.16)] overflow-hidden">
 
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
@@ -35,7 +35,7 @@ export default function LiquidityHeatmap({
               Sell Liquidity
             </p>
 
-            <div className="text-2xl font-black text-red-400">
+            <div className="text-2xl font-black text-neutral-400">
               HEAVY OFFLOAD
             </div>
           </div>
@@ -56,7 +56,7 @@ export default function LiquidityHeatmap({
         </div>
       </div>
 
-      <div className="absolute right-[8%] bottom-[24%] w-[24%] h-[24%] rounded-[40px] border border-green-500/20 bg-green-500/10 backdrop-blur-md shadow-[0_0_80px_rgba(255,255,255,0.03)] overflow-hidden animate-pulse">
+      <div className="absolute right-[8%] bottom-[24%] w-[24%] h-[24%] rounded-[40px] border border-green-500/20 bg-white/10 backdrop-blur-md shadow-[0_0_80px_rgba(255,255,255,0.03)] overflow-hidden animate-pulse">
 
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_45%)]" />
 
@@ -67,7 +67,7 @@ export default function LiquidityHeatmap({
               Buy Liquidity
             </p>
 
-            <div className="text-2xl font-black text-green-400">
+            <div className="text-2xl font-black text-white">
               ACCUMULATION
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function LiquidityHeatmap({
               Orderflow Energy
             </p>
 
-            <div className="text-5xl font-black text-cyan-400">
+            <div className="text-5xl font-black text-white">
               {signal?.confidence || 0}%
             </div>
 
@@ -131,7 +131,7 @@ export default function LiquidityHeatmap({
               Sell Pressure
             </p>
 
-            <div className="text-3xl font-black text-red-400">
+            <div className="text-3xl font-black text-neutral-400">
               {bearish}%
             </div>
 
@@ -149,7 +149,7 @@ export default function LiquidityHeatmap({
               Liquidity Pulse
             </p>
 
-            <div className="flex items-center gap-2 text-cyan-400 font-black text-2xl">
+            <div className="flex items-center gap-2 text-white font-black text-2xl">
               <div className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse" />
               ACTIVE
             </div>
@@ -168,7 +168,7 @@ export default function LiquidityHeatmap({
               Buy Pressure
             </p>
 
-            <div className="text-3xl font-black text-green-400">
+            <div className="text-3xl font-black text-white">
               {bullish}%
             </div>
 

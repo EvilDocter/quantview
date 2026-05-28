@@ -313,7 +313,7 @@ export default function AssetPage() {
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white p-3 md:p-6 space-y-6 overflow-x-hidden">
       {isLoading && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/30 text-blue-400 text-sm backdrop-blur-md">
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-blue-500/20 border border-white/10 text-neutral-200 text-sm backdrop-blur-md">
           Loading market data...
         </div>
       )}
@@ -351,7 +351,7 @@ export default function AssetPage() {
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center gap-3 flex-wrap mb-2">
-                    <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-[11px] uppercase tracking-[0.25em] font-semibold">
+                    <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-white/10 text-white text-[11px] uppercase tracking-[0.25em] font-semibold">
                       {getAssetType(symbol)} MARKET
                     </span>
                     <span className="px-3 py-1 rounded-full border border-neutral-500/20 bg-neutral-500/10 text-neutral-200 text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
@@ -366,8 +366,8 @@ export default function AssetPage() {
                     <div className="flex items-center gap-2 mt-3">
                       <span className="text-xs uppercase tracking-[0.2em] text-slate-400 font-semibold">Spot Price:</span>
                       <span className={`text-2xl sm:text-3xl font-black font-mono transition-colors duration-300 ${
-                        priceTrend === "up" ? "text-emerald-400" :
-                        priceTrend === "down" ? "text-red-400" : "text-slate-200"
+                        priceTrend === "up" ? "text-white" :
+                        priceTrend === "down" ? "text-neutral-400" : "text-slate-200"
                       }`}>
                         {assetData.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 5 })}
                       </span>
@@ -379,8 +379,8 @@ export default function AssetPage() {
                   <div
                     className={`px-4 py-2 rounded-2xl text-sm font-semibold border backdrop-blur-xl shadow-lg ${
                       isLiveAsset
-                        ? "bg-green-500/10 text-green-400 border-green-500/30 shadow-[0_0_30px_rgba(255,255,255,0.05)]"
-                        : "bg-yellow-500/10 text-yellow-400 border-yellow-500/30 shadow-[0_0_30px_rgba(255,255,255,0.05)]"
+                        ? "bg-white/10 text-white border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.05)]"
+                        : "bg-neutral-500/10 text-neutral-300 border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.05)]"
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -402,11 +402,11 @@ export default function AssetPage() {
                 onClick={toggleWatchlist}
                 className={`px-6 py-3.5 rounded-2xl border transition-all duration-300 font-semibold backdrop-blur-xl hover:scale-[1.02] whitespace-nowrap flex items-center gap-2 ${
                   isSaved
-                    ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/30 shadow-[0_0_20px_rgba(250,204,21,0.15)]"
-                    : "bg-[#0B0F1A] text-slate-300 border-[#1F2937] hover:bg-[#1F2937] hover:text-white"
+                    ? "bg-neutral-500/10 text-neutral-300 border-white/10 shadow-[0_0_20px_rgba(250,204,21,0.15)]"
+                    : "bg-[#161616] text-slate-300 border-white/5 hover:bg-[#262626] hover:text-white"
                 }`}
               >
-                <Star className={`w-4 h-4 ${isSaved ? "fill-yellow-400 text-yellow-400" : "text-slate-400"}`} />
+                <Star className={`w-4 h-4 ${isSaved ? "fill-yellow-400 text-neutral-300" : "text-slate-400"}`} />
                 {isSaved ? "Watchlisted" : "Add Watchlist"}
               </button>
 
@@ -447,7 +447,7 @@ export default function AssetPage() {
                 <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-1.5 font-semibold">
                   Active Timeframe
                 </p>
-                <div className="text-sm font-bold text-cyan-400 truncate">
+                <div className="text-sm font-bold text-white truncate">
                   {selectedTimeframe}
                 </div>
               </div>
@@ -455,7 +455,7 @@ export default function AssetPage() {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 xl:col-span-7 w-full">
-              <div className="rounded-[24px] border border-white/10 bg-[#161616]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group hover:border-green-500/30 transition-colors">
+              <div className="rounded-[24px] border border-white/10 bg-[#161616]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group hover:border-white/10 transition-colors">
                 <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_50%)] group-hover:opacity-40 transition-opacity" />
                 <div className="relative z-10">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2 font-semibold">
@@ -463,17 +463,17 @@ export default function AssetPage() {
                   </p>
                   <div className={`text-2xl sm:text-3xl font-black tracking-tight ${
                     signal?.signal === "BUY"
-                      ? "text-green-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]"
+                      ? "text-white drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]"
                       : signal?.signal === "SELL"
-                      ? "text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]"
-                      : "text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.3)]"
+                      ? "text-neutral-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]"
+                      : "text-neutral-300 drop-shadow-[0_0_10px_rgba(250,204,21,0.3)]"
                   }`}>
                     {signal?.signal || "HOLD"}
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-[24px] border border-white/10 bg-[#161616]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group hover:border-blue-500/30 transition-colors">
+              <div className="rounded-[24px] border border-white/10 bg-[#161616]/80 backdrop-blur-2xl p-5 overflow-hidden relative shadow-lg group hover:border-white/10 transition-colors">
                 <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_50%)] group-hover:opacity-40 transition-opacity" />
                 <div className="relative z-10">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2 font-semibold">
@@ -504,7 +504,7 @@ export default function AssetPage() {
                   </p>
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
-                    <div className="text-sm font-bold text-yellow-400 uppercase tracking-widest drop-shadow-[0_0_10px_rgba(250,204,21,0.3)]">
+                    <div className="text-sm font-bold text-neutral-300 uppercase tracking-widest drop-shadow-[0_0_10px_rgba(250,204,21,0.3)]">
                       ACTIVE
                     </div>
                   </div>
@@ -566,10 +566,10 @@ export default function AssetPage() {
           <button
             key={tf}
             onClick={() => setSelectedTimeframe(tf)}
-            className={`px-3 py-2 rounded-lg border border-[#1F2937] text-sm transition-colors ${
+            className={`px-3 py-2 rounded-lg border border-white/5 text-sm transition-colors ${
               selectedTimeframe === tf
-                ? "bg-blue-500/20 text-blue-400"
-                : "bg-[#111827] hover:bg-[#1F2937]"
+                ? "bg-blue-500/20 text-neutral-200"
+                : "bg-[#121212] hover:bg-[#262626]"
             }`}
           >
             {tf}
@@ -579,7 +579,7 @@ export default function AssetPage() {
 
       {/* Watchlist Preview */}
       {watchlist.length > 0 && (
-        <div className="bg-[#111827] border border-[#1F2937] rounded-xl p-4 space-y-3">
+        <div className="bg-[#121212] border border-white/5 rounded-xl p-4 space-y-3">
 
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Quick Watchlist</h2>
@@ -597,8 +597,8 @@ export default function AssetPage() {
                 }}
                 className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
                   item === symbol
-                    ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
-                    : "bg-[#0B0F1A] border-[#1F2937] hover:bg-[#1F2937]"
+                    ? "bg-blue-500/20 text-neutral-200 border-white/10"
+                    : "bg-[#161616] border-white/5 hover:bg-[#262626]"
                 }`}
               >
                 {item}
@@ -634,10 +634,10 @@ export default function AssetPage() {
               <h2
                 className={`text-3xl sm:text-4xl md:text-5xl font-bold mt-5 ${
                   signal?.signal === "BUY"
-                    ? "text-green-400"
+                    ? "text-white"
                     : signal?.signal === "SELL"
-                    ? "text-red-400"
-                    : "text-yellow-400"
+                    ? "text-neutral-400"
+                    : "text-neutral-300"
                 }`}
               >
                 {signal?.signal || "HOLD"}
@@ -647,10 +647,10 @@ export default function AssetPage() {
             <div
               className={`w-14 h-14 rounded-2xl border flex items-center justify-center text-2xl ${
                 signal?.signal === "BUY"
-                  ? "bg-green-500/10 border-green-500/20 text-green-400"
+                  ? "bg-white/10 border-green-500/20 text-white"
                   : signal?.signal === "SELL"
-                  ? "bg-red-500/10 border-red-500/20 text-red-400"
-                  : "bg-yellow-500/10 border-yellow-500/20 text-yellow-400"
+                  ? "bg-neutral-600/10 border-red-500/20 text-neutral-400"
+                  : "bg-neutral-500/10 border-yellow-500/20 text-neutral-300"
               }`}
             >
               {signal?.signal === "BUY"
@@ -664,7 +664,7 @@ export default function AssetPage() {
 
           <div className="relative z-10 mt-8 flex items-center justify-between text-sm text-gray-500 border-t border-white/5 pt-4">
             <span>Institutional AI Engine</span>
-            <span className="text-cyan-400">LIVE</span>
+            <span className="text-white">LIVE</span>
           </div>
 
         </div>
@@ -680,7 +680,7 @@ export default function AssetPage() {
               <div
                 className="absolute inset-0 rounded-full"
                 style={{
-                  background: `conic-gradient(#a855f7 ${(signal?.confidence || 0) * 3.6}deg, rgba(255,255,255,0.06) 0deg)`,
+                  background: `conic-gradient(#ffffff ${(signal?.confidence || 0) * 3.6}deg, rgba(255,255,255,0.06) 0deg)`,
                 }}
               />
 
@@ -723,7 +723,7 @@ export default function AssetPage() {
                 </div>
               </div>
 
-              <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-2xl">
+              <div className="w-14 h-14 rounded-2xl bg-white/10 border border-blue-500/20 flex items-center justify-center text-neutral-200 text-2xl">
                 ≋
               </div>
             </div>
@@ -737,7 +737,7 @@ export default function AssetPage() {
 
               <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500"
+                  className="h-full rounded-full bg-gradient-to-r from-neutral-800 via-neutral-400 to-white"
                   style={{
                     width: `${formattedRsi}%`,
                   }}
@@ -763,12 +763,12 @@ export default function AssetPage() {
                   MACD TREND
                 </p>
 
-                <div className="text-4xl font-bold text-cyan-400 mt-4 leading-tight">
+                <div className="text-4xl font-bold text-white mt-4 leading-tight">
                   {signal?.macd || "Neutral"}
                 </div>
               </div>
 
-              <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-2xl">
+              <div className="w-14 h-14 rounded-2xl bg-white/10 border border-cyan-500/20 flex items-center justify-center text-white text-2xl">
                 ∿
               </div>
 
@@ -784,7 +784,7 @@ export default function AssetPage() {
                 {[35, 52, 44, 70, 58, 80, 65, 90].map((bar, idx) => (
                   <div
                     key={idx}
-                    className="flex-1 rounded-t-xl bg-gradient-to-t from-cyan-500 to-blue-400 animate-pulse"
+                    className="flex-1 rounded-t-xl bg-gradient-to-t from-neutral-600 to-neutral-200 animate-pulse"
                     style={{
                       height: `${bar}%`,
                       animationDelay: `${idx * 0.1}s`,
@@ -806,16 +806,16 @@ export default function AssetPage() {
           <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04),transparent_70%)] group-hover:opacity-60 transition-opacity" />
           
           <div className="relative z-10 flex flex-col md:flex-row md:items-start gap-6">
-            <div className="w-16 h-16 shrink-0 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-              <Brain className="w-8 h-8 text-blue-400" />
+            <div className="w-16 h-16 shrink-0 rounded-2xl bg-white/10 border border-blue-500/20 flex items-center justify-center">
+              <Brain className="w-8 h-8 text-neutral-200" />
             </div>
             
             <div className="flex-1 space-y-3">
               <div className="flex items-center gap-3">
-                <p className="text-[11px] uppercase tracking-[0.25em] text-blue-400 font-bold">
+                <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-200 font-bold">
                   Groq Llama-3 AI Engine
                 </p>
-                <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-bold uppercase tracking-wider border border-blue-500/20 animate-pulse">
+                <span className="px-2 py-0.5 rounded-full bg-white/10 text-neutral-200 text-[10px] font-bold uppercase tracking-wider border border-blue-500/20 animate-pulse">
                   Active
                 </span>
               </div>
@@ -829,7 +829,7 @@ export default function AssetPage() {
       )}
 
       {/* Bullish Bearish Speedometer */}
-      <motion.div {...scrollReveal} className="bg-[#111827] border border-[#1F2937] rounded-2xl p-6 space-y-6 overflow-hidden">
+      <motion.div {...scrollReveal} className="bg-[#121212] border border-white/5 rounded-2xl p-6 space-y-6 overflow-hidden">
 
         <div className="flex items-center justify-between flex-wrap gap-3">
 
@@ -846,10 +846,10 @@ export default function AssetPage() {
           <div
             className={`px-4 py-2 rounded-xl border text-sm font-semibold ${
               bullishScore >= 65
-                ? "bg-green-500/10 text-green-400 border-green-500/20"
+                ? "bg-white/10 text-white border-white/20"
                 : bullishScore <= 35
-                ? "bg-red-500/10 text-red-400 border-red-500/20"
-                : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                ? "bg-neutral-600/10 text-neutral-300 border-neutral-600/20"
+                : "bg-neutral-500/10 text-neutral-400 border-neutral-500/20"
             }`}
           >
             {bullishScore >= 65
@@ -874,10 +874,10 @@ export default function AssetPage() {
             <div 
               className={`absolute top-0 left-0 w-[280px] h-[280px] rounded-full border-[18px] transition-all duration-1000 ${
                 signal?.signal === "BUY" 
-                  ? "border-green-500/30 border-b-transparent border-r-transparent"
+                  ? "border-white/10 border-b-transparent border-r-transparent"
                   : signal?.signal === "SELL"
-                  ? "border-red-500/30 border-b-transparent border-l-transparent"
-                  : "border-yellow-500/30 border-b-transparent"
+                  ? "border-white/10 border-b-transparent border-l-transparent"
+                  : "border-white/10 border-b-transparent"
               }`}
               style={{
                 transform: `rotate(${gaugeRotation}deg)`,
@@ -886,7 +886,7 @@ export default function AssetPage() {
             />
 
             {/* Needle indicator pin */}
-            <div className="absolute left-1/2 bottom-0 w-[220px] h-[110px] bg-[#111827] rounded-t-full -translate-x-1/2" />
+            <div className="absolute left-1/2 bottom-0 w-[220px] h-[110px] bg-[#121212] rounded-t-full -translate-x-1/2" />
             
             {/* Rotating Arrow Indicator */}
             <div 
@@ -897,11 +897,11 @@ export default function AssetPage() {
               }}
             />
 
-            <div className="absolute left-0 bottom-0 text-red-400 text-sm font-semibold">
+            <div className="absolute left-0 bottom-0 text-neutral-400 text-sm font-semibold">
               Bearish
             </div>
 
-            <div className="absolute right-0 bottom-0 text-green-400 text-sm font-semibold">
+            <div className="absolute right-0 bottom-0 text-white text-sm font-semibold">
               Bullish
             </div>
 
@@ -940,10 +940,10 @@ export default function AssetPage() {
             <div
               className={`px-4 py-2 rounded-xl border text-sm font-semibold w-fit ${
                 volatility.status === "ACTIVE"
-                  ? "bg-green-500/10 text-green-400 border-green-500/20"
+                  ? "bg-white/10 text-white border-white/20"
                   : volatility.status === "WATCH"
-                  ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-                  : "bg-red-500/10 text-red-400 border-red-500/20"
+                  ? "bg-neutral-500/10 text-neutral-400 border-neutral-500/20"
+                  : "bg-neutral-600/10 text-neutral-300 border-neutral-600/20"
               }`}
             >
               {volatility.status}
@@ -955,7 +955,7 @@ export default function AssetPage() {
 
             <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 space-y-4 hover:scale-[1.02] transition-transform duration-500">
               <p className="text-sm text-gray-400">Volatility Level</p>
-              <h2 className="text-xl font-bold text-blue-400">
+              <h2 className="text-xl font-bold text-neutral-200">
                 {volatility.level || "Moderate"}
               </h2>
             </div>
@@ -974,10 +974,10 @@ export default function AssetPage() {
               <h2
                 className={`text-xl font-bold ${
                   volatility.status === "ACTIVE"
-                    ? "text-green-400"
+                    ? "text-white"
                     : volatility.status === "WATCH"
-                    ? "text-yellow-400"
-                    : "text-red-400"
+                    ? "text-neutral-300"
+                    : "text-neutral-400"
                 }`}
               >
                 {volatility.status}
@@ -988,7 +988,7 @@ export default function AssetPage() {
               <p className="text-sm text-gray-400">Feed Type</p>
               <h2
                 className={`text-xl font-bold ${
-                  isLiveAsset ? "text-green-400" : "text-yellow-400"
+                  isLiveAsset ? "text-white" : "text-neutral-300"
                 }`}
               >
                 {isLiveAsset ? "LIVE" : "DELAYED"}
@@ -1053,7 +1053,7 @@ export default function AssetPage() {
 
             <div className="flex items-center gap-3 flex-wrap">
 
-              <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-[11px] uppercase tracking-[0.25em] font-semibold">
+              <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-white/10 text-white text-[11px] uppercase tracking-[0.25em] font-semibold">
                 LIVE CHART INTELLIGENCE
               </span>
 
@@ -1090,7 +1090,7 @@ export default function AssetPage() {
                   "_blank"
                 );
               }}
-              className="px-6 py-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-all duration-300 text-sm font-semibold backdrop-blur-xl hover:scale-[1.02] shadow-[0_0_40px_rgba(255,255,255,0.03)]"
+              className="px-6 py-4 rounded-2xl border border-cyan-500/20 bg-white/10 text-white hover:bg-cyan-500/20 transition-all duration-300 text-sm font-semibold backdrop-blur-xl hover:scale-[1.02] shadow-[0_0_40px_rgba(255,255,255,0.03)]"
             >
               Open TradingView
             </button>
@@ -1109,10 +1109,10 @@ export default function AssetPage() {
 
               <div className={`text-4xl font-black ${
                 signal?.signal === "BUY"
-                  ? "text-green-400"
+                  ? "text-white"
                   : signal?.signal === "SELL"
-                  ? "text-red-400"
-                  : "text-yellow-400"
+                  ? "text-neutral-400"
+                  : "text-neutral-300"
               }`}>
                 {signal?.signal || "HOLD"}
               </div>
@@ -1126,7 +1126,7 @@ export default function AssetPage() {
                 Momentum Energy
               </p>
 
-              <div className="text-4xl font-black text-cyan-400">
+              <div className="text-4xl font-black text-white">
                 {formattedRsi}
               </div>
             </div>
@@ -1152,7 +1152,7 @@ export default function AssetPage() {
                 Market Feed
               </p>
 
-              <div className="flex items-center gap-2 text-yellow-400 font-bold text-lg">
+              <div className="flex items-center gap-2 text-neutral-300 font-bold text-lg">
                 <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
                 ACTIVE
               </div>
@@ -1169,7 +1169,7 @@ export default function AssetPage() {
               onClick={() => setChartLocked(false)}
               className="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-20 flex flex-col items-center justify-center cursor-pointer group transition-all duration-300 hover:bg-black/20"
             >
-              <div className="bg-slate-900/90 border border-cyan-500/30 text-cyan-400 px-6 py-4 rounded-2xl flex items-center gap-3 shadow-2xl hover:scale-105 hover:bg-slate-950 hover:border-cyan-400 transition-all duration-300">
+              <div className="bg-slate-900/90 border border-cyan-500/30 text-white px-6 py-4 rounded-2xl flex items-center gap-3 shadow-2xl hover:scale-105 hover:bg-slate-950 hover:border-cyan-400 transition-all duration-300">
                 <MousePointerClick className="w-5 h-5 animate-pulse" />
                 <span className="text-xs uppercase tracking-widest font-black">Click to Unlock Chart Controls</span>
               </div>
@@ -1183,7 +1183,7 @@ export default function AssetPage() {
           {!chartLocked && (
             <button
               onClick={() => setChartLocked(true)}
-              className="absolute top-4 right-4 z-30 bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-white border border-red-500/30 hover:border-red-500/50 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-xl flex items-center gap-2 backdrop-blur-md"
+              className="absolute top-4 right-4 z-30 bg-red-500/20 hover:bg-red-500/30 text-neutral-400 hover:text-white border border-white/10 hover:border-red-500/50 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-xl flex items-center gap-2 backdrop-blur-md"
             >
               <Lock className="w-3.5 h-3.5" />
               Lock Scroll
@@ -1244,12 +1244,12 @@ export default function AssetPage() {
               </p>
 
               {signal?.choch_bullish || signal?.bos_bullish ? (
-                <div className="text-2xl font-black text-green-400 flex items-center gap-2">
-                  BULLISH SHIFT <TrendingUp className="w-5 h-5 text-green-400" />
+                <div className="text-2xl font-black text-white flex items-center gap-2">
+                  BULLISH SHIFT <TrendingUp className="w-5 h-5 text-white" />
                 </div>
               ) : signal?.choch_bearish || signal?.bos_bearish ? (
-                <div className="text-2xl font-black text-red-400 flex items-center gap-2">
-                  BEARISH SHIFT <TrendingDown className="w-5 h-5 text-red-400" />
+                <div className="text-2xl font-black text-neutral-400 flex items-center gap-2">
+                  BEARISH SHIFT <TrendingDown className="w-5 h-5 text-neutral-400" />
                 </div>
               ) : (
                 <div className="text-2xl font-black text-slate-400 flex items-center gap-2">
@@ -1260,19 +1260,19 @@ export default function AssetPage() {
               <div className="space-y-1.5 text-xs text-gray-400 pt-1">
                 <div className="flex justify-between items-center border-b border-white/5 pb-1">
                   <span>Structure Break (BOS):</span>
-                  <span className={signal?.bos_bullish ? "text-green-400 font-bold" : signal?.bos_bearish ? "text-red-400 font-bold" : "text-gray-600"}>
+                  <span className={signal?.bos_bullish ? "text-white font-bold" : signal?.bos_bearish ? "text-neutral-400 font-bold" : "text-gray-600"}>
                     {signal?.bos_bullish ? "Bullish BOS" : signal?.bos_bearish ? "Bearish BOS" : "Inactive"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center border-b border-white/5 pb-1">
                   <span>Character Shift (CHoCH):</span>
-                  <span className={signal?.choch_bullish ? "text-green-400 font-bold" : signal?.choch_bearish ? "text-red-400 font-bold" : "text-gray-600"}>
+                  <span className={signal?.choch_bullish ? "text-white font-bold" : signal?.choch_bearish ? "text-neutral-400 font-bold" : "text-gray-600"}>
                     {signal?.choch_bullish ? "Bullish CHoCH" : signal?.choch_bearish ? "Bearish CHoCH" : "Inactive"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Fair Value Gap (FVG):</span>
-                  <span className={signal?.fvg_bullish ? "text-green-400 font-bold" : signal?.fvg_bearish ? "text-red-400 font-bold" : "text-gray-600"}>
+                  <span className={signal?.fvg_bullish ? "text-white font-bold" : signal?.fvg_bearish ? "text-neutral-400 font-bold" : "text-gray-600"}>
                     {signal?.fvg_bullish ? `Bullish FVG (+${signal.fvg_gap})` : signal?.fvg_bearish ? `Bearish FVG (-${signal.fvg_gap})` : "None"}
                   </span>
                 </div>
@@ -1287,7 +1287,7 @@ export default function AssetPage() {
                 Macro Risk Layer
               </p>
 
-              <div className="text-3xl font-black text-red-400">
+              <div className="text-3xl font-black text-neutral-400">
                 ELEVATED
               </div>
 
@@ -1304,7 +1304,7 @@ export default function AssetPage() {
                 AI Projection
               </p>
 
-              <div className="text-3xl font-black text-cyan-400">
+              <div className="text-3xl font-black text-white">
                 {signal?.signal || "HOLD"}
               </div>
 
@@ -1336,10 +1336,10 @@ export default function AssetPage() {
             <div
               className={`px-4 py-2 rounded-xl border text-sm font-semibold w-fit ${
                 positioning.crowd_bias === "BULLISH"
-                  ? "bg-green-500/10 text-green-400 border-green-500/20"
+                  ? "bg-white/10 text-white border-white/20"
                   : positioning.crowd_bias === "BEARISH"
-                  ? "bg-red-500/10 text-red-400 border-red-500/20"
-                  : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                  ? "bg-neutral-600/10 text-neutral-300 border-neutral-600/20"
+                  : "bg-neutral-500/10 text-neutral-400 border-neutral-500/20"
               }`}
             >
               Crowd Bias: {positioning.crowd_bias}
@@ -1353,7 +1353,7 @@ export default function AssetPage() {
                 <h3 className="text-lg font-semibold">
                   Retail Positioning
                 </h3>
-                <span className="text-xs px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                <span className="text-xs px-3 py-1 rounded-full bg-white/10 text-white border border-cyan-500/20">
                   LIVE POSITIONING
                 </span>
               </div>
@@ -1371,7 +1371,7 @@ export default function AssetPage() {
                       <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                         Retail Long
                       </p>
-                      <div className="text-5xl font-bold text-green-400">
+                      <div className="text-5xl font-bold text-white">
                         {positioning.retail_long}%
                       </div>
                       <div className="text-xs text-gray-500">
@@ -1387,11 +1387,11 @@ export default function AssetPage() {
                         <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500">
                           Retail Short
                         </p>
-                        <div className="text-3xl font-bold text-red-400 mt-2">
+                        <div className="text-3xl font-bold text-neutral-400 mt-2">
                           {positioning.retail_short}%
                         </div>
                       </div>
-                      <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-xl">
+                      <div className="w-12 h-12 rounded-2xl bg-neutral-600/10 border border-red-500/20 flex items-center justify-center text-neutral-400 text-xl">
                         ↓
                       </div>
                     </div>
@@ -1417,7 +1417,7 @@ export default function AssetPage() {
                       <p className="text-xs text-gray-500 mb-2">
                         Institutional Activity
                       </p>
-                      <p className="text-sm font-semibold text-orange-400 leading-relaxed">
+                      <p className="text-sm font-semibold text-white leading-relaxed">
                         {positioning.institutional_activity?.activity}
                       </p>
                     </div>
@@ -1435,10 +1435,10 @@ export default function AssetPage() {
                 <span
                   className={`text-xs px-3 py-1 rounded-full border ${
                     positioning.squeeze_risk?.risk >= 75
-                      ? "bg-red-500/10 text-red-400 border-red-500/20"
+                      ? "bg-neutral-600/10 text-neutral-300 border-neutral-600/20"
                       : positioning.squeeze_risk?.risk >= 50
-                      ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-                      : "bg-green-500/10 text-green-400 border-green-500/20"
+                      ? "bg-neutral-500/10 text-neutral-400 border-neutral-500/20"
+                      : "bg-white/10 text-white border-white/20"
                   }`}
                 >
                   {positioning.squeeze_risk?.type}
@@ -1505,10 +1505,10 @@ export default function AssetPage() {
             <div
               className={`px-4 py-2 rounded-xl border text-sm font-semibold w-fit ${
                 marketPulse.overall_sentiment === "Bullish"
-                  ? "bg-green-500/10 text-green-400 border-green-500/20"
+                  ? "bg-white/10 text-white border-white/20"
                   : marketPulse.overall_sentiment === "Bearish"
-                  ? "bg-red-500/10 text-red-400 border-red-500/20"
-                  : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                  ? "bg-neutral-600/10 text-neutral-300 border-neutral-600/20"
+                  : "bg-neutral-500/10 text-neutral-400 border-neutral-500/20"
               }`}
             >
               Overall: {marketPulse.overall_sentiment}
@@ -1518,11 +1518,11 @@ export default function AssetPage() {
             <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 space-y-4 hover:scale-[1.02] transition-transform duration-500">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-400">Bullish</p>
-                <p className="text-lg font-bold text-green-400">
+                <p className="text-lg font-bold text-white">
                   {marketPulse.bullish_percentage}%
                 </p>
               </div>
-              <div className="w-full h-2 rounded-full bg-[#1F2937] overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-[#262626] overflow-hidden">
                 <div
                   className="h-full bg-green-400 rounded-full"
                   style={{ width: `${marketPulse.bullish_percentage}%` }}
@@ -1532,11 +1532,11 @@ export default function AssetPage() {
             <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 space-y-4 hover:scale-[1.02] transition-transform duration-500">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-400">Bearish</p>
-                <p className="text-lg font-bold text-red-400">
+                <p className="text-lg font-bold text-neutral-400">
                   {marketPulse.bearish_percentage}%
                 </p>
               </div>
-              <div className="w-full h-2 rounded-full bg-[#1F2937] overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-[#262626] overflow-hidden">
                 <div
                   className="h-full bg-red-400 rounded-full"
                   style={{ width: `${marketPulse.bearish_percentage}%` }}
@@ -1546,11 +1546,11 @@ export default function AssetPage() {
             <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-black/20 backdrop-blur-2xl p-5 space-y-4 hover:scale-[1.02] transition-transform duration-500">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-400">Neutral</p>
-                <p className="text-lg font-bold text-yellow-400">
+                <p className="text-lg font-bold text-neutral-300">
                   {marketPulse.neutral_percentage}%
                 </p>
               </div>
-              <div className="w-full h-2 rounded-full bg-[#1F2937] overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-[#262626] overflow-hidden">
                 <div
                   className="h-full bg-yellow-400 rounded-full"
                   style={{ width: `${marketPulse.neutral_percentage}%` }}
@@ -1580,7 +1580,7 @@ export default function AssetPage() {
 
               <div className="flex items-center gap-3 flex-wrap">
 
-                <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-[11px] uppercase tracking-[0.25em] font-semibold">
+                <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-white/10 text-white text-[11px] uppercase tracking-[0.25em] font-semibold">
                   AI INTELLIGENCE CORE
                 </span>
 
@@ -1602,8 +1602,8 @@ export default function AssetPage() {
 
             </div>
 
-            <div className="rounded-3xl border border-cyan-500/20 bg-cyan-500/10 px-6 py-5 backdrop-blur-2xl shadow-[0_0_50px_rgba(255,255,255,0.03)]">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-cyan-400 mb-2">
+            <div className="rounded-3xl border border-cyan-500/20 bg-white/10 px-6 py-5 backdrop-blur-2xl shadow-[0_0_50px_rgba(255,255,255,0.03)]">
+              <p className="text-[11px] uppercase tracking-[0.25em] text-white mb-2">
                 Market Regime
               </p>
 
@@ -1623,7 +1623,7 @@ export default function AssetPage() {
                   Smart Money Flow
                 </p>
 
-                <div className="text-2xl font-black text-green-400 leading-tight">
+                <div className="text-2xl font-black text-white leading-tight">
                   {assetData.ai_analysis.smart_money?.flow}
                 </div>
               </div>
@@ -1636,7 +1636,7 @@ export default function AssetPage() {
                   Event Risk
                 </p>
 
-                <div className="text-2xl font-black text-red-400">
+                <div className="text-2xl font-black text-neutral-400">
                   {assetData.ai_analysis.volatility_forecast?.event_risk}
                 </div>
               </div>
@@ -1662,7 +1662,7 @@ export default function AssetPage() {
                   Breakout Probability
                 </p>
 
-                <div className="text-4xl font-black text-cyan-400">
+                <div className="text-4xl font-black text-white">
                   {assetData.ai_analysis.volatility_forecast?.breakout_probability}%
                 </div>
               </div>
@@ -1689,7 +1689,7 @@ export default function AssetPage() {
                     </h3>
                   </div>
 
-                  <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-2xl shadow-[0_0_30px_rgba(255,255,255,0.03)]">
+                  <div className="w-14 h-14 rounded-2xl bg-white/10 border border-cyan-500/20 flex items-center justify-center text-white text-2xl shadow-[0_0_30px_rgba(255,255,255,0.03)]">
                     ◎
                   </div>
                 </div>
@@ -1765,11 +1765,11 @@ export default function AssetPage() {
 
             <div>
               <div className="flex items-center gap-3 flex-wrap mb-4">
-                <span className="px-3 py-1 rounded-full border border-green-500/20 bg-green-500/10 text-green-400 text-[11px] uppercase tracking-[0.25em] font-semibold">
+                <span className="px-3 py-1 rounded-full border border-green-500/20 bg-white/10 text-white text-[11px] uppercase tracking-[0.25em] font-semibold">
                   AI PROJECTION ENGINE
                 </span>
 
-                <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
+                <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-white/10 text-white text-[11px] uppercase tracking-[0.25em] font-semibold animate-pulse">
                   LIVE FORECAST
                 </span>
               </div>
@@ -1783,17 +1783,17 @@ export default function AssetPage() {
               </p>
             </div>
 
-            <div className="rounded-3xl border border-green-500/20 bg-green-500/10 px-6 py-5 backdrop-blur-2xl shadow-[0_0_50px_rgba(34,197,94,0.12)]">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-green-400 mb-2">
+            <div className="rounded-3xl border border-green-500/20 bg-white/10 px-6 py-5 backdrop-blur-2xl shadow-[0_0_50px_rgba(34,197,94,0.12)]">
+              <p className="text-[11px] uppercase tracking-[0.25em] text-white mb-2">
                 Preferred Direction
               </p>
 
               <div className={`text-3xl font-black ${
                 assetData.ai_projection.projected_move?.direction === "BUY"
-                  ? "text-green-400"
+                  ? "text-white"
                   : assetData.ai_projection.projected_move?.direction === "SELL"
-                  ? "text-red-400"
-                  : "text-yellow-400"
+                  ? "text-neutral-400"
+                  : "text-neutral-300"
               }`}>
                 {assetData.ai_projection.projected_move?.direction}
               </div>
@@ -1810,7 +1810,7 @@ export default function AssetPage() {
                   AI Target Price
                 </p>
 
-                <div className="text-4xl font-black text-green-400">
+                <div className="text-4xl font-black text-white">
                   {assetData.ai_projection.projected_move?.target_price}
                 </div>
               </div>
@@ -1823,7 +1823,7 @@ export default function AssetPage() {
                   Breakout Probability
                 </p>
 
-                <div className="text-4xl font-black text-cyan-400">
+                <div className="text-4xl font-black text-white">
                   {assetData.ai_projection.breakout_projection?.breakout_probability}%
                 </div>
               </div>
@@ -1849,7 +1849,7 @@ export default function AssetPage() {
                   Projected Move
                 </p>
 
-                <div className="text-4xl font-black text-yellow-400">
+                <div className="text-4xl font-black text-neutral-300">
                   {assetData.ai_projection.projected_move?.move_percent}%
                 </div>
               </div>
@@ -1876,7 +1876,7 @@ export default function AssetPage() {
                     </h3>
                   </div>
 
-                  <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-cyan-400 text-2xl">
+                  <div className="w-14 h-14 rounded-2xl bg-white/10 border border-blue-500/20 flex items-center justify-center text-white text-2xl">
                     ◈
                   </div>
                 </div>
@@ -1888,7 +1888,7 @@ export default function AssetPage() {
                       Accumulation Zone
                     </p>
 
-                    <div className="text-xl font-black text-green-400">
+                    <div className="text-xl font-black text-white">
                       {assetData.ai_projection.institutional_zones?.accumulation_zone?.low}
                     </div>
 
@@ -1902,7 +1902,7 @@ export default function AssetPage() {
                       Distribution Zone
                     </p>
 
-                    <div className="text-xl font-black text-red-400">
+                    <div className="text-xl font-black text-neutral-400">
                       {assetData.ai_projection.institutional_zones?.distribution_zone?.low}
                     </div>
 
@@ -1994,7 +1994,7 @@ export default function AssetPage() {
         </div>
       )}
       {/* Economic Calendar */}
-      <div id="live-timeline-section" className="bg-[#111827] border border-[#1F2937] rounded-2xl p-5 space-y-5 overflow-hidden">
+      <div id="live-timeline-section" className="bg-[#121212] border border-white/5 rounded-2xl p-5 space-y-5 overflow-hidden">
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
@@ -2008,19 +2008,19 @@ export default function AssetPage() {
             </p>
           </div>
 
-          <span className="text-xs px-3 py-1 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 w-fit">
+          <span className="text-xs px-3 py-1 rounded-full bg-white/10 text-white border border-orange-500/20 w-fit">
             LIVE MACRO EVENTS
           </span>
 
         </div>
 
         {economicEvents.length === 0 && (
-          <div className="p-5 rounded-xl bg-[#0B0F1A] border border-[#1F2937] text-sm text-gray-400">
+          <div className="p-5 rounded-xl bg-[#161616] border border-white/5 text-sm text-gray-400">
             No high-impact economic events currently available for this asset.
           </div>
         )}
 
-        <div className="relative space-y-6 before:absolute before:left-[30px] before:top-0 before:h-full before:w-[2px] before:bg-gradient-to-b before:from-red-500/40 before:via-yellow-500/30 before:to-blue-500/20">
+        <div className="relative space-y-6 before:absolute before:left-[30px] before:top-0 before:h-full before:w-[2px] before:bg-gradient-to-b before:from-white/40 before:via-neutral-400/30 before:to-neutral-800/10">
 
           {(() => {
             const sortedEvents = [...economicEvents].sort((a: any, b: any) => {
@@ -2041,7 +2041,7 @@ export default function AssetPage() {
                       ? "bg-red-500/5 border-red-500/20"
                       : isMedium
                       ? "bg-yellow-500/5 border-yellow-500/20"
-                      : "bg-[#0B0F1A] border-[#1F2937]"
+                      : "bg-[#161616] border-white/5"
                   }`}
                 >
 
@@ -2071,17 +2071,17 @@ export default function AssetPage() {
 
                       <div className="flex items-center gap-2 flex-wrap">
 
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-neutral-200 border border-blue-500/20">
                           {event.currency}
                         </span>
 
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold border ${
                             isHigh
-                              ? "bg-red-500/10 text-red-400 border-red-500/20"
+                              ? "bg-neutral-600/10 text-neutral-300 border-neutral-600/20"
                               : isMedium
-                              ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-                              : "bg-green-500/10 text-green-400 border-green-500/20"
+                              ? "bg-neutral-500/10 text-neutral-400 border-neutral-500/20"
+                              : "bg-white/10 text-white border-white/20"
                           }`}
                         >
                           {event.impact} IMPACT
@@ -2124,7 +2124,7 @@ export default function AssetPage() {
                             (asset: string, assetIdx: number) => (
                               <span
                                 key={assetIdx}
-                                className="px-2 py-1 rounded-lg text-[10px] font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
+                                className="px-2 py-1 rounded-lg text-[10px] font-medium bg-white/10 text-white border border-cyan-500/20"
                               >
                                 {asset}
                               </span>
@@ -2161,7 +2161,7 @@ export default function AssetPage() {
                   setVisibleEventsCount(3);
                   document.getElementById("live-timeline-section")?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="px-6 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-bold text-xs uppercase tracking-widest transition-all"
+                className="px-6 py-3 rounded-xl bg-neutral-600/10 hover:bg-red-500/20 border border-red-500/20 text-neutral-400 font-bold text-xs uppercase tracking-widest transition-all"
               >
                 Show Less Events
               </button>
@@ -2177,7 +2177,7 @@ export default function AssetPage() {
             setVisibleEventsCount(3);
             document.getElementById("live-timeline-section")?.scrollIntoView({ behavior: "smooth" });
           }}
-          className="fixed bottom-24 right-6 z-50 bg-[#0f0f0f]/90 hover:bg-red-500/10 border border-red-500/30 text-red-400 font-bold text-xs uppercase tracking-widest px-4 py-3 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all flex items-center gap-2 backdrop-blur-md"
+          className="fixed bottom-24 right-6 z-50 bg-[#0f0f0f]/90 hover:bg-neutral-600/10 border border-white/10 text-neutral-400 font-bold text-xs uppercase tracking-widest px-4 py-3 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all flex items-center gap-2 backdrop-blur-md"
         >
           <span>✕ Show Less Events</span>
         </button>
@@ -2212,10 +2212,10 @@ export default function AssetPage() {
                 <span
                   className={`px-2 py-0.5 rounded-full font-bold border ${
                     item.sentiment === "Bullish"
-                      ? "bg-green-500/10 text-green-400 border-green-500/20"
+                      ? "bg-white/10 text-white border-white/20"
                       : item.sentiment === "Bearish"
-                      ? "bg-red-500/10 text-red-400 border-red-500/20"
-                      : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                      ? "bg-neutral-600/10 text-neutral-300 border-neutral-600/20"
+                      : "bg-neutral-500/10 text-neutral-400 border-neutral-500/20"
                   }`}
                 >
                   {item.sentiment}
@@ -2224,8 +2224,8 @@ export default function AssetPage() {
                 <span
                   className={`px-2 py-0.5 rounded-full font-bold border ${
                     item.impact === "HIGH"
-                      ? "bg-red-500/10 text-red-400 border-red-500/20"
-                      : "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                      ? "bg-neutral-600/10 text-neutral-300 border-neutral-600/20"
+                      : "bg-white/10 text-neutral-200 border-blue-500/20"
                   }`}
                 >
                   {item.impact || "LOW"}
@@ -2255,7 +2255,7 @@ export default function AssetPage() {
                 <span className="text-gray-500 font-medium">
                   {item.published ? new Date(item.published).toLocaleDateString() : "Recent"}
                 </span>
-                <span className="text-blue-400 font-bold group-hover:translate-x-1 transition-transform">
+                <span className="text-neutral-200 font-bold group-hover:translate-x-1 transition-transform">
                   Open ↗
                 </span>
               </div>
@@ -2274,7 +2274,7 @@ export default function AssetPage() {
                   Institutional-grade macroeconomic intelligence grouped by market impact folders
                 </p>
               </div>
-              <span className="text-xs px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 w-fit font-bold">
+              <span className="text-xs px-3 py-1 rounded-full bg-white/10 text-neutral-200 border border-blue-500/20 w-fit font-bold">
                 LIVE IMPACT ROTATION
               </span>
             </div>
@@ -2284,8 +2284,8 @@ export default function AssetPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 px-2 pb-2 border-b border-red-500/20">
                   <span className="w-3 h-3 rounded bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-                  <h3 className="text-sm font-bold text-red-400 uppercase tracking-widest">Red Folder (High Risk)</h3>
-                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/15">
+                  <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Red Folder (High Risk)</h3>
+                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-neutral-600/10 text-neutral-400 border border-red-500/15">
                     {redFolderNews.length}
                   </span>
                 </div>
@@ -2302,8 +2302,8 @@ export default function AssetPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 px-2 pb-2 border-b border-yellow-500/20">
                   <span className="w-3 h-3 rounded bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                  <h3 className="text-sm font-bold text-yellow-400 uppercase tracking-widest">Yellow Folder (Medium Risk)</h3>
-                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/15">
+                  <h3 className="text-sm font-bold text-neutral-300 uppercase tracking-widest">Yellow Folder (Medium Risk)</h3>
+                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-neutral-500/10 text-neutral-300 border border-yellow-500/15">
                     {yellowFolderNews.length}
                   </span>
                 </div>
@@ -2320,8 +2320,8 @@ export default function AssetPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 px-2 pb-2 border-b border-green-500/20">
                   <span className="w-3 h-3 rounded bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
-                  <h3 className="text-sm font-bold text-green-400 uppercase tracking-widest">Green Folder (Low Risk)</h3>
-                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/15">
+                  <h3 className="text-sm font-bold text-white uppercase tracking-widest">Green Folder (Low Risk)</h3>
+                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-white/10 text-white border border-green-500/15">
                     {greenFolderNews.length}
                   </span>
                 </div>
@@ -2364,7 +2364,7 @@ export default function AssetPage() {
 
           <div className="flex items-center gap-3 flex-wrap">
 
-            <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-[11px] uppercase tracking-[0.25em] font-semibold">
+            <span className="px-3 py-1 rounded-full border border-cyan-500/20 bg-white/10 text-white text-[11px] uppercase tracking-[0.25em] font-semibold">
               CORRELATION MATRIX
             </span>
 
@@ -2392,7 +2392,7 @@ export default function AssetPage() {
             SMART DISCOVERY ACTIVE
           </div>
 
-          <div className="px-4 py-2 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-sm font-semibold backdrop-blur-xl shadow-[0_0_30px_rgba(255,255,255,0.03)]">
+          <div className="px-4 py-2 rounded-2xl border border-cyan-500/20 bg-white/10 text-white text-sm font-semibold backdrop-blur-xl shadow-[0_0_30px_rgba(255,255,255,0.03)]">
             LIVE CORRELATIONS
           </div>
 
@@ -2429,12 +2429,12 @@ export default function AssetPage() {
                   <h3 className="text-lg font-bold truncate text-white">
                     {asset}
                   </h3>
-                  <p className="text-xs text-cyan-400 mt-2 uppercase tracking-[0.2em] font-semibold">
+                  <p className="text-xs text-white mt-2 uppercase tracking-[0.2em] font-semibold">
                     {getAssetType(asset)} MARKET
                   </p>
                 </div>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-xl shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_30px_rgba(255,255,255,0.03)]">
+              <div className="w-12 h-12 rounded-2xl bg-white/10 border border-cyan-500/20 flex items-center justify-center text-white text-xl shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_30px_rgba(255,255,255,0.03)]">
                 ↗
               </div>
             </div>
@@ -2444,7 +2444,7 @@ export default function AssetPage() {
                   <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2">
                     Correlation
                   </p>
-                  <div className="text-lg font-black text-green-400">
+                  <div className="text-lg font-black text-white">
                     {85 + (asset.charCodeAt(0) % 15)}%
                   </div>
                 </div>
@@ -2452,7 +2452,7 @@ export default function AssetPage() {
                   <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2">
                     Flow State
                   </p>
-                  <div className="flex items-center gap-2 text-cyan-400 text-sm font-semibold">
+                  <div className="flex items-center gap-2 text-white text-sm font-semibold">
                     <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
                     ACTIVE
                   </div>
@@ -2490,7 +2490,7 @@ export default function AssetPage() {
               Risk-On Flow
             </p>
 
-            <div className="text-3xl font-black text-green-400">
+            <div className="text-3xl font-black text-white">
               ACCELERATING
             </div>
 
@@ -2507,7 +2507,7 @@ export default function AssetPage() {
               Safe Haven Rotation
             </p>
 
-            <div className="text-3xl font-black text-yellow-400">
+            <div className="text-3xl font-black text-neutral-300">
               MODERATE
             </div>
 
@@ -2524,7 +2524,7 @@ export default function AssetPage() {
               AI Correlation Engine
             </p>
 
-            <div className="text-3xl font-black text-cyan-400">
+            <div className="text-3xl font-black text-white">
               SYNCHRONIZED
             </div>
 

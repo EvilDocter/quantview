@@ -689,7 +689,7 @@ export default function Home() {
             ].map((item) => (
               <button key={item.id} onClick={() => setActiveTab(item.id as any)}
                 className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-300 font-bold text-sm text-left border ${
-                  activeTab === item.id ? "bg-neutral-500/10 border-purple-500/30 text-neutral-200 shadow-[0_0_30px_rgba(168,85,247,0.15)]" : "border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
+                  activeTab === item.id ? "bg-neutral-500/10 border-white/10 text-neutral-200 shadow-[0_0_30px_rgba(168,85,247,0.15)]" : "border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
                 }`}>
                 {item.icon}<span>{item.label}</span>{item.badge}
               </button>
@@ -727,7 +727,7 @@ export default function Home() {
       {/* Main workspace (Displays only the active Sidebar SPA Tab) */}
       <div className="flex-1 flex flex-col overflow-hidden relative">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-neutral-500/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-[120px] pointer-events-none" />
 
         {/* TAB 1: AUTO TRADER BOT */}
         {activeTab === "trader" && (
@@ -763,7 +763,7 @@ export default function Home() {
               // ── Broker Connect Card ──────────────────────────────────────────
               <div className="max-w-md mx-auto my-10 bg-[#161616] border border-white/10 rounded-[32px] p-8 shadow-[0_0_60px_rgba(0,0,0,0.5)] space-y-6">
                 <div className="text-center space-y-2">
-                  <div className="inline-flex p-4 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                  <div className="inline-flex p-4 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-white">
                     <Zap className="w-8 h-8" />
                   </div>
                   <h2 className="text-xl font-bold text-white tracking-tight">Connect Trading Account</h2>
@@ -802,18 +802,18 @@ export default function Home() {
                   <div className="space-y-4">
                     <div className="p-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/15 text-emerald-300 text-[10px] leading-relaxed space-y-1">
                       <p className="font-bold flex items-center gap-1.5">
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <Check className="w-3.5 h-3.5 text-white" />
                         Free — No Credits Required
                       </p>
                       <ol className="list-decimal pl-4 space-y-1 text-slate-400">
                         <li>Open an account with IC Markets, Pepperstone, or any cTrader broker</li>
-                        <li>Go to <a href="https://openapi.ctrader.com/apps" target="_blank" rel="noreferrer" className="text-emerald-400 underline font-bold">openapi.ctrader.com/apps</a> → create a free app → get <strong>Client ID</strong></li>
+                        <li>Go to <a href="https://openapi.ctrader.com/apps" target="_blank" rel="noreferrer" className="text-white underline font-bold">openapi.ctrader.com/apps</a> → create a free app → get <strong>Client ID</strong></li>
                         <li>Visit the auth URL, approve access → paste your <strong>Access Token</strong> below</li>
                       </ol>
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold">cTrader Access Token</label>
+                      <label className="text-[10px] uppercase tracking-wider text-white font-bold">cTrader Access Token</label>
                       <input
                         type="password"
                         value={ctAccessToken}
@@ -855,7 +855,7 @@ export default function Home() {
 
                     {ctAccounts.length > 0 && (
                       <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold">Select Account</label>
+                        <label className="text-[10px] uppercase tracking-wider text-white font-bold">Select Account</label>
                         <select
                           value={ctAccountId}
                           onChange={e => setCtAccountId(e.target.value)}
@@ -871,7 +871,7 @@ export default function Home() {
                     )}
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold">Trading Volume (Lots)</label>
+                      <label className="text-[10px] uppercase tracking-wider text-white font-bold">Trading Volume (Lots)</label>
                       <input
                         type="number" step="0.01" min="0.01"
                         value={ctVolume}
@@ -1010,12 +1010,12 @@ export default function Home() {
                   </div>
 
                   <div className="rounded-[28px] border border-white/5 bg-[#161616]/80 p-6 relative overflow-hidden backdrop-blur-md">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl" />
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
                     <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Account Equity</p>
                     <h3 className="text-3xl font-black text-white mt-2 font-mono">
                       ${Number(mt5AccountData?.equity || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </h3>
-                    <p className="text-[10px] text-cyan-400 font-semibold mt-1 uppercase tracking-wide">
+                    <p className="text-[10px] text-white font-semibold mt-1 uppercase tracking-wide">
                       Broker: {mt5AccountData?.broker || "MetaTrader Demo"}
                     </p>
                   </div>
@@ -1023,7 +1023,7 @@ export default function Home() {
                   <div className="rounded-[28px] border border-white/5 bg-[#161616]/80 p-6 relative overflow-hidden backdrop-blur-md">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl" />
                     <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Free Margin</p>
-                    <h3 className="text-3xl font-black text-emerald-400 mt-2 font-mono">
+                    <h3 className="text-3xl font-black text-white mt-2 font-mono">
                       ${Number(mt5AccountData?.freeMargin || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </h3>
                     <p className="text-[10px] text-emerald-500 font-semibold mt-1 uppercase tracking-wide">
@@ -1060,14 +1060,14 @@ export default function Home() {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <span className={`text-[10px] font-black px-2 py-1 rounded-md ${
-                                  pos.type === "BUY" ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                  pos.type === "BUY" ? "bg-white/10 text-white border border-green-500/20" : "bg-neutral-600/10 text-neutral-400 border border-red-500/20"
                                 }`}>
                                   {pos.type}
                                 </span>
                                 <span className="font-bold text-white">{pos.symbol}</span>
                                 <span className="text-xs text-slate-500">x{pos.volume} Lots</span>
                               </div>
-                              <span className={`text-xl font-black font-mono ${isWin ? "text-green-400" : "text-red-400"}`}>
+                              <span className={`text-xl font-black font-mono ${isWin ? "text-white" : "text-neutral-400"}`}>
                                 ${pos.profit >= 0 ? "+" : ""}{pos.profit.toFixed(2)}
                               </span>
                             </div>
@@ -1081,7 +1081,7 @@ export default function Home() {
 
                             <button
                               onClick={() => closePosition(pos.id)}
-                              className="w-full py-2.5 bg-red-950/20 border border-red-500/20 hover:bg-red-900/20 text-red-400 font-bold text-xs uppercase rounded-xl transition-all mt-4"
+                              className="w-full py-2.5 bg-red-950/20 border border-red-500/20 hover:bg-red-900/20 text-neutral-400 font-bold text-xs uppercase rounded-xl transition-all mt-4"
                             >
                               Close Order
                             </button>
@@ -1113,13 +1113,13 @@ export default function Home() {
                     <div className="grid grid-cols-2 gap-3 pt-2">
                       <button
                         onClick={() => manualTrade("BUY")}
-                        className="py-4 bg-green-600/10 border border-green-500/20 hover:bg-green-500/20 text-green-400 font-black text-xs uppercase rounded-2xl transition-all shadow-[0_0_30px_rgba(34,197,94,0.05)]"
+                        className="py-4 bg-green-600/10 border border-green-500/20 hover:bg-green-500/20 text-white font-black text-xs uppercase rounded-2xl transition-all shadow-[0_0_30px_rgba(34,197,94,0.05)]"
                       >
                         Buy Long
                       </button>
                       <button
                         onClick={() => manualTrade("SELL")}
-                        className="py-4 bg-red-600/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 font-black text-xs uppercase rounded-2xl transition-all shadow-[0_0_30px_rgba(239,68,68,0.05)]"
+                        className="py-4 bg-red-600/10 border border-red-500/20 hover:bg-red-500/20 text-neutral-400 font-black text-xs uppercase rounded-2xl transition-all shadow-[0_0_30px_rgba(239,68,68,0.05)]"
                       >
                         Sell Short
                       </button>
@@ -1160,7 +1160,7 @@ export default function Home() {
                       setMt5Positions([]);
                       playSound("close");
                     }}
-                    className="px-4 py-2 bg-red-950/20 border border-red-500/10 hover:bg-red-900/20 text-red-400 text-xs font-bold uppercase rounded-xl transition-all"
+                    className="px-4 py-2 bg-red-950/20 border border-red-500/10 hover:bg-red-900/20 text-neutral-400 text-xs font-bold uppercase rounded-xl transition-all"
                   >
                     Disconnect MT5 Broker Link
                   </button>
@@ -1219,7 +1219,7 @@ export default function Home() {
                 </div>
 
                 <div className="bg-[#161616]/80 border border-white/5 rounded-2xl p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl" />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Analysis Resolution</p>
                   <h2 className="text-2xl font-black mt-1 text-white">5-Minute</h2>
                 </div>
@@ -1262,7 +1262,7 @@ export default function Home() {
                           }}
                           className={`flex items-center gap-3.5 px-4.5 py-3 rounded-2xl transition-all duration-300 border ${
                             selectedSymbol === asset
-                              ? "bg-neutral-500/10 border-purple-500/30 text-neutral-200 shadow-[0_0_20px_rgba(168,85,247,0.1)]"
+                              ? "bg-neutral-500/10 border-white/10 text-neutral-200 shadow-[0_0_20px_rgba(168,85,247,0.1)]"
                               : "bg-black/30 border-white/5 text-slate-300 hover:bg-black/50"
                           }`}
                         >
@@ -1347,8 +1347,8 @@ export default function Home() {
                           <div>
                             <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Realtime Spot Price</p>
                             <p className={`text-2xl md:text-3xl font-black mt-1 font-mono tracking-tighter transition-colors duration-300 ${
-                              priceTrend[item.symbol] === "up" ? "text-emerald-400" :
-                              priceTrend[item.symbol] === "down" ? "text-red-400" : "text-slate-200"
+                              priceTrend[item.symbol] === "up" ? "text-white" :
+                              priceTrend[item.symbol] === "down" ? "text-neutral-400" : "text-slate-200"
                             }`}>
                               {priceData?.price || "--"}
                             </p>
@@ -1357,7 +1357,7 @@ export default function Home() {
                           <div className="text-right">
                             <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">Price Change</p>
                             <span className={`inline-flex px-3 py-1 rounded-lg text-xs font-bold mt-1 tracking-wide ${
-                              isPositive ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"
+                              isPositive ? "bg-emerald-500/10 text-white border border-emerald-500/20" : "bg-neutral-600/10 text-neutral-400 border border-red-500/20"
                             }`}>
                               {isPositive ? "+" : ""}{priceData?.change || "0.00"}%
                             </span>
@@ -1414,7 +1414,7 @@ export default function Home() {
                             <div className="bg-[#161616] border border-white/5 rounded-xl p-3">
                               <p className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Llama-3 Signal</p>
                               <h4 className={`text-md font-black mt-1 ${
-                                signalData?.signal === "BUY" ? "text-green-400" : signalData?.signal === "SELL" ? "text-red-400" : "text-yellow-400"
+                                signalData?.signal === "BUY" ? "text-white" : signalData?.signal === "SELL" ? "text-neutral-400" : "text-neutral-300"
                               }`}>
                                 {signalData?.signal || "HOLD"}
                               </h4>
@@ -1429,7 +1429,7 @@ export default function Home() {
 
                             <div className="bg-[#161616] border border-white/5 rounded-xl p-3">
                               <p className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">RSI (Momentum)</p>
-                              <h4 className="text-md font-black mt-1 text-cyan-400 font-mono">
+                              <h4 className="text-md font-black mt-1 text-white font-mono">
                                 {signalData?.rsi !== undefined ? Number(signalData.rsi).toFixed(2) : "0.00"}
                               </h4>
                             </div>
@@ -1437,7 +1437,7 @@ export default function Home() {
                             <div className="bg-[#161616] border border-white/5 rounded-xl p-3">
                               <p className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">MACD Trend</p>
                               <h4 className={`text-md font-black mt-1 ${
-                                signalData?.macd === "Bullish" ? "text-green-400" : signalData?.macd === "Bearish" ? "text-red-400" : "text-slate-400"
+                                signalData?.macd === "Bullish" ? "text-white" : signalData?.macd === "Bearish" ? "text-neutral-400" : "text-slate-400"
                               }`}>
                                 {signalData?.macd || "Neutral"}
                               </h4>
@@ -1455,7 +1455,7 @@ export default function Home() {
                             onClick={() => toggleSignals(item.symbol)}
                             className={`px-3 py-2 rounded-xl border text-xs font-bold transition-all ${
                               expandedSignals.includes(item.symbol)
-                                ? "bg-purple-500/20 text-neutral-200 border-purple-500/30"
+                                ? "bg-purple-500/20 text-neutral-200 border-white/10"
                                 : "bg-black/40 border-white/10 hover:bg-black/60 text-slate-400"
                             }`}
                           >
@@ -1522,7 +1522,7 @@ export default function Home() {
                             localStorage.setItem("quantview_watchlist", JSON.stringify(nextList));
                             playSound("close");
                           }}
-                          className="text-xs text-slate-500 hover:text-red-400 uppercase font-bold"
+                          className="text-xs text-slate-500 hover:text-neutral-400 uppercase font-bold"
                         >
                           Remove
                         </button>
@@ -1569,9 +1569,9 @@ export default function Home() {
 
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { id: "conservative", name: "Conservative", desc: "Confidence ≥ 90%", color: "text-green-400 border-green-500/25 bg-green-500/5" },
+                    { id: "conservative", name: "Conservative", desc: "Confidence ≥ 90%", color: "text-white border-green-500/25 bg-green-500/5" },
                     { id: "moderate", name: "Moderate (Standard)", desc: "Confidence ≥ 80%", color: "text-neutral-200 border-purple-500/25 bg-purple-500/5" },
-                    { id: "aggressive", name: "Aggressive", desc: "Confidence ≥ 70%", color: "text-red-400 border-red-500/25 bg-red-500/5" }
+                    { id: "aggressive", name: "Aggressive", desc: "Confidence ≥ 70%", color: "text-neutral-400 border-red-500/25 bg-red-500/5" }
                   ].map((risk) => (
                     <button
                       key={risk.id}
@@ -1635,7 +1635,7 @@ export default function Home() {
                   </div>
                   <div className="flex justify-between">
                     <span>Llama-3 cognitive latency:</span>
-                    <span className="text-emerald-400">~240ms (High-Speed Groq)</span>
+                    <span className="text-white">~240ms (High-Speed Groq)</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Simulated Sound Driver:</span>

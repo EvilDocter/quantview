@@ -17,7 +17,7 @@ interface GlassCardProps {
 
 const glowMap = {
   cyan: "group-hover:shadow-[0_0_40px_rgba(6,182,212,0.15)] hover:border-cyan-500/30",
-  blue: "group-hover:shadow-[0_0_40px_rgba(255,255,255,0.04)] hover:border-blue-500/30",
+  blue: "group-hover:shadow-[0_0_40px_rgba(255,255,255,0.04)] hover:border-white/10",
   purple: "group-hover:shadow-[0_0_40px_rgba(139,92,246,0.15)] hover:border-neutral-500/30",
   emerald: "group-hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] hover:border-emerald-500/30",
   gold: "group-hover:shadow-[0_0_40px_rgba(251,191,36,0.15)] hover:border-amber-500/30",

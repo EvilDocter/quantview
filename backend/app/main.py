@@ -41,26 +41,70 @@ async def live_market_engine():
                     else:
                         # Hard fallback default starting price
                         price_defaults = {
-                            "BTC/USD": 67000.0,
-                            "ETH/USD": 3500.0,
-                            "SOL/USD": 150.0,
-                            "XRP/USD": 0.55,
-                            "EUR/USD": 1.0850,
-                            "GBP/USD": 1.2700,
-                            "USD/JPY": 156.0,
-                            "USD/CHF": 0.9000,
-                            "XAU/USD": 2330.0,
-                            "AAPL": 190.0,
-                            "TSLA": 175.0,
-                            "NVDA": 900.0
+                            "BTC/USD": 108000.0,
+                            "ETH/USD": 2700.0,
+                            "SOL/USD": 178.0,
+                            "XRP/USD": 2.45,
+                            "DOGE/USD": 0.26,
+                            "ADA/USD": 0.72,
+                            "BNB/USD": 680.0,
+                            "EUR/USD": 1.1140,
+                            "GBP/USD": 1.2680,
+                            "USD/JPY": 144.50,
+                            "USD/CHF": 0.8820,
+                            "AUD/USD": 0.6480,
+                            "USD/CAD": 1.3810,
+                            "NZD/USD": 0.5670,
+                            "EUR/GBP": 0.8450,
+                            "EUR/JPY": 162.50,
+                            "GBP/JPY": 190.20,
+                            "EUR/AUD": 1.7250,
+                            "XAU/USD": 3961.0,
+                            "XAG/USD": 31.50,
+                            "WTI": 67.50,
+                            "COPPER": 4.35,
+                            "AAPL": 218.0,
+                            "TSLA": 280.0,
+                            "NVDA": 140.0,
+                            "MSFT": 460.0,
+                            "AMZN": 205.0,
+                            "META": 630.0,
+                            "GOOGL": 190.0,
+                            "NFLX": 1050.0,
+                            "AMD": 155.0,
                         }
                         default_p = price_defaults.get(symbol, 1.0)
-                        # Seed 50 historical points
-                        PRICE_HISTORY[symbol].extend([default_p] * 50)
+                        # Seed 50 varied historical points with realistic walk
+                        seed_prices = []
+                        p = default_p * (0.995 + random.random() * 0.01)
+                        for _ in range(50):
+                            vol = 0.004 if any(c in symbol for c in ["BTC", "ETH", "SOL"]) else 0.002 if any(c in symbol for c in ["XAU", "XAG", "WTI"]) else 0.0012
+                            p += p * random.uniform(-vol, vol)
+                            seed_prices.append(p)
+                        PRICE_HISTORY[symbol].extend(seed_prices)
 
-                # Simulate live ticking walk if no new data was pushed from websockets recently
+                # Simulate live ticking walk with asset-appropriate volatility
                 current_price = PRICE_HISTORY[symbol][-1]
-                walk = current_price * random.uniform(-0.00015, 0.00015)
+                # Use larger walk for realistic indicator variation
+                if any(c in symbol for c in ["BTC", "ETH", "SOL", "DOGE", "XRP", "ADA", "BNB"]):
+                    walk_pct = random.uniform(-0.0012, 0.0012)  # Crypto: ±0.12%
+                elif any(c in symbol for c in ["XAU", "XAG", "WTI", "COPPER"]):
+                    walk_pct = random.uniform(-0.0008, 0.0008)  # Commodities: ±0.08%
+                elif current_price > 100:  # Stocks
+                    walk_pct = random.uniform(-0.0006, 0.0006)  # Stocks: ±0.06%
+                else:  # Forex
+                    walk_pct = random.uniform(-0.0004, 0.0004)  # Forex: ±0.04%
+                
+                # Anchor toward real WebSocket price if available
+                cached = LIVE_CACHE.get(symbol, {})
+                ws_price = cached.get("price", 0)
+                if ws_price > 0 and abs(current_price - ws_price) / ws_price > 0.001:
+                    # Pull toward real price
+                    drift = (ws_price - current_price) * 0.05
+                    walk = drift + current_price * walk_pct
+                else:
+                    walk = current_price * walk_pct
+                
                 PRICE_HISTORY[symbol].append(current_price + walk)
                 
                 # Keep history capped at 100
@@ -88,15 +132,33 @@ async def live_market_engine():
                     })
                     continue
 
-                candles = [
-                    {
-                        "open": price,
-                        "high": price,
-                        "low": price,
-                        "close": price,
-                    }
-                    for price in prices
-                ]
+                # Build proper OHLC candles with realistic high/low spreads
+                # This is critical: without proper H/L, ATR=0 and RSI/MACD cluster
+                candles = []
+                for idx, price in enumerate(prices):
+                    # Calculate spread based on asset class
+                    if any(c in symbol for c in ["BTC", "ETH", "SOL", "DOGE", "XRP", "ADA", "BNB"]):
+                        spread_pct = 0.003 + random.random() * 0.004  # 0.3-0.7% spread
+                    elif any(c in symbol for c in ["XAU", "XAG", "WTI", "COPPER"]):
+                        spread_pct = 0.002 + random.random() * 0.003  # 0.2-0.5% spread
+                    elif price > 100:  # Stocks
+                        spread_pct = 0.0015 + random.random() * 0.003  # 0.15-0.45% spread
+                    else:  # Forex
+                        spread_pct = 0.001 + random.random() * 0.002  # 0.1-0.3% spread
+                    
+                    half_spread = price * spread_pct / 2
+                    # Use adjacent prices for open when available
+                    open_p = prices[idx - 1] if idx > 0 else price
+                    close_p = price
+                    high_p = max(open_p, close_p) + half_spread * random.uniform(0.3, 1.0)
+                    low_p = min(open_p, close_p) - half_spread * random.uniform(0.3, 1.0)
+                    
+                    candles.append({
+                        "open": open_p,
+                        "high": high_p,
+                        "low": low_p,
+                        "close": close_p,
+                    })
 
                 signal = await indicator_service.generate_signal(
                     candles
@@ -108,11 +170,15 @@ async def live_market_engine():
 
                 LIVE_CACHE.setdefault(symbol, {})
 
-                # ── Calculate RANDOM % price change between 5% and 30% ──
-                # User requested randomized change if last hour not possible
-                change_magnitude = random.uniform(5.0, 30.0)
-                sign = random.choice([1, -1])
-                price_change_pct = round(change_magnitude * sign, 2)
+                # Calculate actual price change from history
+                if len(prices) >= 2:
+                    oldest_price = prices[0]
+                    if oldest_price > 0:
+                        price_change_pct = round(((current_price - oldest_price) / oldest_price) * 100, 2)
+                    else:
+                        price_change_pct = 0.0
+                else:
+                    price_change_pct = 0.0
 
                 # Inject price_change into the signal dict
                 signal["price_change"] = price_change_pct

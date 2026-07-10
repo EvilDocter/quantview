@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # ── PostgreSQL Database ─────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: quantview_postgres_local
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: quantview_india
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - quantview_net
+
+  # ── Redis Cache & Celery Broker ─────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: quantview_redis_local
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - quantview_net
+
+  # ── Qdrant Vector Store ─────────────────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: quantview_qdrant_local
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - quantview_net
+
+  # ── Neo4j Graph Database ────────────────────────────────────────
+  neo4j:
+    image: neo4j:5-community
+    container_name: quantview_neo4j_local
+    ports:
+      - "7474:7474" # HTTP UI
+      - "7687:7687" # Bolt protocol
+    environment:
+      NEO4J_AUTH: neo4j/password
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    networks:
+      - quantview_net
+
+  # ── OpenSearch Search Engine ────────────────────────────────────
+  opensearch:
+    image: opensearchproject/opensearch:2.12.0
+    container_name: quantview_opensearch_local
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node1
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true # Disable HTTPS and Auth for local dev
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    networks:
+      - quantview_net
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+  neo4j_data:
+  neo4j_logs:
+  opensearch_data:
+
+networks:
+  quantview_net:
+    driver: bridge

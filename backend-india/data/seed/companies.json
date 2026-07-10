@@ -1,0 +1,80 @@
+# Nifty 500 Symbol Master Seed File
+[
+  {
+    "symbol": "RELIANCE",
+    "name": "Reliance Industries Limited",
+    "sector": "Energy",
+    "industry": "Oil & Gas",
+    "bse_code": "500325",
+    "isin": "INE002A01018",
+    "market_cap": 165000000,
+    "market_cap_category": "Large Cap",
+    "face_value": 10.0
+  },
+  {
+    "symbol": "TCS",
+    "name": "Tata Consultancy Services Limited",
+    "sector": "Information Technology",
+    "industry": "IT Services",
+    "bse_code": "532540",
+    "isin": "INE467B01029",
+    "market_cap": 135000000,
+    "market_cap_category": "Large Cap",
+    "face_value": 1.0
+  },
+  {
+    "symbol": "HDFCBANK",
+    "name": "HDFC Bank Limited",
+    "sector": "Banking",
+    "industry": "Private Bank",
+    "bse_code": "500180",
+    "isin": "INE040A01034",
+    "market_cap": 125000000,
+    "market_cap_category": "Large Cap",
+    "face_value": 1.0
+  },
+  {
+    "symbol": "BHARTIARTL",
+    "name": "Bharti Airtel Limited",
+    "sector": "Telecom",
+    "industry": "Telecom Services",
+    "bse_code": "532454",
+    "isin": "INE397D01024",
+    "market_cap": 95000000,
+    "market_cap_category": "Large Cap",
+    "face_value": 5.0
+  },
+  {
+    "symbol": "INFY",
+    "name": "Infosys Limited",
+    "sector": "Information Technology",
+    "industry": "IT Services",
+    "bse_code": "500209",
+    "isin": "INE009A01021",
+    "market_cap": 75000000,
+    "market_cap_category": "Large Cap",
+    "face_value": 5.0
+  },
+  {
+    "symbol": "ICICIBANK",
+    "name": "ICICI Bank Limited",
+    "sector": "Banking",
+    "industry": "Private Bank",
+    "bse_code": "532174",
+    "isin": "INE090A01021",
+    "market_cap": 85000000,
+    "market_cap_category": "Large Cap",
+    "face_value": 2.0
+  },
+  {
+    "symbol": "TATAMOTORS",
+    "name": "Tata Motors Limited",
+    "sector": "Automobiles",
+    "industry": "Passenger Cars & Utility Vehicles",
+    "bse_code": "500570",
+    "isin": "INE155A01022",
+    "market_cap": 35000000,
+    "market_cap_category": "Large Cap",
+    "face_value": 2.0
+  }
+]

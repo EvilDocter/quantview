@@ -155,10 +155,6 @@ export function GlobalHeader() {
       {/* Global Header Bar */}
       <header className="fixed top-0 left-0 right-0 z-40 h-16 bg-[#0f0f0f]/70 backdrop-blur-md border-b border-white/5 px-6 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <button onClick={() => router.push("/")} className="flex items-center gap-2.5 focus:outline-none">
-            <img src="/logo.png" alt="QuantView Logo" className="h-10 w-auto object-contain" />
-          </button>
-          
           <nav className="hidden md:flex items-center gap-6">
             <button 
               onClick={() => router.push("/")}

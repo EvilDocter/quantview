@@ -15,25 +15,70 @@ export default function IndianMarketHome() {
     "Explain Reliance Industries' Q4 profit margin.",
     "Find undervalued small-caps."
   ];
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL_INDIA || "https://quantview-india.onrender.com";
 
-  const indices = [
-    { name: "NIFTY 50", value: "24,325.20", change: "+302.50", pct: "+1.26%", status: "up" },
-    { name: "SENSEX", value: "79,850.50", change: "+872.10", pct: "+1.10%", status: "up" },
-    { name: "BANK NIFTY", value: "52,100.10", change: "-235.40", pct: "-0.45%", status: "down" },
-    { name: "NIFTY IT", value: "39,120.30", change: "+645.20", pct: "+1.68%", status: "up" }
-  ];
+  const [indices, setIndices] = useState<any[]>([
+    { name: "NIFTY 50", value: "24,325.20", pct: "+1.26%", status: "up" },
+    { name: "SENSEX", value: "79,850.50", pct: "+1.10%", status: "up" },
+    { name: "BANK NIFTY", value: "52,100.10", pct: "-0.45%", status: "down" },
+    { name: "NIFTY IT", value: "39,120.30", pct: "+1.68%", status: "up" }
+  ]);
 
-  const gainers = [
+  const [gainers, setGainers] = useState<any[]>([
     { symbol: "TATAMOTORS", price: "₹980.50", change: "+4.85%" },
     { symbol: "INFY", price: "₹1,560.20", change: "+3.20%" },
     { symbol: "RELIANCE", price: "₹2,450.00", change: "+2.15%" }
-  ];
+  ]);
 
-  const losers = [
+  const [losers, setLosers] = useState<any[]>([
     { symbol: "TCS", price: "₹3,820.00", change: "-1.85%" },
     { symbol: "HDFCBANK", price: "₹1,610.50", change: "-1.10%" },
     { symbol: "AXISBANK", price: "₹1,120.00", change: "-0.95%" }
-  ];
+  ]);
+
+  const [fiiNet, setFiiNet] = useState("+₹550 Cr");
+  const [diiNet, setDiiNet] = useState("+₹600 Cr");
+
+  React.useEffect(() => {
+    const fetchLiveData = async () => {
+      try {
+        // Fetch Live Indices
+        const idxRes = await fetch(`${BACKEND_URL}/api/v1/market/indices`);
+        if (idxRes.ok) {
+          const data = await idxRes.json();
+          if (data.indices && data.indices.length > 0) setIndices(data.indices);
+        }
+
+        // Fetch Top Gainers
+        const gainRes = await fetch(`${BACKEND_URL}/api/v1/market/gainers`);
+        if (gainRes.ok) {
+          const data = await gainRes.json();
+          if (data.gainers && data.gainers.length > 0) setGainers(data.gainers);
+        }
+
+        // Fetch Top Losers
+        const loseRes = await fetch(`${BACKEND_URL}/api/v1/market/losers`);
+        if (loseRes.ok) {
+          const data = await loseRes.json();
+          if (data.losers && data.losers.length > 0) setLosers(data.losers);
+        }
+
+        // Fetch FII/DII
+        const instRes = await fetch(`${BACKEND_URL}/api/v1/market/fii-dii`);
+        if (instRes.ok) {
+          const data = await instRes.json();
+          if (data.fii_net) setFiiNet(data.fii_net);
+          if (data.dii_net) setDiiNet(data.dii_net);
+        }
+      } catch (err) {
+        console.error("Failed to connect to India EOD tick API:", err);
+      }
+    };
+
+    fetchLiveData();
+    const interval = setInterval(fetchLiveData, 15000); // Poll EOD updates every 15s
+    return () => clearInterval(interval);
+  }, []);
 
   const sectors = [
     { name: "Automobile", perf: "+2.40%", trend: "up" },
@@ -145,14 +190,14 @@ export default function IndianMarketHome() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-black/30 rounded-2xl p-3 border border-white/5 text-center">
                   <div className="text-[10px] text-slate-400 font-bold uppercase">FII Net Flow</div>
-                  <div className="text-sm font-black text-emerald-400 mt-1">+₹550 Cr</div>
+                  <div className="text-sm font-black text-emerald-400 mt-1">{fiiNet}</div>
                 </div>
                 <div className="bg-black/30 rounded-2xl p-3 border border-white/5 text-center">
                   <div className="text-[10px] text-slate-400 font-bold uppercase">DII Net Flow</div>
-                  <div className="text-sm font-black text-emerald-400 mt-1">+₹600 Cr</div>
+                  <div className="text-sm font-black text-emerald-400 mt-1">{diiNet}</div>
                 </div>
               </div>
-            </div>
+          </div>
           </div>
 
           {/* Column 2: Gainers & Losers */}

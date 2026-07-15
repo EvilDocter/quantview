@@ -3,7 +3,9 @@ QuantView — Market Data API Routes
 
 Endpoints for market overview, indices, gainers/losers,
 heatmap, FII/DII activity, and daily intelligence.
-"""from fastapi import APIRouter, Depends
+"""
+
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.postgres import get_db
 from app.core.schemas import MarketOverview, IndexData

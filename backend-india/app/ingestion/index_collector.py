@@ -6,6 +6,7 @@ Ingests historical and daily index level closing values for Nifty 50, Sensex, et
 
 import logging
 from datetime import date, timedelta
+from typing import Any
 from sqlalchemy import select
 import yfinance as yf
 

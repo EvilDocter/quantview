@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 interface Message {
   role: "user" | "assistant";
-  content: str;
+  content: string;
   citations?: any[];
 }
 

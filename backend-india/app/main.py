@@ -43,12 +43,9 @@ async def lifespan(app: FastAPI):
     Runs once at startup and shutdown.
     """
     print("🚀 QuantView India Backend starting up...")
-
-    # Initialize PostgreSQL tables (for development)
-    if settings.app_env == "development":
-        async with async_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-        print("  ✅ PostgreSQL tables created/verified")
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("  ✅ PostgreSQL tables created/verified")
 
     # Initialize external services (gracefully handle failures)
     try:

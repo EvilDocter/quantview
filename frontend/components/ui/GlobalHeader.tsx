@@ -162,12 +162,6 @@ export function GlobalHeader() {
             >
               <Home className="w-4 h-4" /> Home
             </button>
-            <button 
-              onClick={() => setIsSearchOpen(true)}
-              className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-300 hover:text-white transition-colors"
-            >
-              <Search className="w-4 h-4" /> Search Assets
-            </button>
           </nav>
         </div>
 

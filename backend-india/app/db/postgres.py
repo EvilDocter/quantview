@@ -15,13 +15,38 @@ from app.config import get_settings
 
 settings = get_settings()
 
+from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
+
+def clean_async_db_url(url: str) -> str:
+    """Removes sslmode parameter from database URL since asyncpg does not support it."""
+    if not url:
+        return url
+    parsed = urlparse(url)
+    # Remove sslmode from query parameters
+    query_params = dict(parse_qsl(parsed.query))
+    query_params.pop("sslmode", None)
+    
+    # Reconstruct the URL without sslmode
+    new_query = urlencode(query_params)
+    return urlunparse((
+        parsed.scheme,
+        parsed.netloc,
+        parsed.path,
+        parsed.params,
+        new_query,
+        parsed.fragment
+    ))
+
+db_url = clean_async_db_url(settings.database_url)
+
 # ── Async Engine (for FastAPI request handling) ──────────────────
 async_engine = create_async_engine(
-    settings.database_url,
+    db_url,
     echo=settings.app_env == "development",
     pool_pre_ping=True,
     pool_size=5,
     max_overflow=10,
+    connect_args={"ssl": True} if "localhost" not in db_url and "127.0.0.1" not in db_url else {}
 )
 
 AsyncSessionLocal = async_sessionmaker(

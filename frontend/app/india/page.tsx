@@ -15,8 +15,7 @@ export default function IndianMarketHome() {
     "Explain Reliance Industries' Q4 profit margin.",
     "Find undervalued small-caps."
   ];
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL_INDIA || "https://quantview-india.onrender.com";
-
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL_INDIA || "http://localhost:8000";
   const [indices, setIndices] = useState<any[]>([
     { name: "NIFTY 50", value: "24,325.20", pct: "+1.26%", status: "up" },
     { name: "SENSEX", value: "79,850.50", pct: "+1.10%", status: "up" },

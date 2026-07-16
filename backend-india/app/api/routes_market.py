@@ -11,9 +11,9 @@ from app.db.postgres import get_db
 from app.core.schemas import MarketOverview, IndexData
 from app.ingestion.index_collector import IndexCollector
 from seed import seed_companies
+import yfinance as yf
 
 router = APIRouter()
-
 @router.get("/seed")
 async def seed_market_data(db: AsyncSession = Depends(get_db)):
     """Triggers database migrations setup, seeds companies list, and downloads live index prices."""
@@ -41,26 +41,54 @@ from app.models.financial import InstitutionalActivity
 
 @router.get("/indices")
 async def get_all_indices(db: AsyncSession = Depends(get_db)):
-    """Get all index values with change percentages."""
+    """Get all index values with change percentages in real-time."""
+    symbols_map = {
+        "^NSEI": "NIFTY 50",
+        "^BSESN": "SENSEX",
+        "^NSEBANK": "BANK NIFTY",
+        "^CNXIT": "NIFTY IT"
+    }
+    indices_list = []
     try:
-        res = await db.execute(
-            select(IndexMaster, IndexPrice)
-            .join(IndexPrice, IndexMaster.id == IndexPrice.index_id)
-            .order_by(IndexPrice.date.desc())
-        )
-        records = res.all()
-        seen = set()
-        indices_list = []
-        for master, price in records:
-            if master.symbol not in seen:
-                seen.add(master.symbol)
-                indices_list.append({
-                    "name": master.name,
-                    "symbol": master.symbol,
-                    "value": f"{price.close:,.2f}",
-                    "pct": f"+{((price.close - price.open) / price.open * 100):.2f}%" if price.close >= price.open else f"{((price.close - price.open) / price.open * 100):.2f}%",
-                    "status": "up" if price.close >= price.open else "down"
-                })
+        for yf_sym, name in symbols_map.items():
+            try:
+                t = yf.Ticker(yf_sym)
+                price = t.info.get("regularMarketPrice")
+                prev = t.info.get("regularMarketPreviousClose")
+                if price and prev:
+                    pct = ((price - prev) / prev) * 100
+                    indices_list.append({
+                        "name": name,
+                        "symbol": yf_sym,
+                        "value": f"{price:,.2f}",
+                        "pct": f"{pct:+.2f}%",
+                        "status": "up" if pct >= 0 else "down"
+                    })
+            except Exception:
+                pass
+        
+        # Fallback to database values if yfinance rate limited us
+        if not indices_list:
+            res = await db.execute(
+                select(IndexMaster, IndexPrice)
+                .join(IndexPrice, IndexMaster.id == IndexPrice.index_id)
+                .order_by(IndexPrice.date.desc())
+            )
+            records = res.all()
+            seen = set()
+            for master, price in records:
+                if master.symbol not in seen and master.symbol in ["NIFTY50", "SENSEX", "BANKNIFTY", "NIFTYIT"]:
+                    seen.add(master.symbol)
+                    pct = ((price.close - price.open) / price.open) * 100
+                    indices_list.append({
+                        "name": master.name,
+                        "symbol": master.symbol,
+                        "value": f"{price.close:,.2f}",
+                        "pct": f"{pct:+.2f}%",
+                        "status": "up" if pct >= 0 else "down"
+                    })
+        
+        # Static absolute fallback
         if not indices_list:
             indices_list = [
                 { "name": "NIFTY 50", "value": "24,325.20", "pct": "+1.26%", "status": "up" },
@@ -73,27 +101,70 @@ async def get_all_indices(db: AsyncSession = Depends(get_db)):
         return {"indices": []}
 
 @router.get("/gainers")
-async def get_top_gainers(limit: int = 20, db: AsyncSession = Depends(get_db)):
-    """Get top gaining stocks by percentage change."""
-    return {
-        "gainers": [
-            { "symbol": "TATAMOTORS", "price": "₹980.50", "change": "+4.85%" },
-            { "symbol": "INFY", "price": "₹1,560.20", "change": "+3.20%" },
-            { "symbol": "RELIANCE", "price": "₹2,450.00", "change": "+2.15%" }
-        ]
-    }
+async def get_top_gainers(limit: int = 5, db: AsyncSession = Depends(get_db)):
+    """Get top gaining stocks by percentage change in real-time."""
+    stocks = ["RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "BHARTIARTL.NS", "INFY.NS", "ICICIBANK.NS", "TATAMOTORS.NS"]
+    results = []
+    for sym in stocks:
+        try:
+            t = yf.Ticker(sym)
+            price = t.info.get("regularMarketPrice")
+            prev = t.info.get("regularMarketPreviousClose")
+            if price and prev:
+                pct = ((price - prev) / prev) * 100
+                results.append({
+                    "symbol": sym.replace(".NS", ""),
+                    "price": f"₹{price:,.2f}",
+                    "change": f"{pct:+.2f}%",
+                    "pct_val": pct
+                })
+        except Exception:
+            pass
+            
+    if not results:
+        return {
+            "gainers": [
+                { "symbol": "TATAMOTORS", "price": "₹980.50", "change": "+4.85%" },
+                { "symbol": "INFY", "price": "₹1,560.20", "change": "+3.20%" },
+                { "symbol": "RELIANCE", "price": "₹2,450.00", "change": "+2.15%" }
+            ]
+        }
+        
+    results.sort(key=lambda x: x["pct_val"], reverse=True)
+    return {"gainers": results[:3]}
 
 @router.get("/losers")
-async def get_top_losers(limit: int = 20, db: AsyncSession = Depends(get_db)):
-    """Get top losing stocks by percentage change."""
-    return {
-        "losers": [
-            { "symbol": "TCS", "price": "₹3,820.00", "change": "-1.85%" },
-            { "symbol": "HDFCBANK", "price": "₹1,610.50", "change": "-1.10%" },
-            { "symbol": "AXISBANK", "price": "₹1,120.00", "change": "-0.95%" }
-        ]
-    }
-
+async def get_top_losers(limit: int = 5, db: AsyncSession = Depends(get_db)):
+    """Get top losing stocks by percentage change in real-time."""
+    stocks = ["RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "BHARTIARTL.NS", "INFY.NS", "ICICIBANK.NS", "TATAMOTORS.NS"]
+    results = []
+    for sym in stocks:
+        try:
+            t = yf.Ticker(sym)
+            price = t.info.get("regularMarketPrice")
+            prev = t.info.get("regularMarketPreviousClose")
+            if price and prev:
+                pct = ((price - prev) / prev) * 100
+                results.append({
+                    "symbol": sym.replace(".NS", ""),
+                    "price": f"₹{price:,.2f}",
+                    "change": f"{pct:+.2f}%",
+                    "pct_val": pct
+                })
+        except Exception:
+            pass
+            
+    if not results:
+        return {
+            "losers": [
+                { "symbol": "TCS", "price": "₹3,820.00", "change": "-1.85%" },
+                { "symbol": "HDFCBANK", "price": "₹1,610.50", "change": "-1.10%" },
+                { "symbol": "AXISBANK", "price": "₹1,120.00", "change": "-0.95%" }
+            ]
+        }
+        
+    results.sort(key=lambda x: x["pct_val"])
+    return {"losers": results[:3]}
 @router.get("/fii-dii")
 async def get_fii_dii_activity(days: int = 30, db: AsyncSession = Depends(get_db)):
     """Get FII/DII buy/sell activity for the last N days."""

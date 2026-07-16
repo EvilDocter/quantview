@@ -53,9 +53,10 @@ async def get_all_indices(db: AsyncSession = Depends(get_db)):
         for yf_sym, name in symbols_map.items():
             try:
                 t = yf.Ticker(yf_sym)
-                price = t.info.get("regularMarketPrice")
-                prev = t.info.get("regularMarketPreviousClose")
-                if price and prev:
+                df = t.history(period="2d")
+                if len(df) >= 2:
+                    price = df.iloc[-1]["Close"]
+                    prev = df.iloc[-2]["Close"]
                     pct = ((price - prev) / prev) * 100
                     indices_list.append({
                         "name": name,
@@ -103,14 +104,15 @@ async def get_all_indices(db: AsyncSession = Depends(get_db)):
 @router.get("/gainers")
 async def get_top_gainers(limit: int = 5, db: AsyncSession = Depends(get_db)):
     """Get top gaining stocks by percentage change in real-time."""
-    stocks = ["RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "BHARTIARTL.NS", "INFY.NS", "ICICIBANK.NS", "TATAMOTORS.NS"]
+    stocks = ["RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "BHARTIARTL.NS", "INFY.NS", "ICICIBANK.NS"]
     results = []
     for sym in stocks:
         try:
             t = yf.Ticker(sym)
-            price = t.info.get("regularMarketPrice")
-            prev = t.info.get("regularMarketPreviousClose")
-            if price and prev:
+            df = t.history(period="2d")
+            if len(df) >= 2:
+                price = df.iloc[-1]["Close"]
+                prev = df.iloc[-2]["Close"]
                 pct = ((price - prev) / prev) * 100
                 results.append({
                     "symbol": sym.replace(".NS", ""),
@@ -124,7 +126,6 @@ async def get_top_gainers(limit: int = 5, db: AsyncSession = Depends(get_db)):
     if not results:
         return {
             "gainers": [
-                { "symbol": "TATAMOTORS", "price": "₹980.50", "change": "+4.85%" },
                 { "symbol": "INFY", "price": "₹1,560.20", "change": "+3.20%" },
                 { "symbol": "RELIANCE", "price": "₹2,450.00", "change": "+2.15%" }
             ]
@@ -136,14 +137,15 @@ async def get_top_gainers(limit: int = 5, db: AsyncSession = Depends(get_db)):
 @router.get("/losers")
 async def get_top_losers(limit: int = 5, db: AsyncSession = Depends(get_db)):
     """Get top losing stocks by percentage change in real-time."""
-    stocks = ["RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "BHARTIARTL.NS", "INFY.NS", "ICICIBANK.NS", "TATAMOTORS.NS"]
+    stocks = ["RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "BHARTIARTL.NS", "INFY.NS", "ICICIBANK.NS"]
     results = []
     for sym in stocks:
         try:
             t = yf.Ticker(sym)
-            price = t.info.get("regularMarketPrice")
-            prev = t.info.get("regularMarketPreviousClose")
-            if price and prev:
+            df = t.history(period="2d")
+            if len(df) >= 2:
+                price = df.iloc[-1]["Close"]
+                prev = df.iloc[-2]["Close"]
                 pct = ((price - prev) / prev) * 100
                 results.append({
                     "symbol": sym.replace(".NS", ""),
@@ -158,13 +160,13 @@ async def get_top_losers(limit: int = 5, db: AsyncSession = Depends(get_db)):
         return {
             "losers": [
                 { "symbol": "TCS", "price": "₹3,820.00", "change": "-1.85%" },
-                { "symbol": "HDFCBANK", "price": "₹1,610.50", "change": "-1.10%" },
-                { "symbol": "AXISBANK", "price": "₹1,120.00", "change": "-0.95%" }
+                { "symbol": "HDFCBANK", "price": "₹1,610.50", "change": "-1.10%" }
             ]
         }
         
     results.sort(key=lambda x: x["pct_val"])
     return {"losers": results[:3]}
+
 @router.get("/fii-dii")
 async def get_fii_dii_activity(days: int = 30, db: AsyncSession = Depends(get_db)):
     """Get FII/DII buy/sell activity for the last N days."""

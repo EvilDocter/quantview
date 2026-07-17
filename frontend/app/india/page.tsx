@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { 
   Search, Brain, Activity, TrendingUp, TrendingDown, 
   Layers, Users, ArrowUpRight, Flame 
@@ -194,6 +196,47 @@ export default function IndianMarketHome() {
             ))}
           </div>
         </div>
+
+        {/* AI Agent Research Chat Response (Full Width) */}
+        {aiResponse && (
+          <div className="w-full bg-[#12121a]/80 border border-indigo-500/20 rounded-[24px] p-8 shadow-2xl backdrop-blur-md relative overflow-hidden transition-all duration-500 max-w-4xl mx-auto">
+            {isLoading && (
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 animate-pulse" />
+            )}
+            
+            <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+                <Brain className="w-5 h-5 text-indigo-400" /> AI Agent Research Output
+              </h3>
+              {isLoading && (
+                <span className="flex h-3 w-3 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                </span>
+              )}
+            </div>
+            
+            <div className="prose prose-invert prose-indigo max-w-none text-slate-200 text-sm md:text-base leading-relaxed">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {aiResponse}
+              </ReactMarkdown>
+            </div>
+
+            {agentsUsed.length > 0 && (
+              <div className="mt-8 pt-4 border-t border-white/5 space-y-3">
+                <div className="text-xs uppercase tracking-wider font-bold text-slate-500">Specialist Agents Invoked</div>
+                <div className="flex flex-wrap gap-2">
+                  {agentsUsed.map((agent, i) => (
+                    <span key={i} className="text-[10px] font-bold px-3 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 uppercase tracking-wide">
+                      {agent}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Market Overview Dashboards Grid */}
         <div className="grid md:grid-cols-3 gap-6">
           
@@ -299,38 +342,7 @@ export default function IndianMarketHome() {
               </div>
             </div>
 
-            {/* AI Insights Card */}
-            <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-[24px] p-6 space-y-4 backdrop-blur-md relative overflow-hidden">
-              {isLoading && (
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 animate-pulse" />
-              )}
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                  <Brain className="w-4 h-4 text-indigo-400" /> AI Agent Research Output
-                </h3>
-                {isLoading && (
-                  <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-                  </span>
-                )}
-              </div>
-              <p className="text-[11px] text-slate-300 leading-relaxed whitespace-pre-line">
-                {aiResponse}
-              </p>
-              {agentsUsed.length > 0 && (
-                <div className="pt-2 border-t border-white/5 space-y-2">
-                  <div className="text-[9px] uppercase tracking-wider font-bold text-slate-500">Specialist Agents Invoked:</div>
-                  <div className="flex flex-wrap gap-1">
-                    {agentsUsed.map((agent, i) => (
-                      <span key={i} className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
-                        {agent}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+
           </div>
 
         </div>

@@ -33,9 +33,23 @@ async def submit_research_query(
     # Extract company symbol candidate from query (e.g. "INFY", "TCS", "RELIANCE")
     query_upper = query.upper()
     detected_symbol = "NIFTY50"
-    for symbol in ["RELIANCE", "INFY", "TCS", "HDFCBANK", "TATAMOTORS", "BHARTIARTL", "ICICIBANK"]:
-        if symbol in query_upper:
-            detected_symbol = symbol
+    
+    symbol_mappings = {
+        "RELIANCE": "RELIANCE",
+        "INFOSYS": "INFY",
+        "INFY": "INFY",
+        "TCS": "TCS",
+        "HDFC": "HDFCBANK",
+        "TATA MOTORS": "TATAMOTORS",
+        "TATA": "TATAMOTORS",
+        "BHARTI": "BHARTIARTL",
+        "AIRTEL": "BHARTIARTL",
+        "ICICI": "ICICIBANK"
+    }
+    
+    for word, ticker in symbol_mappings.items():
+        if word in query_upper:
+            detected_symbol = ticker
             break
             
     initial_state = {

@@ -8,6 +8,9 @@ import {
 
 export default function IndianMarketHome() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [aiResponse, setAiResponse] = useState<string>("Indian indices closed near record highs today supported by massive heavy-weights purchasing. Auto stocks rallied on sales numbers, while IT stocks stabilized despite foreign currency headwinds.");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [agentsUsed, setAgentsUsed] = useState<string[]>([]);
 
   const quickPrompts = [
     "Should I invest in Tata Motors?",
@@ -16,6 +19,35 @@ export default function IndianMarketHome() {
     "Find undervalued small-caps."
   ];
   const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL_INDIA || "http://localhost:8000";
+
+  const handleSearch = async (queryToSubmit?: string) => {
+    const activeQuery = queryToSubmit || searchQuery;
+    if (!activeQuery.trim()) return;
+
+    setIsLoading(true);
+    setAiResponse("Invoking Planning Coordinator... Decomposing financial query...");
+    setAgentsUsed(["planner"]);
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/v1/ai/research`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: activeQuery })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAiResponse(data.answer || "No response received from agents.");
+        setAgentsUsed(data.agents_used || []);
+      } else {
+        setAiResponse("AI research system encountered a connection error. Please try again.");
+      }
+    } catch (err) {
+      setAiResponse("Failed to connect to agent research platform.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const [indices, setIndices] = useState<any[]>([
     { name: "NIFTY 50", value: "24,325.20", pct: "+1.26%", status: "up" },
     { name: "SENSEX", value: "79,850.50", pct: "+1.10%", status: "up" },
@@ -124,7 +156,6 @@ export default function IndianMarketHome() {
             </p>
           </div>
 
-          {/* AI Search Bar */}
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-[24px] blur opacity-30 group-hover:opacity-40 transition duration-300" />
             <div className="relative bg-[#12121a] border border-white/10 rounded-[22px] flex items-center p-2 shadow-2xl">
@@ -134,10 +165,15 @@ export default function IndianMarketHome() {
                 placeholder="Ask anything about Indian markets (e.g., 'Analyze Reliance Industries')..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
                 className="w-full bg-transparent px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none"
               />
-              <button className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-lg">
-                Ask Agent
+              <button
+                onClick={() => handleSearch()}
+                disabled={isLoading}
+                className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-lg"
+              >
+                {isLoading ? "Searching..." : "Ask Agent"}
               </button>
             </div>
           </div>
@@ -147,7 +183,10 @@ export default function IndianMarketHome() {
             {quickPrompts.map((prompt, idx) => (
               <button
                 key={idx}
-                onClick={() => setSearchQuery(prompt)}
+                onClick={() => {
+                  setSearchQuery(prompt);
+                  handleSearch(prompt);
+                }}
                 className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 text-xs text-slate-400 hover:text-white hover:bg-white/[0.06] transition"
               >
                 {prompt}
@@ -155,7 +194,6 @@ export default function IndianMarketHome() {
             ))}
           </div>
         </div>
-
         {/* Market Overview Dashboards Grid */}
         <div className="grid md:grid-cols-3 gap-6">
           
@@ -262,13 +300,36 @@ export default function IndianMarketHome() {
             </div>
 
             {/* AI Insights Card */}
-            <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-[24px] p-6 space-y-3 backdrop-blur-md">
-              <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                <Brain className="w-4 h-4 text-indigo-400" /> Daily Market AI summary
-              </h3>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                Indian indices closed near record highs today supported by massive heavy-weights purchasing. Auto stocks rallied on sales numbers, while IT stocks stabilized despite foreign currency headwinds.
+            <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-[24px] p-6 space-y-4 backdrop-blur-md relative overflow-hidden">
+              {isLoading && (
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 animate-pulse" />
+              )}
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+                  <Brain className="w-4 h-4 text-indigo-400" /> AI Agent Research Output
+                </h3>
+                {isLoading && (
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed whitespace-pre-line">
+                {aiResponse}
               </p>
+              {agentsUsed.length > 0 && (
+                <div className="pt-2 border-t border-white/5 space-y-2">
+                  <div className="text-[9px] uppercase tracking-wider font-bold text-slate-500">Specialist Agents Invoked:</div>
+                  <div className="flex flex-wrap gap-1">
+                    {agentsUsed.map((agent, i) => (
+                      <span key={i} className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                        {agent}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

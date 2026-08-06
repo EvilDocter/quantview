@@ -15,7 +15,6 @@ export default function IndiaNavbar() {
     { label: "AI Research", path: "/india", icon: Brain },
     { label: "Broker Portfolio", path: "/india/portfolio", icon: Wallet },
     { label: "Smart Screener", path: "/india/screener", icon: Sliders },
-    { label: "Quant Lab", path: "/india/quant", icon: Activity },
     { label: "Watchlist", path: "/india/watchlist", icon: Star },
     { label: "Sectors", path: "/india/sectors", icon: Layers },
   ];

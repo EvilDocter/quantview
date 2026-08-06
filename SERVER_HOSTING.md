@@ -102,12 +102,75 @@ pm2 save
 
 ---
 
-## Public Internet Access (Optional)
+## Connecting Your Custom Domain (e.g. `yourdomain.com`)
 
-If you want to access your server dashboard from anywhere outside your intranet:
+You can connect your custom domain directly to your GPU server with **100% free HTTPS SSL certificates**.
 
-1. **Cloudflare Tunnel (Free & Instant)**:
+### Method 1: Cloudflare Tunnel (Recommended — No Router Port Forwarding Required!)
+
+Cloudflare Tunnel securely routes traffic from your custom domain (`app.yourdomain.com`) directly to `http://localhost:3000` on your GPU server without opening any ports on your router or firewall.
+
+1. **Install Cloudflare Tunnel CLI** on your server:
    ```bash
-   cloudflared tunnel --url http://localhost:3000
+   curl -L --output cloudflared.rpm https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-x86_64.rpm
+   sudo rpm -i cloudflared.rpm
    ```
-2. **Nginx Reverse Proxy**: Route `quantview.yourdomain.com` $\rightarrow$ `http://localhost:3000`.
+
+2. **Login & Create Tunnel**:
+   ```bash
+   cloudflared tunnel login
+   cloudflared tunnel create quantview
+   ```
+
+3. **Bind Your Custom Domain**:
+   ```bash
+   # Route your domain (e.g. app.yourdomain.com) to your tunnel
+   cloudflared tunnel route dns quantview app.yourdomain.com
+   ```
+
+4. **Run Tunnel 24/7 as System Service**:
+   ```bash
+   # Create cloudflared service configuration
+   sudo cloudflared service install
+   cloudflared tunnel run --url http://localhost:3000 quantview
+   ```
+
+> **Result**: Anyone going to `https://app.yourdomain.com` will reach your QuantView GPU server securely over HTTPS!
+
+---
+
+### Method 2: Nginx + Certbot (For Servers with Static Public IP & Port 80/443)
+
+If your server has a public IP address:
+
+1. **Add DNS A Record**: Point `app.yourdomain.com` to your Server's Public IP.
+2. **Install Nginx & Certbot**:
+   ```bash
+   sudo dnf install -y nginx certbot python3-certbot-nginx
+   ```
+3. **Configure Nginx Reverse Proxy** (`/etc/nginx/conf.d/quantview.conf`):
+   ```nginx
+   server {
+       server_name app.yourdomain.com;
+
+       location / {
+           proxy_pass http://127.0.0.1:3000;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection 'upgrade';
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
+
+       location /api/ {
+           proxy_pass http://127.0.0.1:8000;
+           proxy_set_header Host $host;
+           proxy_set_header X-Real-IP $remote_addr;
+       }
+   }
+   ```
+4. **Issue Free SSL Certificate**:
+   ```bash
+   sudo certbot --nginx -d app.yourdomain.com
+   ```
+

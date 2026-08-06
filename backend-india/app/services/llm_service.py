@@ -12,12 +12,13 @@ from app.config import get_settings
 
 logger = logging.getLogger("llm_service")
 
-# Model fallback sequence for Gemini
+# Valid Gemini models verified from Google API
 GEMINI_MODELS = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-1.5-pro",
+    "gemini-3.6-flash",
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite",
+    "gemini-flash-latest",
+    "gemini-pro-latest",
 ]
 
 class LLMService:
@@ -39,16 +40,28 @@ class LLMService:
             except Exception as e:
                 logger.warning(f"Failed configuring Gemini API key: {e}")
 
-        # Safety: trim prompt length to avoid prompt bloat timeout
+        # Safety: trim prompt length to avoid prompt bloat
         if len(prompt) > 12000:
             prompt = prompt[:12000] + "\n...[truncated for context limits]..."
 
         # Attempt 1: Primary provider
         response_text = ""
         if primary == "ollama":
-            response_text = await LLMService._ollama(prompt, temperature, max_tokens)
+            # Give Ollama up to 25s; if slow, fallback to Gemini instantly
+            try:
+                response_text = await asyncio.wait_for(
+                    LLMService._ollama(prompt, temperature, max_tokens),
+                    timeout=25.0
+                )
+            except asyncio.TimeoutError:
+                logger.warning("Ollama evaluation exceeded 25s timeout limit.")
+                response_text = ""
+            except Exception as e:
+                logger.warning(f"Ollama failed: {e}")
+                response_text = ""
+
             if not response_text and settings.gemini_api_key:
-                logger.warning("Primary provider (Ollama) failed/empty. Falling back to Gemini API...")
+                logger.warning("Primary provider (Ollama) unavailable/timeout. Falling back to Gemini API...")
                 response_text = await LLMService._gemini(prompt, temperature, max_tokens)
         else:
             response_text = await LLMService._gemini(prompt, temperature, max_tokens)
@@ -60,7 +73,7 @@ class LLMService:
 
     @staticmethod
     async def _gemini(prompt: str, temperature: float, max_tokens: int) -> str:
-        """Call Gemini API with model fallback sequence."""
+        """Call Gemini API with verified model sequence."""
         settings = get_settings()
         if not settings.gemini_api_key:
             logger.warning("Gemini API key not configured")
@@ -87,7 +100,7 @@ class LLMService:
                     return response.text
             except Exception as e:
                 logger.warning(f"Gemini model '{model_name}' failed: {e}")
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
                 continue
 
         logger.error("Gemini: exhausted all fallback models")
@@ -95,11 +108,11 @@ class LLMService:
 
     @staticmethod
     async def _ollama(prompt: str, temperature: float, max_tokens: int) -> str:
-        """Call Ollama server endpoint with 180s timeout."""
+        """Call Ollama server endpoint."""
         settings = get_settings()
         try:
             logger.info(f"Attempting Ollama generation ({settings.ai_server_url}) model={settings.llm_reasoning_model}")
-            async with httpx.AsyncClient(timeout=180.0) as client:
+            async with httpx.AsyncClient(timeout=30.0) as client:
                 response = await client.post(
                     settings.ai_server_url,
                     json={

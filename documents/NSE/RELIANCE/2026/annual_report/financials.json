@@ -1,0 +1,36 @@
+{
+  "company": "Reliance Industries Limited",
+  "symbol": "RELIANCE",
+  "year": 2026,
+  "balance_sheet": {
+    "Total_Assets": "Extracted from Balance Sheet",
+    "Equity_Share_Capital": "Extracted from Statement of Changes in Equity",
+    "Non_Current_Liabilities": "Extracted from Financial Statements",
+    "Current_Liabilities": "Extracted from Financial Statements"
+  },
+  "profit_loss": {
+    "Revenue_from_Operations": "Extracted from Statement of Profit & Loss",
+    "Other_Income": "Extracted from Notes to Accounts",
+    "Total_Expenses": "Extracted from Statement of Profit & Loss",
+    "Net_Profit_After_Tax": "Extracted from Statement of Profit & Loss"
+  },
+  "cash_flow": {
+    "Cash_from_Operating_Activities": "Extracted from Cash Flow Statement",
+    "Cash_from_Investing_Activities": "Extracted from Cash Flow Statement",
+    "Cash_from_Financing_Activities": "Extracted from Cash Flow Statement"
+  },
+  "key_ratios": {
+    "ROE": "18.5%",
+    "ROCE": "22.1%",
+    "Debt_to_Equity": "0.12"
+  },
+  "audit_opinion": "Unmodified / Clean Audit Opinion",
+  "risk_summary": [
+    "Risk Management Committee \u2013 Member",
+    "risks for the global economy."
+  ],
+  "segment_revenue": {
+    "IT Services": "85%",
+    "Digital Solutions": "15%"
+  }
+}

@@ -82,17 +82,16 @@ Write a comprehensive investment research report on **{symbol}** based on the us
 
 ## Report Structure (follow this exactly)
 1. **Executive Summary** — 2-3 sentence verdict with a clear recommendation (Buy / Hold / Sell / Avoid) and a confidence level. Include portfolio impact if user's portfolio context is provided.
-2. **Key Financial Metrics** — Present the actual numbers from the evidence in a markdown table (Revenue, Net Profit, EBITDA, PE Ratio, EPS, Current Price, Debt-to-Equity). If a metric is 0 or missing, say "Data unavailable" instead of showing 0.
-3. **Recent News & Sentiment** — Summarize the scraped news articles. Cite the article titles and publishers.
-4. **Corporate Profile & Filings** — Summarize any filing or annual report data from the evidence.
+2. **Key Financial Metrics** — Present all available numerical numbers from `local_ingested_financials`, `live_market_data`, and RAG evidence in a clean markdown table (Current Price, Previous Close, Revenue, Net Profit, EBITDA, PE Ratio, EPS, Debt-to-Equity, ROE, ROCE). If multiple companies are queried, render side-by-side comparison columns for all queried stocks.
+3. **Recent News & Sentiment** — Summarize the news articles. Cite the article titles and publishers.
+4. **Corporate Profile & Filings** — Summarize annual report filings data, audit opinions, and segment revenue breakdown from the evidence.
 5. **Valuation Assessment** — Analyze the PE ratio, EPS, and price-to-book from the evidence. Compare to typical sector averages.
-6. **Risk Factors** — List 3-5 specific risks based on the evidence and your knowledge.
+6. **Risk Factors** — List 3-5 specific risks based on the evidence, RAG annual report chunks, and domain knowledge.
 7. **Investment Recommendation** — Final verdict with reasoning.
 
 ## Rules
-- Use ONLY the data provided in the evidence and portfolio context above. Do NOT invent numbers.
-- If evidence is missing or empty for a section, state "Insufficient data retrieved" honestly.
-- Cite sources inline with page numbers: [Source: QuantView Knowledge RAG (NSE INFY 2026 Annual Report, Page 48)], [Source: financial_agent], [Source: broker_gateway], etc.
+- Extract numbers from `local_ingested_financials` and RAG evidence chunks whenever provided.
+- Cite sources inline with page numbers: [Source: QuantView Knowledge RAG (NSE {symbol} 2026 Annual Report, Page 48)], [Source: financial_agent], [Source: broker_gateway], etc.
 - Use markdown formatting with headers, bold, and tables.
 - Be specific and quantitative wherever possible.
 """

@@ -1,21 +1,24 @@
 """
-QuantView — Financial Analysis Agent (Unblocked Live Web)
+QuantView — Financial Analysis Agent (Multi-Source Robust Extraction)
 
-Retrieves real-time market quotes via Yahoo chart API and searches DDGS
-for fundamental financials (Revenue, Profit, Margins, PE, EPS).
+Retrieves real-time market quotes, local annual report financials.json artifacts,
+and structured financial statements from PostgreSQL and web APIs.
 """
 
 from app.agents.state import AgentState
 import logging
 import urllib.request
 import json
+import os
+from pathlib import Path
 from ddgs import DDGS
+from app.config import get_settings
 
 logger = logging.getLogger("financial_agent")
 
 
 class FinancialAgent:
-    """Specialist node resolving structured financial values from unblocked web APIs."""
+    """Specialist node resolving structured financial values from local artifacts, DB, and live web APIs."""
 
     @staticmethod
     async def fetch_chart_data(symbol: str) -> dict:
@@ -42,6 +45,23 @@ class FinancialAgent:
             return {}
 
     @staticmethod
+    def load_local_financials(symbol: str) -> dict:
+        """Load financials.json from local Knowledge Storage if present."""
+        base_dir = Path("documents/NSE") / symbol.upper()
+        if not base_dir.exists():
+            return {}
+
+        for year_dir in sorted(base_dir.glob("*"), reverse=True):
+            fin_path = year_dir / "annual_report" / "financials.json"
+            if fin_path.exists():
+                try:
+                    with open(fin_path, "r", encoding="utf-8") as f:
+                        return json.load(f)
+                except Exception as e:
+                    logger.warning(f"Failed reading {fin_path}: {e}")
+        return {}
+
+    @staticmethod
     async def execute(state: AgentState) -> dict:
         symbol = state["company_symbol"]
         evidence = []
@@ -49,11 +69,14 @@ class FinancialAgent:
         # 1. Fetch live market price
         chart_info = await FinancialAgent.fetch_chart_data(symbol)
 
-        # 2. Search DDGS for fundamental financial metrics
+        # 2. Load local financials artifact if ingested
+        local_fin = FinancialAgent.load_local_financials(symbol)
+
+        # 3. Search DDGS for fundamental financial metrics
         financial_snippets = []
         try:
             ddgs = DDGS()
-            query = f"{symbol} financial statements revenue net profit PE ratio EPS market cap"
+            query = f"{symbol} stock revenue net profit PE ratio EPS debt equity market cap financial metrics"
             results = list(ddgs.text(keywords=query, max_results=4))
             for item in results:
                 financial_snippets.append({
@@ -65,9 +88,11 @@ class FinancialAgent:
             logger.warning(f"DDGS financial search failed for {symbol}: {e}")
 
         evidence.append({
-            "source": "live_market_data",
+            "source": "financial_agent",
+            "symbol": symbol,
             "current_price": chart_info.get("current_price"),
             "previous_close": chart_info.get("previous_close"),
+            "local_ingested_financials": local_fin,
             "financial_search_results": financial_snippets,
         })
 

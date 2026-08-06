@@ -92,7 +92,7 @@ Write a comprehensive investment research report on **{symbol}** based on the us
 ## Rules
 - Use ONLY the data provided in the evidence and portfolio context above. Do NOT invent numbers.
 - If evidence is missing or empty for a section, state "Insufficient data retrieved" honestly.
-- Cite sources inline: [Source: financial_agent], [Source: news_agent], [Source: broker_gateway], etc.
+- Cite sources inline with page numbers: [Source: QuantView Knowledge RAG (NSE INFY 2026 Annual Report, Page 48)], [Source: financial_agent], [Source: broker_gateway], etc.
 - Use markdown formatting with headers, bold, and tables.
 - Be specific and quantitative wherever possible.
 """

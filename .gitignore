@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 backend/venv/
+backend-india/venv/
 .pnp
 .pnp.*
 .yarn/*
@@ -17,6 +18,7 @@ __pycache__/
 .Python
 backend/app/mt5_logs.json
 backend/app/mt5_simulated_db.json
+*.cache
 
 # Environment/Secrets
 .env
@@ -51,6 +53,8 @@ backend/scratch_*.py
 tempCodeRunnerFile
 tempCodeRunnerFile.c
 tempCodeRunnerFile.py
+status_report.md
+walkthrough.md
 
 # Database and SQLite files
 *.db

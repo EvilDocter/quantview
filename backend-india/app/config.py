@@ -58,8 +58,10 @@ class Settings(BaseSettings):
     r2_endpoint: Optional[str] = Field(default=None, alias="R2_ENDPOINT")
 
     # ── AI Model Server ─────────────────────────────────────────
-    ai_server_url: str = Field(default="http://localhost:7861", alias="AI_SERVER_URL")
-    llm_reasoning_model: str = "qwen2.5:7b"
+    ai_server_url: str = Field(default="http://localhost:11434/api/generate", alias="AI_SERVER_URL")
+    llm_provider: str = Field(default="ollama", alias="LLM_PROVIDER")
+    gemini_api_key: Optional[str] = Field(default=None, alias="GEMINI_API_KEY")
+    llm_reasoning_model: str = "qwen2.5:1.5b"
     llm_extraction_model: str = "qwen2.5:3b"
     embedding_model: str = "BAAI/bge-large-en-v1.5"
 

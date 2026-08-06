@@ -1,56 +1,47 @@
 """
-QuantView — Valuation Agent
+QuantView — Valuation Agent (Unblocked Live Web)
 
-Calculates DCF, Peter Lynch, Graham Number, and multiples valuation models.
+Retrieves valuation multiples (PE Ratio, Price-to-Book, EPS) by querying DDGS.
 """
 
-from sqlalchemy import select
 from app.agents.state import AgentState
-from app.db.postgres import AsyncSessionLocal
-from app.models.company import Company
-from app.models.financial import FinancialStatement, FinancialRatio
+import logging
+from ddgs import DDGS
+
+logger = logging.getLogger("valuation_agent")
+
 
 class ValuationAgent:
-    """Specialist node calculating company intrinsic valuations."""
+    """Specialist node resolving company valuation metrics via DDGS search."""
 
     @staticmethod
     async def execute(state: AgentState) -> dict:
         symbol = state["company_symbol"]
-        session = AsyncSessionLocal()
         evidence = []
         try:
-            stmt = select(Company).where(Company.symbol == symbol)
-            res = await session.execute(stmt)
-            company = res.scalar_one_or_none()
-            
-            if company:
-                # Fetch latest ratios
-                ratio_stmt = select(FinancialRatio).where(FinancialRatio.company_id == company.id).order_by(FinancialRatio.period_end.desc())
-                ratio_res = await session.execute(ratio_stmt)
-                latest_ratio = ratio_res.scalars().first()
-                
-                # Fetch latest financial statement
-                fs_stmt = select(FinancialStatement).where(FinancialStatement.company_id == company.id).order_by(FinancialStatement.period_end.desc())
-                fs_res = await session.execute(fs_stmt)
-                latest_fs = fs_res.scalars().first()
+            logger.info(f"Live DDGS valuation scraping for {symbol}")
+            ddgs = DDGS()
+            query = f"{symbol} stock PE ratio EPS price to book value market cap TipRanks Screener"
+            results = list(ddgs.text(keywords=query, max_results=4))
 
-                pe_val = float(latest_ratio.pe_ratio) if (latest_ratio and latest_ratio.pe_ratio) else 0.0
-                eps_val = float(latest_fs.eps) if (latest_fs and latest_fs.eps) else 0.0
-                
-                # Simple Graham valuation estimation: Intrinsic Value = sqrt(22.5 * EPS * Book Value)
-                evidence.append({
-                    "valuation_method": "multiples",
-                    "pe_ratio": pe_val,
-                    "eps": eps_val
+            valuation_snippets = []
+            for item in results:
+                valuation_snippets.append({
+                    "title": item.get("title", ""),
+                    "snippet": item.get("body", ""),
+                    "url": item.get("href", ""),
                 })
-        except Exception:
-            pass
-        finally:
-            await session.close()
+
+            evidence.append({
+                "source": "duckduckgo_valuation_scraper",
+                "valuation_data": valuation_snippets,
+            })
+        except Exception as e:
+            logger.error(f"Valuation scraping failed for {symbol}: {e}")
 
         return {
             "retrieved_evidence": [{
                 "agent": "valuation_agent",
-                "evidence": evidence
+                "evidence": evidence,
             }]
         }

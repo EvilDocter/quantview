@@ -139,6 +139,15 @@ app.include_router(portfolio_router, prefix="/api/v1/portfolio", tags=["Portfoli
 app.include_router(watchlist_router, prefix="/api/v1/watchlist", tags=["Watchlist"])
 app.include_router(sectors_router, prefix="/api/v1/sectors", tags=["Sectors"])
 
+# ── Mount Broker Gateway Microservice Routers ────────────────────
+from app.broker_gateway.api.routes_portfolio import router as bg_portfolio_router
+from app.broker_gateway.api.routes_auth import router as bg_auth_router
+from app.broker_gateway.api.routes_ai_bridge import router as bg_ai_bridge_router
+
+app.include_router(bg_portfolio_router, prefix="/api/v1", tags=["Broker Gateway Portfolio"])
+app.include_router(bg_auth_router, prefix="/api/v1", tags=["Broker Gateway Auth"])
+app.include_router(bg_ai_bridge_router, prefix="/api/v1", tags=["Broker Gateway AI Bridge"])
+
 
 # ── Health Check ─────────────────────────────────────────────────
 

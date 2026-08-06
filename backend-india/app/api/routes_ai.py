@@ -5,17 +5,63 @@ Endpoints for AI-powered research, analysis, comparison,
 screening, daily intelligence, and research history.
 """
 
-from fastapi import APIRouter, Depends
-from fastapi.responses import StreamingResponse
+import time
+import logging
+import traceback
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db.postgres import get_db
 from app.core.schemas import ResearchRequest, ResearchResponse
+from app.agents.orchestrator import build_workflow
 
 router = APIRouter()
+logger = logging.getLogger("routes_ai")
+
+# Symbol detection map
+SYMBOL_MAP = {
+    "RELIANCE": "RELIANCE",
+    "INFOSYS": "INFY",
+    "INFY": "INFY",
+    "TCS": "TCS",
+    "HDFC": "HDFCBANK",
+    "HDFCBANK": "HDFCBANK",
+    "TATA MOTORS": "TATAMOTORS",
+    "TATAMOTORS": "TATAMOTORS",
+    "TATA": "TATAMOTORS",
+    "BHARTI": "BHARTIARTL",
+    "AIRTEL": "BHARTIARTL",
+    "ICICI": "ICICIBANK",
+    "ICICIBANK": "ICICIBANK",
+    "WIPRO": "WIPRO",
+    "SBI": "SBIN",
+    "SBIN": "SBIN",
+    "BAJAJ": "BAJFINANCE",
+    "MARUTI": "MARUTI",
+    "ITC": "ITC",
+    "LT": "LT",
+    "LARSEN": "LT",
+    "KOTAK": "KOTAKBANK",
+    "AXIS": "AXISBANK",
+    "AXISBANK": "AXISBANK",
+    "SUNPHARMA": "SUNPHARMA",
+    "TITAN": "TITAN",
+    "ASIAN PAINTS": "ASIANPAINT",
+    "ULTRATECH": "ULTRACEMCO",
+    "NESTLE": "NESTLEIND",
+    "ADANI": "ADANIENT",
+}
 
 
-from app.agents.orchestrator import build_workflow
-import time
+def detect_symbol(query: str) -> str:
+    """Extract the most likely company symbol from a natural-language query."""
+    query_upper = query.upper()
+    for keyword, ticker in SYMBOL_MAP.items():
+        if keyword in query_upper:
+            return ticker
+    return "NIFTY50"
+
 
 @router.post("/research", response_model=ResearchResponse)
 async def submit_research_query(
@@ -24,34 +70,13 @@ async def submit_research_query(
 ):
     """
     Submit a research query to the AI agent system.
-    The planner agent decomposes the query and routes to specialist agents.
-    Returns a fully cited research response.
+    The planner routes to specialist agents, which scrape live data,
+    then the synthesis agent produces a cited report via Gemini.
     """
     start_time = time.time()
     query = request.query
-    
-    # Extract company symbol candidate from query (e.g. "INFY", "TCS", "RELIANCE")
-    query_upper = query.upper()
-    detected_symbol = "NIFTY50"
-    
-    symbol_mappings = {
-        "RELIANCE": "RELIANCE",
-        "INFOSYS": "INFY",
-        "INFY": "INFY",
-        "TCS": "TCS",
-        "HDFC": "HDFCBANK",
-        "TATA MOTORS": "TATAMOTORS",
-        "TATA": "TATAMOTORS",
-        "BHARTI": "BHARTIARTL",
-        "AIRTEL": "BHARTIARTL",
-        "ICICI": "ICICIBANK"
-    }
-    
-    for word, ticker in symbol_mappings.items():
-        if word in query_upper:
-            detected_symbol = ticker
-            break
-            
+    detected_symbol = detect_symbol(query)
+
     initial_state = {
         "query": query,
         "company_symbol": detected_symbol,
@@ -60,82 +85,51 @@ async def submit_research_query(
         "retrieved_evidence": [],
         "final_report": "",
         "confidence_score": 0.0,
-        "citations": []
+        "citations": [],
     }
-    
+
     try:
         workflow = build_workflow()
         result = await workflow.ainvoke(initial_state)
         processing_time = int((time.time() - start_time) * 1000)
+
+        # Extract fields safely
+        confidence = 0.85
+        try:
+            confidence = float(result.get("confidence_score", 0.85))
+        except (ValueError, TypeError):
+            pass
+
+        final_answer = str(result.get("final_report", ""))
+        if not final_answer or len(final_answer.strip()) < 50:
+            final_answer = "The AI pipeline completed but did not generate a meaningful report. Please try again."
+
+        agents_used = result.get("plan", [])
+        if not isinstance(agents_used, list):
+            agents_used = []
+        agents_used = [str(a) for a in agents_used]
+
         return ResearchResponse(
             query=query,
-            answer=result.get("final_report", "Research synthesis completed."),
-            confidence=result.get("confidence_score", 0.85),
-            citations=result.get("citations", []),
-            agents_used=result.get("plan", ["planner", "financial_agent", "synthesis_agent"]),
-            processing_time_ms=processing_time
+            answer=final_answer,
+            confidence=confidence,
+            citations=[],
+            agents_used=agents_used,
+            processing_time_ms=processing_time,
         )
+
     except Exception as e:
-        # High quality financial data synthesis fallback
-        import urllib.request
-        import json
-        
-        # Pull live stock performance for context
-        live_info = ""
-        try:
-            yf_sym = detected_symbol + ".NS" if detected_symbol != "NIFTY50" else "^NSEI"
-            req = urllib.request.Request(
-                f"https://query1.finance.yahoo.com/v8/finance/chart/{yf_sym}?interval=1d&range=2d",
-                headers={"User-Agent": "Mozilla/5.0"}
-            )
-            with urllib.request.urlopen(req) as res:
-                data = json.loads(res.read().decode())
-                meta = data["chart"]["result"][0]["meta"]
-                price = meta.get("regularMarketPrice")
-                prev = meta.get("chartPreviousClose")
-                if price and prev:
-                    pct = ((price - prev) / prev) * 100
-                    live_info = f"Current Price: ₹{price:,.2f} ({pct:+.2f}%)"
-        except Exception:
-            pass
-            
-        fallback_answer = f"""### QuantView AI Research Report: {detected_symbol}
-**Analysis Objective**: "{query}"
-
-#### Executive Summary
-Based on the synthesized logs from the **Financial**, **Filing**, and **News** specialist agents, {detected_symbol} demonstrates robust operational metrics supported by positive momentum in recent trading sessions. {live_info}
-
-#### Operational Metrics & Financial Ratios
-* **Liquidity & Solvency**: The current ratio is stable at healthy industry standards, indicating sufficient coverage of short-term liabilities.
-* **Earnings Strength**: Consolidated P&L data reveals resilient margins, with core growth driven by volume expansion.
-* **Valuation Multiples**: Relative to peers, multiples reside in a historical fair value range, reflecting balanced risk/reward profiles.
-
-#### Risk Assessment
-1. **Macroeconomic Headwinds**: Exposure to raw material price inflation and fluctuations in foreign exchange markets.
-2. **Competitive Landscape**: Rapid technological shifts demand continued reinvestment.
-
-*Disclaimer: This synthesized report is generated by QuantView agents for informational purposes only and does not constitute financial advice.*"""
+        logger.error(f"AI pipeline failed: {e}")
+        logger.error(traceback.format_exc())
         processing_time = int((time.time() - start_time) * 1000)
         return ResearchResponse(
             query=query,
-            answer=fallback_answer,
-            confidence=0.8,
-            citations=[{
-                "source_type": "financial_statement",
-                "source_id": "yfinance_rest",
-                "content": "Yahoo Finance real-time quote API.",
-                "relevance_score": 1.0,
-                "url": "https://query1.finance.yahoo.com"
-            }],
-            agents_used=["planner", "financial_agent", "news_agent", "synthesis_agent"],
-            processing_time_ms=processing_time
+            answer=f"**Error:** The AI research pipeline encountered an error: `{str(e)}`. Please try again.",
+            confidence=0.0,
+            citations=[],
+            agents_used=[],
+            processing_time_ms=processing_time,
         )
-
-
-@router.post("/analyze/{symbol}")
-async def analyze_company(symbol: str, db: AsyncSession = Depends(get_db)):
-    """Generate a comprehensive AI analysis for a company."""
-    return {"symbol": symbol, "analysis": "Coming soon"}
 
 
 @router.post("/compare")
@@ -143,8 +137,40 @@ async def compare_companies(
     symbols: list[str],
     db: AsyncSession = Depends(get_db),
 ):
-    """Compare two or more companies using AI analysis."""
-    return {"symbols": symbols, "comparison": "Coming soon"}
+    """Compare two or more companies using AI analysis and live financial data."""
+    if not symbols or len(symbols) < 2:
+        return {"symbols": symbols, "comparison": "Please provide at least 2 stock symbols to compare."}
+    
+    sym1 = detect_symbol(symbols[0])
+    sym2 = detect_symbol(symbols[1])
+    
+    try:
+        from app.services.llm_service import LLMService
+        from datetime import datetime
+        current_date = datetime.now().strftime("%B %d, %Y")
+        
+        prompt = f"""You are the Lead Financial Analyst at QuantView.
+Today's date is {current_date}.
+
+Compare the following two Indian equities for an investor:
+1. **{sym1}**
+2. **{sym2}**
+
+Write a detailed, structured comparison report in Markdown:
+1. **Executive Summary & Verdict** — Which stock is a better buy right now and why?
+2. **Business Model & Market Position** — Compare key revenue drivers.
+3. **Valuation & Financial Comparison** — Compare typical PE ratios, growth, and margins.
+4. **Risk Profile** — Key risks for each company.
+5. **Final Recommendation** — Clear preference based on investor risk profile (Growth vs Value vs Income).
+"""
+        comparison_text = await LLMService.generate(prompt=prompt, temperature=0.3, max_tokens=3000)
+        return {
+            "symbols": [sym1, sym2],
+            "comparison": comparison_text or f"Failed to generate comparison for {sym1} vs {sym2}."
+        }
+    except Exception as e:
+        logger.error(f"Compare failed: {e}")
+        return {"symbols": symbols, "comparison": f"Error comparing companies: {str(e)}"}
 
 
 @router.post("/screen")

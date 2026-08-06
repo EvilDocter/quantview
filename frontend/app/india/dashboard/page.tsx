@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { ArrowLeft, Layers, ShieldAlert, Brain, TrendingUp } from "lucide-react";
+import { Layers } from "lucide-react";
 import { useRouter } from "next/navigation";
+import IndiaNavbar from "@/components/IndiaNavbar";
 
 export default function InstitutionalDashboard() {
   const router = useRouter();
@@ -17,23 +18,20 @@ export default function InstitutionalDashboard() {
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-slate-100 flex flex-col font-sans relative overflow-hidden">
       
-      {/* Header */}
-      <header className="border-b border-white/5 bg-[#0e0e15]/50 backdrop-blur-md px-6 py-4 flex items-center justify-between sticky top-0 z-40">
-        <button 
-          onClick={() => router.push("/india")}
-          className="flex items-center gap-2 text-xs text-slate-400 hover:text-white font-bold uppercase tracking-wider"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-        </button>
-        <h2 className="text-md font-bold text-white">Institutional Analytics Portal</h2>
-      </header>
+      {/* Shared Navbar */}
+      <IndiaNavbar />
 
       {/* Main container */}
       <main className="max-w-6xl w-full mx-auto px-6 py-12 space-y-8 z-10 animate-in fade-in duration-300">
         
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-black text-white">Institutional Analytics Matrix</h1>
+          <p className="text-xs text-slate-400">Cross-company financial comparison and peer valuation metric analysis.</p>
+        </div>
+
         {/* Comparison matrix */}
         <div className="bg-white/[0.01] border border-white/5 rounded-[24px] p-6 space-y-4">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
             <Layers className="w-4 h-4 text-indigo-400" /> Sector Peer Comparison Matrix
           </h3>
           <div className="overflow-x-auto">

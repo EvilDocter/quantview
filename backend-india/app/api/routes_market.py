@@ -38,6 +38,8 @@ from sqlalchemy import select
 from app.models.price import IndexMaster, IndexPrice, StockPrice
 from app.models.company import Company
 from app.models.financial import InstitutionalActivity
+import urllib.request
+import json
 
 @router.get("/indices")
 async def get_all_indices(db: AsyncSession = Depends(get_db)):
@@ -52,19 +54,24 @@ async def get_all_indices(db: AsyncSession = Depends(get_db)):
     try:
         for yf_sym, name in symbols_map.items():
             try:
-                t = yf.Ticker(yf_sym)
-                df = t.history(period="2d")
-                if len(df) >= 2:
-                    price = df.iloc[-1]["Close"]
-                    prev = df.iloc[-2]["Close"]
-                    pct = ((price - prev) / prev) * 100
-                    indices_list.append({
-                        "name": name,
-                        "symbol": yf_sym,
-                        "value": f"{price:,.2f}",
-                        "pct": f"{pct:+.2f}%",
-                        "status": "up" if pct >= 0 else "down"
-                    })
+                req = urllib.request.Request(
+                    f"https://query1.finance.yahoo.com/v8/finance/chart/{yf_sym}?interval=1d&range=2d",
+                    headers={"User-Agent": "Mozilla/5.0"}
+                )
+                with urllib.request.urlopen(req) as res:
+                    data = json.loads(res.read().decode())
+                    meta = data["chart"]["result"][0]["meta"]
+                    price = meta.get("regularMarketPrice")
+                    prev = meta.get("chartPreviousClose")
+                    if price and prev:
+                        pct = ((price - prev) / prev) * 100
+                        indices_list.append({
+                            "name": name,
+                            "symbol": yf_sym,
+                            "value": f"{price:,.2f}",
+                            "pct": f"{pct:+.2f}%",
+                            "status": "up" if pct >= 0 else "down"
+                        })
             except Exception:
                 pass
         
@@ -108,18 +115,23 @@ async def get_top_gainers(limit: int = 5, db: AsyncSession = Depends(get_db)):
     results = []
     for sym in stocks:
         try:
-            t = yf.Ticker(sym)
-            df = t.history(period="2d")
-            if len(df) >= 2:
-                price = df.iloc[-1]["Close"]
-                prev = df.iloc[-2]["Close"]
-                pct = ((price - prev) / prev) * 100
-                results.append({
-                    "symbol": sym.replace(".NS", ""),
-                    "price": f"₹{price:,.2f}",
-                    "change": f"{pct:+.2f}%",
-                    "pct_val": pct
-                })
+            req = urllib.request.Request(
+                f"https://query1.finance.yahoo.com/v8/finance/chart/{sym}?interval=1d&range=2d",
+                headers={"User-Agent": "Mozilla/5.0"}
+            )
+            with urllib.request.urlopen(req) as res:
+                data = json.loads(res.read().decode())
+                meta = data["chart"]["result"][0]["meta"]
+                price = meta.get("regularMarketPrice")
+                prev = meta.get("chartPreviousClose")
+                if price and prev:
+                    pct = ((price - prev) / prev) * 100
+                    results.append({
+                        "symbol": sym.replace(".NS", ""),
+                        "price": f"₹{price:,.2f}",
+                        "change": f"{pct:+.2f}%",
+                        "pct_val": pct
+                    })
         except Exception:
             pass
             
@@ -141,18 +153,23 @@ async def get_top_losers(limit: int = 5, db: AsyncSession = Depends(get_db)):
     results = []
     for sym in stocks:
         try:
-            t = yf.Ticker(sym)
-            df = t.history(period="2d")
-            if len(df) >= 2:
-                price = df.iloc[-1]["Close"]
-                prev = df.iloc[-2]["Close"]
-                pct = ((price - prev) / prev) * 100
-                results.append({
-                    "symbol": sym.replace(".NS", ""),
-                    "price": f"₹{price:,.2f}",
-                    "change": f"{pct:+.2f}%",
-                    "pct_val": pct
-                })
+            req = urllib.request.Request(
+                f"https://query1.finance.yahoo.com/v8/finance/chart/{sym}?interval=1d&range=2d",
+                headers={"User-Agent": "Mozilla/5.0"}
+            )
+            with urllib.request.urlopen(req) as res:
+                data = json.loads(res.read().decode())
+                meta = data["chart"]["result"][0]["meta"]
+                price = meta.get("regularMarketPrice")
+                prev = meta.get("chartPreviousClose")
+                if price and prev:
+                    pct = ((price - prev) / prev) * 100
+                    results.append({
+                        "symbol": sym.replace(".NS", ""),
+                        "price": f"₹{price:,.2f}",
+                        "change": f"{pct:+.2f}%",
+                        "pct_val": pct
+                    })
         except Exception:
             pass
             
@@ -166,6 +183,7 @@ async def get_top_losers(limit: int = 5, db: AsyncSession = Depends(get_db)):
         
     results.sort(key=lambda x: x["pct_val"])
     return {"losers": results[:3]}
+
 
 @router.get("/fii-dii")
 async def get_fii_dii_activity(days: int = 30, db: AsyncSession = Depends(get_db)):

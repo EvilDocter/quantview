@@ -3,14 +3,19 @@
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useRouter } from "next/navigation";
 import { 
   Search, Brain, Activity, TrendingUp, TrendingDown, 
   Layers, Users, ArrowUpRight, Flame 
 } from "lucide-react";
+import IndiaNavbar from "@/components/IndiaNavbar";
 
 export default function IndianMarketHome() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [aiResponse, setAiResponse] = useState<string>("Indian indices closed near record highs today supported by massive heavy-weights purchasing. Auto stocks rallied on sales numbers, while IT stocks stabilized despite foreign currency headwinds.");
+  const [aiResponse, setAiResponse] = useState<string>(
+    "Indian market indices closed near record territory today supported by heavy-weights purchasing. Auto stocks rallied on sales numbers, while IT stocks stabilized despite foreign currency headwinds."
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [agentsUsed, setAgentsUsed] = useState<string[]>([]);
 
@@ -75,28 +80,24 @@ export default function IndianMarketHome() {
   React.useEffect(() => {
     const fetchLiveData = async () => {
       try {
-        // Fetch Live Indices
         const idxRes = await fetch(`${BACKEND_URL}/api/v1/market/indices`);
         if (idxRes.ok) {
           const data = await idxRes.json();
           if (data.indices && data.indices.length > 0) setIndices(data.indices);
         }
 
-        // Fetch Top Gainers
         const gainRes = await fetch(`${BACKEND_URL}/api/v1/market/gainers`);
         if (gainRes.ok) {
           const data = await gainRes.json();
           if (data.gainers && data.gainers.length > 0) setGainers(data.gainers);
         }
 
-        // Fetch Top Losers
         const loseRes = await fetch(`${BACKEND_URL}/api/v1/market/losers`);
         if (loseRes.ok) {
           const data = await loseRes.json();
           if (data.losers && data.losers.length > 0) setLosers(data.losers);
         }
 
-        // Fetch FII/DII
         const instRes = await fetch(`${BACKEND_URL}/api/v1/market/fii-dii`);
         if (instRes.ok) {
           const data = await instRes.json();
@@ -109,7 +110,7 @@ export default function IndianMarketHome() {
     };
 
     fetchLiveData();
-    const interval = setInterval(fetchLiveData, 15000); // Poll EOD updates every 15s
+    const interval = setInterval(fetchLiveData, 15000);
     return () => clearInterval(interval);
   }, []);
 
@@ -124,37 +125,24 @@ export default function IndianMarketHome() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-slate-100 flex flex-col font-sans relative overflow-hidden">
-      {/* Background Glow effects */}
+      {/* Glow Background */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Header */}
-      <header className="border-b border-white/5 bg-[#0e0e15]/50 backdrop-blur-md sticky top-0 z-40 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg">
-            Q
-          </div>
-          <span className="font-black text-xl tracking-tight text-white">QuantView India</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="text-xs uppercase tracking-wider font-bold text-slate-400 hover:text-white transition">
-            Research Portal
-          </button>
-          <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10" />
-        </div>
-      </header>
+      {/* Shared Navbar */}
+      <IndiaNavbar />
 
       {/* Content wrapper */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-12 flex flex-col space-y-12 z-10">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-6 py-8 flex flex-col space-y-10 z-10">
         
         {/* Research search engine interface */}
-        <div className="text-center space-y-8 max-w-3xl mx-auto pt-6">
-          <div className="space-y-3">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">
+        <div className="text-center space-y-6 max-w-3xl mx-auto pt-4">
+          <div className="space-y-2">
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white">
               AI Financial Research Platform
-            </h2>
-            <p className="text-sm text-slate-400">
-              Assign comprehensive research tasks to autonomous agents running over deep financial data.
+            </h1>
+            <p className="text-xs md:text-sm text-slate-400">
+              Assign comprehensive research tasks to autonomous agents analyzing real-time financial data.
             </p>
           </div>
 
@@ -197,7 +185,7 @@ export default function IndianMarketHome() {
           </div>
         </div>
 
-        {/* AI Agent Research Chat Response (Full Width) */}
+        {/* AI Agent Research Chat Response */}
         {aiResponse && (
           <div className="w-full bg-[#12121a]/80 border border-indigo-500/20 rounded-[24px] p-8 shadow-2xl backdrop-blur-md relative overflow-hidden transition-all duration-500 max-w-4xl mx-auto">
             {isLoading && (
@@ -242,7 +230,6 @@ export default function IndianMarketHome() {
           
           {/* Column 1: Market Pulse & Institutional */}
           <div className="space-y-6">
-            {/* Index Levels */}
             <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 space-y-4 backdrop-blur-md">
               <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
                 <Activity className="w-4 h-4 text-indigo-400" /> Market Pulse
@@ -262,7 +249,6 @@ export default function IndianMarketHome() {
               </div>
             </div>
 
-            {/* FII / DII net flows */}
             <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 space-y-4 backdrop-blur-md">
               <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
                 <Users className="w-4 h-4 text-indigo-400" /> Institutional Activity
@@ -277,20 +263,25 @@ export default function IndianMarketHome() {
                   <div className="text-sm font-black text-emerald-400 mt-1">{diiNet}</div>
                 </div>
               </div>
-          </div>
+            </div>
           </div>
 
-          {/* Column 2: Gainers & Losers */}
+          {/* Column 2: Gainers & Losers (Clickable to Deep Dive) */}
           <div className="space-y-6">
-            {/* Top Gainers */}
             <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 space-y-4 backdrop-blur-md">
               <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
                 <TrendingUp className="w-4 h-4 text-emerald-400" /> Top Gainers
               </h3>
               <div className="space-y-3">
                 {gainers.map((stock, i) => (
-                  <div key={i} className="flex justify-between items-center text-xs">
-                    <span className="text-slate-300 font-semibold">{stock.symbol}</span>
+                  <div 
+                    key={i} 
+                    onClick={() => router.push(`/india/company/${stock.symbol}`)}
+                    className="flex justify-between items-center text-xs hover:bg-white/[0.04] p-2 rounded-xl cursor-pointer transition"
+                  >
+                    <span className="text-slate-300 font-semibold flex items-center gap-1">
+                      {stock.symbol} <ArrowUpRight className="w-3 h-3 text-indigo-400" />
+                    </span>
                     <div className="flex items-center gap-3">
                       <span className="text-slate-400">{stock.price}</span>
                       <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px]">
@@ -302,15 +293,20 @@ export default function IndianMarketHome() {
               </div>
             </div>
 
-            {/* Top Losers */}
             <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 space-y-4 backdrop-blur-md">
               <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
                 <TrendingDown className="w-4 h-4 text-rose-400" /> Top Losers
               </h3>
               <div className="space-y-3">
                 {losers.map((stock, i) => (
-                  <div key={i} className="flex justify-between items-center text-xs">
-                    <span className="text-slate-300 font-semibold">{stock.symbol}</span>
+                  <div 
+                    key={i} 
+                    onClick={() => router.push(`/india/company/${stock.symbol}`)}
+                    className="flex justify-between items-center text-xs hover:bg-white/[0.04] p-2 rounded-xl cursor-pointer transition"
+                  >
+                    <span className="text-slate-300 font-semibold flex items-center gap-1">
+                      {stock.symbol} <ArrowUpRight className="w-3 h-3 text-indigo-400" />
+                    </span>
                     <div className="flex items-center gap-3">
                       <span className="text-slate-400">{stock.price}</span>
                       <span className="text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded-full text-[10px]">
@@ -323,13 +319,20 @@ export default function IndianMarketHome() {
             </div>
           </div>
 
-          {/* Column 3: Sector Heatmap & AI Insights */}
+          {/* Column 3: Sector Heatmap */}
           <div className="space-y-6">
-            {/* Sector Heatmap representation */}
             <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 space-y-4 backdrop-blur-md">
-              <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                <Layers className="w-4 h-4 text-indigo-400" /> Sector Performance
-              </h3>
+              <div className="flex justify-between items-center">
+                <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+                  <Layers className="w-4 h-4 text-indigo-400" /> Sector Performance
+                </h3>
+                <button 
+                  onClick={() => router.push("/india/sectors")}
+                  className="text-[10px] text-indigo-400 font-bold hover:underline"
+                >
+                  View All →
+                </button>
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 {sectors.map((sec, i) => (
                   <div key={i} className="bg-black/20 rounded-xl p-3 border border-white/5 flex flex-col justify-between">
@@ -341,8 +344,6 @@ export default function IndianMarketHome() {
                 ))}
               </div>
             </div>
-
-
           </div>
 
         </div>

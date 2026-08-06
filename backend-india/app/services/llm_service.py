@@ -23,7 +23,7 @@ GEMINI_MODELS = [
 class LLMService:
     @staticmethod
     async def generate(
-        prompt: str, temperature: float = 0.2, max_tokens: int = 4000
+        prompt: str, temperature: float = 0.2, max_tokens: int = 2500
     ) -> str:
         """
         Generate a response with automatic multi-provider fallback.
@@ -38,6 +38,10 @@ class LLMService:
                 genai.configure(api_key=settings.gemini_api_key)
             except Exception as e:
                 logger.warning(f"Failed configuring Gemini API key: {e}")
+
+        # Safety: trim prompt length to avoid prompt bloat timeout
+        if len(prompt) > 12000:
+            prompt = prompt[:12000] + "\n...[truncated for context limits]..."
 
         # Attempt 1: Primary provider
         response_text = ""
@@ -91,11 +95,11 @@ class LLMService:
 
     @staticmethod
     async def _ollama(prompt: str, temperature: float, max_tokens: int) -> str:
-        """Call Ollama server endpoint."""
+        """Call Ollama server endpoint with 180s timeout."""
         settings = get_settings()
         try:
             logger.info(f"Attempting Ollama generation ({settings.ai_server_url}) model={settings.llm_reasoning_model}")
-            async with httpx.AsyncClient(timeout=120.0) as client:
+            async with httpx.AsyncClient(timeout=180.0) as client:
                 response = await client.post(
                     settings.ai_server_url,
                     json={

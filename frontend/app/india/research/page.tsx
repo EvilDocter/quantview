@@ -33,6 +33,16 @@ export default function AIResearchPortal() {
     "Evaluate my Zerodha portfolio health"
   ];
 
+  const getBackendUrl = () => {
+    if (typeof window !== "undefined") {
+      const host = window.location.hostname;
+      if (host.includes("quantview.in")) {
+        return "https://quantview.in";
+      }
+    }
+    return process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+  };
+
   const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
@@ -42,22 +52,34 @@ export default function AIResearchPortal() {
     setQuery("");
     setLoading(true);
 
-    try {
-      // Connect to live FastAPI backend route: POST /api/v1/ai/research
-      const response = await fetch("http://localhost:8000/api/v1/ai/research", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query: userText }),
-      });
+    const apiEndpoints = [
+      `${getBackendUrl()}/api/v1/ai/research`,
+      "/api/v1/ai/research",
+      "http://localhost:8000/api/v1/ai/research"
+    ];
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    let data: any = null;
+    let errorMsg = "";
+
+    for (const endpoint of apiEndpoints) {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: userText }),
+        });
+        if (response.ok) {
+          data = await response.json();
+          break;
+        } else {
+          errorMsg = `HTTP ${response.status}: ${response.statusText}`;
+        }
+      } catch (err: any) {
+        errorMsg = err.message || "Connection refused";
       }
+    }
 
-      const data = await response.json();
-      
+    if (data) {
       setMessages(prev => [...prev, {
         role: "assistant",
         content: data.answer || "No response content generated.",
@@ -65,35 +87,13 @@ export default function AIResearchPortal() {
         processingTimeMs: data.processing_time_ms,
         citations: data.citations || []
       }]);
-    } catch (err: any) {
-      console.error("AI Research fetch error:", err);
-      // Try fallback to backend directly if origin differs
-      try {
-        const response = await fetch("/api/v1/ai/research", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: userText }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setMessages(prev => [...prev, {
-            role: "assistant",
-            content: data.answer || "No response content generated.",
-            confidence: data.confidence,
-            processingTimeMs: data.processing_time_ms,
-            citations: data.citations || []
-          }]);
-          return;
-        }
-      } catch (e2) {}
-
+    } else {
       setMessages(prev => [...prev, { 
         role: "assistant", 
-        content: "⚠️ Connection error contacting QuantView AI Backend (http://localhost:8000). Please ensure the backend server is running." 
+        content: `⚠️ Could not connect to QuantView AI Backend (${errorMsg}). Please verify server is active on quantview.in.` 
       }]);
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   return (

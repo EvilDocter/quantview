@@ -102,15 +102,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        settings.frontend_url,
-        "http://localhost:3000",
-        "https://quantview.in",
-        "https://www.quantview.in",
-        "https://api.quantview.in",
-        "https://quantview.com",
-        "https://www.quantview.com",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

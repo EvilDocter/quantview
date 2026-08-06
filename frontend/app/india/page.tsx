@@ -25,34 +25,48 @@ export default function IndianMarketHome() {
     "Explain Reliance Industries' Q4 profit margin.",
     "Find undervalued small-caps."
   ];
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL_INDIA || "http://localhost:8000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
   const handleSearch = async (queryToSubmit?: string) => {
     const activeQuery = queryToSubmit || searchQuery;
     if (!activeQuery.trim()) return;
 
     setIsLoading(true);
-    setAiResponse("Invoking Planning Coordinator... Decomposing financial query...");
-    setAgentsUsed(["planner"]);
+    setAiResponse("Invoking Planning Coordinator... Searching Knowledge Vector DB & Scraping Evidence...");
+    setAgentsUsed(["planner", "filing_agent", "financial_agent", "synthesis_agent"]);
 
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/v1/ai/research`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: activeQuery })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAiResponse(data.answer || "No response received from agents.");
-        setAgentsUsed(data.agents_used || []);
-      } else {
-        setAiResponse("AI research system encountered a connection error. Please try again.");
-      }
-    } catch (err) {
-      setAiResponse("Failed to connect to agent research platform.");
-    } finally {
-      setIsLoading(false);
+    const domainUrl = typeof window !== "undefined" && window.location.hostname.includes("quantview.in")
+      ? "https://quantview.in/api/v1/ai/research"
+      : null;
+
+    const endpoints = [
+      ...(domainUrl ? [domainUrl] : []),
+      "http://localhost:8000/api/v1/ai/research",
+      "/api/v1/ai/research"
+    ];
+
+    let res: Response | null = null;
+    for (const ep of endpoints) {
+      try {
+        res = await fetch(ep, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: activeQuery })
+        });
+        if (res.ok) break;
+      } catch (err) {}
     }
+
+    if (res && res.ok) {
+      const data = await res.json();
+      setAiResponse(data.answer || "No response received from agents.");
+      setAgentsUsed(data.agents_used || ["planner", "filing_agent", "synthesis_agent"]);
+    } else if (res) {
+      setAiResponse(`AI research backend returned error HTTP ${res.status}. Please check backend logs.`);
+    } else {
+      setAiResponse("⚠️ Connection error: Could not reach QuantView Backend. Please ensure backend server is active.");
+    }
+    setIsLoading(false);
   };
 
   const [indices, setIndices] = useState<any[]>([

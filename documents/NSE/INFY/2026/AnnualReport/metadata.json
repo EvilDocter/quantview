@@ -1,0 +1,17 @@
+{
+  "company": "Infosys Limited",
+  "symbol": "INFY",
+  "exchange": "NSE",
+  "isin": null,
+  "year": 2026,
+  "document_type": "Annual Report",
+  "source": "NSE",
+  "downloaded_at": "2026-08-06T08:59:07.715440",
+  "pdf_url": "https://nsearchives.nseindia.com/annual_reports/AR_29313_INFY_2025_2026_U_8985411_30052026200413.pdf",
+  "file_path": "/Users/mahant/quantview/documents/NSE/INFY/2026/AnnualReport/raw.pdf",
+  "hash": "4fc4a071157f446bfc96f71763159122059c9881870e245cb9383069906bf3e8",
+  "pages": 384,
+  "size": 8985411,
+  "status": "downloaded",
+  "error_message": null
+}

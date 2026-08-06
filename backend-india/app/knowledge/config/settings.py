@@ -39,7 +39,8 @@ class KnowledgePlatformSettings(BaseSettings):
     vector_weight: float = 0.7
     keyword_weight: float = 0.3
 
-    # Cron Bot
+    # Cron Bot (Runs automatically every night at 2:00 AM IST)
+    scheduler_enabled: bool = Field(default=True, alias="KNOWLEDGE_SCHEDULER_ENABLED")
     nightly_cron_hour: int = 2        # 2:00 AM IST
     nightly_cron_minute: int = 0
     nightly_cron_symbols: str = "INFY,RELIANCE,TCS,HDFCBANK,TATAMOTORS,ICICIBANK,WIPRO,SBIN,LT,BAJFINANCE"

@@ -63,12 +63,24 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"  ⚠️ OpenSearch init failed (will retry on first use): {e}")
 
+    # Initialize Nightly Automated Knowledge Ingestion Bot
+    bot = None
+    try:
+        from app.knowledge.scheduler import NightlyScraperBot
+        bot = NightlyScraperBot()
+        bot.start()
+        print("  🤖 Nightly Ingestion Bot started (runs daily at 2:00 AM IST)")
+    except Exception as e:
+        print(f"  ⚠️ Nightly Bot init failed: {e}")
+
     print("✅ QuantView India Backend ready!")
 
     yield
 
     # Cleanup
     print("🛑 Shutting down...")
+    if bot:
+        bot.stop()
     await close_neo4j()
     await close_redis()
     await async_engine.dispose()

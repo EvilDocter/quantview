@@ -37,6 +37,7 @@ def clean_async_db_url(url: str) -> str:
         parsed.fragment
     ))
 
+db_url = clean_async_db_url(settings.database_url)
 is_sqlite = db_url.startswith("sqlite")
 
 async_kwargs = {"echo": settings.app_env == "development"}

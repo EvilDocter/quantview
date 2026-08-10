@@ -13,9 +13,9 @@ from pydantic import Field
 
 
 class NSEIngestionSettings(BaseSettings):
-    # Storage Configuration
+    # Storage Configuration (dynamic project relative path)
     base_storage_dir: Path = Field(
-        default=Path("/Users/mahant/quantview/documents"),
+        default_factory=lambda: Path(__file__).resolve().parents[5] / "documents",
         alias="NSE_STORAGE_DIR"
     )
 

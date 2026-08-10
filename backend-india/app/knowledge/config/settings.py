@@ -9,9 +9,9 @@ from pydantic import Field
 
 
 class KnowledgePlatformSettings(BaseSettings):
-    # Storage paths
+    # Storage paths (dynamic project relative path, works on Mac, Linux server, and Docker)
     storage_root: Path = Field(
-        default=Path("/Users/mahant/quantview/documents"),
+        default_factory=lambda: Path(__file__).resolve().parents[4] / "documents",
         alias="KNOWLEDGE_STORAGE_ROOT"
     )
     
@@ -20,7 +20,7 @@ class KnowledgePlatformSettings(BaseSettings):
     qdrant_host: str = Field(default="10.250.101.68", alias="QDRANT_HOST")
     qdrant_port: int = Field(default=6333, alias="QDRANT_PORT")
     qdrant_local_path: Path = Field(
-        default=Path("/Users/mahant/quantview/documents/qdrant_storage"),
+        default_factory=lambda: Path(__file__).resolve().parents[4] / "documents" / "qdrant_storage",
         alias="QDRANT_LOCAL_PATH"
     )
     qdrant_collection_annual_reports: str = "annual_reports"

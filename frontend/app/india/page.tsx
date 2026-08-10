@@ -69,57 +69,56 @@ export default function IndianMarketHome() {
     setIsLoading(false);
   };
 
-  const [indices, setIndices] = useState<any[]>([
-    { name: "NIFTY 50", value: "24,325.20", pct: "+1.26%", status: "up" },
-    { name: "SENSEX", value: "79,850.50", pct: "+1.10%", status: "up" },
-    { name: "BANK NIFTY", value: "52,100.10", pct: "-0.45%", status: "down" },
-    { name: "NIFTY IT", value: "39,120.30", pct: "+1.68%", status: "up" }
-  ]);
+  const [indices, setIndices] = useState<any[]>([]);
+  const [gainers, setGainers] = useState<any[]>([]);
+  const [losers, setLosers] = useState<any[]>([]);
+  const [sectors, setSectors] = useState<any[]>([]);
+  const [fiiNet, setFiiNet] = useState("Loading...");
+  const [diiNet, setDiiNet] = useState("Loading...");
 
-  const [gainers, setGainers] = useState<any[]>([
-    { symbol: "TATAMOTORS", price: "₹980.50", change: "+4.85%" },
-    { symbol: "INFY", price: "₹1,560.20", change: "+3.20%" },
-    { symbol: "RELIANCE", price: "₹2,450.00", change: "+2.15%" }
-  ]);
-
-  const [losers, setLosers] = useState<any[]>([
-    { symbol: "TCS", price: "₹3,820.00", change: "-1.85%" },
-    { symbol: "HDFCBANK", price: "₹1,610.50", change: "-1.10%" },
-    { symbol: "AXISBANK", price: "₹1,120.00", change: "-0.95%" }
-  ]);
-
-  const [fiiNet, setFiiNet] = useState("+₹550 Cr");
-  const [diiNet, setDiiNet] = useState("+₹600 Cr");
+  const getApiBaseUrl = () => {
+    if (typeof window !== "undefined" && window.location.hostname.includes("quantview.in")) {
+      return "https://quantview.in";
+    }
+    return process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+  };
 
   React.useEffect(() => {
     const fetchLiveData = async () => {
+      const apiBase = getApiBaseUrl();
       try {
-        const idxRes = await fetch(`${BACKEND_URL}/api/v1/market/indices`);
+        const idxRes = await fetch(`${apiBase}/api/v1/market/indices`);
         if (idxRes.ok) {
           const data = await idxRes.json();
           if (data.indices && data.indices.length > 0) setIndices(data.indices);
         }
 
-        const gainRes = await fetch(`${BACKEND_URL}/api/v1/market/gainers`);
+        const gainRes = await fetch(`${apiBase}/api/v1/market/gainers`);
         if (gainRes.ok) {
           const data = await gainRes.json();
           if (data.gainers && data.gainers.length > 0) setGainers(data.gainers);
         }
 
-        const loseRes = await fetch(`${BACKEND_URL}/api/v1/market/losers`);
+        const loseRes = await fetch(`${apiBase}/api/v1/market/losers`);
         if (loseRes.ok) {
           const data = await loseRes.json();
           if (data.losers && data.losers.length > 0) setLosers(data.losers);
         }
 
-        const instRes = await fetch(`${BACKEND_URL}/api/v1/market/fii-dii`);
+        const secRes = await fetch(`${apiBase}/api/v1/market/sectors`);
+        if (secRes.ok) {
+          const data = await secRes.json();
+          if (data.sectors && data.sectors.length > 0) setSectors(data.sectors);
+        }
+
+        const instRes = await fetch(`${apiBase}/api/v1/market/fii-dii`);
         if (instRes.ok) {
           const data = await instRes.json();
           if (data.fii_net) setFiiNet(data.fii_net);
           if (data.dii_net) setDiiNet(data.dii_net);
         }
       } catch (err) {
-        console.error("Failed to connect to India EOD tick API:", err);
+        console.error("Failed to connect to India market tick API:", err);
       }
     };
 
@@ -127,15 +126,6 @@ export default function IndianMarketHome() {
     const interval = setInterval(fetchLiveData, 15000);
     return () => clearInterval(interval);
   }, []);
-
-  const sectors = [
-    { name: "Automobile", perf: "+2.40%", trend: "up" },
-    { name: "IT Services", perf: "+1.65%", trend: "up" },
-    { name: "Private Banks", perf: "-0.85%", trend: "down" },
-    { name: "Power", perf: "+0.90%", trend: "up" },
-    { name: "FMCG", perf: "+0.15%", trend: "up" },
-    { name: "Oil & Gas", perf: "+1.10%", trend: "up" }
-  ];
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-slate-100 flex flex-col font-sans relative overflow-hidden">
@@ -351,8 +341,8 @@ export default function IndianMarketHome() {
                 {sectors.map((sec, i) => (
                   <div key={i} className="bg-black/20 rounded-xl p-3 border border-white/5 flex flex-col justify-between">
                     <span className="text-[10px] text-slate-400 truncate">{sec.name}</span>
-                    <span className={`text-xs font-bold mt-1 ${sec.trend === "up" ? "text-emerald-400" : "text-rose-400"}`}>
-                      {sec.perf}
+                    <span className={`text-xs font-bold mt-1 ${sec.status === "up" || (sec.change && sec.change.includes("+")) ? "text-emerald-400" : "text-rose-400"}`}>
+                      {sec.change || sec.perf}
                     </span>
                   </div>
                 ))}

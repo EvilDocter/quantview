@@ -1,6 +1,6 @@
 {
-  "company": "Reliance Industries Limited",
-  "symbol": "RELIANCE",
+  "company": "Infosys Limited",
+  "symbol": "INFY",
   "year": 2026,
   "balance_sheet": {
     "Total_Assets": "Extracted from Balance Sheet",
@@ -26,8 +26,10 @@
   },
   "audit_opinion": "Unmodified / Clean Audit Opinion",
   "risk_summary": [
-    "Risk Management Committee \u2013 Member",
-    "risks for the global economy."
+    "risking transformation at",
+    "risk of costly recalls under evolving regulations such as the FDA",
+    "risk to customer\u2019s critical",
+    "Risk management report"
   ],
   "segment_revenue": {
     "IT Services": "85%",

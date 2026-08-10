@@ -21,13 +21,13 @@ class Settings(BaseSettings):
     app_version: str = "0.1.0"
     frontend_url: str = Field(default="http://localhost:3000", alias="FRONTEND_URL")
 
-    # ── PostgreSQL (Neon) ────────────────────────────────────────
+    # ── PostgreSQL / SQLite Fallback ────────────────────────────────────────
     database_url: str = Field(
-        default="postgresql+asyncpg://localhost:5432/quantview_india",
+        default="sqlite+aiosqlite:///./quantview_india.db",
         alias="DATABASE_URL",
     )
     database_url_sync: str = Field(
-        default="postgresql://localhost:5432/quantview_india",
+        default="sqlite:///./quantview_india.db",
         alias="DATABASE_URL_SYNC",
     )
 

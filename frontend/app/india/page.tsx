@@ -76,47 +76,42 @@ export default function IndianMarketHome() {
   const [fiiNet, setFiiNet] = useState("Loading...");
   const [diiNet, setDiiNet] = useState("Loading...");
 
-  const getApiBaseUrl = () => {
-    if (typeof window !== "undefined" && window.location.hostname.includes("quantview.in")) {
-      return "https://quantview.in";
-    }
-    return process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
-  };
-
   React.useEffect(() => {
     const fetchLiveData = async () => {
-      const apiBase = getApiBaseUrl();
+      const isQuantviewDomain = typeof window !== "undefined" && window.location.hostname.includes("quantview.in");
+      const baseEndpoints = [
+        ...(isQuantviewDomain ? ["https://quantview.in", "https://api.quantview.in"] : []),
+        process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000",
+        ""
+      ];
+
+      const fetchEndpoint = async (path: string) => {
+        for (const base of baseEndpoints) {
+          try {
+            const url = base ? `${base}${path}` : path;
+            const res = await fetch(url);
+            if (res.ok) return await res.json();
+          } catch (e) {}
+        }
+        return null;
+      };
+
       try {
-        const idxRes = await fetch(`${apiBase}/api/v1/market/indices`);
-        if (idxRes.ok) {
-          const data = await idxRes.json();
-          if (data.indices && data.indices.length > 0) setIndices(data.indices);
-        }
+        const idxData = await fetchEndpoint("/api/v1/market/indices");
+        if (idxData?.indices?.length) setIndices(idxData.indices);
 
-        const gainRes = await fetch(`${apiBase}/api/v1/market/gainers`);
-        if (gainRes.ok) {
-          const data = await gainRes.json();
-          if (data.gainers && data.gainers.length > 0) setGainers(data.gainers);
-        }
+        const gainData = await fetchEndpoint("/api/v1/market/gainers");
+        if (gainData?.gainers?.length) setGainers(gainData.gainers);
 
-        const loseRes = await fetch(`${apiBase}/api/v1/market/losers`);
-        if (loseRes.ok) {
-          const data = await loseRes.json();
-          if (data.losers && data.losers.length > 0) setLosers(data.losers);
-        }
+        const loseData = await fetchEndpoint("/api/v1/market/losers");
+        if (loseData?.losers?.length) setLosers(loseData.losers);
 
-        const secRes = await fetch(`${apiBase}/api/v1/market/sectors`);
-        if (secRes.ok) {
-          const data = await secRes.json();
-          if (data.sectors && data.sectors.length > 0) setSectors(data.sectors);
-        }
+        const secData = await fetchEndpoint("/api/v1/market/sectors");
+        if (secData?.sectors?.length) setSectors(secData.sectors);
 
-        const instRes = await fetch(`${apiBase}/api/v1/market/fii-dii`);
-        if (instRes.ok) {
-          const data = await instRes.json();
-          if (data.fii_net) setFiiNet(data.fii_net);
-          if (data.dii_net) setDiiNet(data.dii_net);
-        }
+        const instData = await fetchEndpoint("/api/v1/market/fii-dii");
+        if (instData?.fii_net) setFiiNet(instData.fii_net);
+        if (instData?.dii_net) setDiiNet(instData.dii_net);
       } catch (err) {
         console.error("Failed to connect to India market tick API:", err);
       }

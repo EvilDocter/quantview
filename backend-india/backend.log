@@ -15,243 +15,201 @@ See README for more details:
 https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
 
   import google.generativeai as genai
-INFO:     Started server process [17868]
+INFO:     Started server process [18655]
 INFO:     Waiting for application startup.
 🚀 QuantView India Backend starting up...
-2026-08-10 10:46:58,351 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2026-08-10 12:12:08,533 INFO sqlalchemy.engine.Engine select pg_catalog.version()
 INFO:sqlalchemy.engine.Engine:select pg_catalog.version()
-2026-08-10 10:46:58,352 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-08-10 12:12:08,533 INFO sqlalchemy.engine.Engine [raw sql] ()
 INFO:sqlalchemy.engine.Engine:[raw sql] ()
-2026-08-10 10:46:58,903 INFO sqlalchemy.engine.Engine select current_schema()
+2026-08-10 12:12:09,508 INFO sqlalchemy.engine.Engine select current_schema()
 INFO:sqlalchemy.engine.Engine:select current_schema()
-2026-08-10 10:46:58,903 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-08-10 12:12:09,508 INFO sqlalchemy.engine.Engine [raw sql] ()
 INFO:sqlalchemy.engine.Engine:[raw sql] ()
-2026-08-10 10:46:59,466 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-08-10 12:12:10,056 INFO sqlalchemy.engine.Engine show standard_conforming_strings
 INFO:sqlalchemy.engine.Engine:show standard_conforming_strings
-2026-08-10 10:46:59,466 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-08-10 12:12:10,056 INFO sqlalchemy.engine.Engine [raw sql] ()
 INFO:sqlalchemy.engine.Engine:[raw sql] ()
-2026-08-10 10:46:59,875 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-08-10 12:12:10,481 INFO sqlalchemy.engine.Engine BEGIN (implicit)
 INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
-2026-08-10 10:46:59,881 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:10,484 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:46:59,882 INFO sqlalchemy.engine.Engine [generated in 0.00062s] ('companies', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[generated in 0.00062s] ('companies', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:00,329 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:10,484 INFO sqlalchemy.engine.Engine [generated in 0.00017s] ('companies', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[generated in 0.00017s] ('companies', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:11,319 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:00,330 INFO sqlalchemy.engine.Engine [cached since 0.4487s ago] ('financial_statements', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 0.4487s ago] ('financial_statements', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:00,469 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:11,319 INFO sqlalchemy.engine.Engine [cached since 0.8351s ago] ('financial_statements', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 0.8351s ago] ('financial_statements', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:11,461 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:00,470 INFO sqlalchemy.engine.Engine [cached since 0.5883s ago] ('financial_ratios', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 0.5883s ago] ('financial_ratios', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:00,615 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:11,461 INFO sqlalchemy.engine.Engine [cached since 0.9771s ago] ('financial_ratios', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 0.9771s ago] ('financial_ratios', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:11,597 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:00,616 INFO sqlalchemy.engine.Engine [cached since 0.7345s ago] ('shareholding_patterns', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 0.7345s ago] ('shareholding_patterns', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:01,103 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:11,597 INFO sqlalchemy.engine.Engine [cached since 1.113s ago] ('shareholding_patterns', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 1.113s ago] ('shareholding_patterns', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:11,736 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:01,103 INFO sqlalchemy.engine.Engine [cached since 1.222s ago] ('corporate_actions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 1.222s ago] ('corporate_actions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:01,244 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:11,736 INFO sqlalchemy.engine.Engine [cached since 1.252s ago] ('corporate_actions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 1.252s ago] ('corporate_actions', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:11,873 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:01,244 INFO sqlalchemy.engine.Engine [cached since 1.363s ago] ('insider_trades', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 1.363s ago] ('insider_trades', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:01,378 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:11,873 INFO sqlalchemy.engine.Engine [cached since 1.389s ago] ('insider_trades', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 1.389s ago] ('insider_trades', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:12,020 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:01,379 INFO sqlalchemy.engine.Engine [cached since 1.497s ago] ('mutual_fund_holdings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 1.497s ago] ('mutual_fund_holdings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:01,515 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:12,020 INFO sqlalchemy.engine.Engine [cached since 1.536s ago] ('mutual_fund_holdings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 1.536s ago] ('mutual_fund_holdings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:12,163 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:01,515 INFO sqlalchemy.engine.Engine [cached since 1.634s ago] ('institutional_activity', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 1.634s ago] ('institutional_activity', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:01,656 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:12,163 INFO sqlalchemy.engine.Engine [cached since 1.68s ago] ('institutional_activity', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 1.68s ago] ('institutional_activity', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:12,297 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:01,656 INFO sqlalchemy.engine.Engine [cached since 1.775s ago] ('ai_scores', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 1.775s ago] ('ai_scores', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:01,797 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:12,298 INFO sqlalchemy.engine.Engine [cached since 1.814s ago] ('ai_scores', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 1.814s ago] ('ai_scores', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:12,433 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:01,797 INFO sqlalchemy.engine.Engine [cached since 1.916s ago] ('stock_prices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 1.916s ago] ('stock_prices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:01,934 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:12,433 INFO sqlalchemy.engine.Engine [cached since 1.949s ago] ('stock_prices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 1.949s ago] ('stock_prices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:12,569 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:01,935 INFO sqlalchemy.engine.Engine [cached since 2.053s ago] ('indices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 2.053s ago] ('indices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:02,071 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:12,569 INFO sqlalchemy.engine.Engine [cached since 2.085s ago] ('indices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 2.085s ago] ('indices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:13,071 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:02,071 INFO sqlalchemy.engine.Engine [cached since 2.19s ago] ('index_prices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 2.19s ago] ('index_prices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:02,207 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:13,071 INFO sqlalchemy.engine.Engine [cached since 2.587s ago] ('index_prices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 2.587s ago] ('index_prices', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:13,206 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:02,207 INFO sqlalchemy.engine.Engine [cached since 2.325s ago] ('index_constituents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 2.325s ago] ('index_constituents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:02,337 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:13,206 INFO sqlalchemy.engine.Engine [cached since 2.723s ago] ('index_constituents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 2.723s ago] ('index_constituents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:13,356 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:02,338 INFO sqlalchemy.engine.Engine [cached since 2.456s ago] ('news', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 2.456s ago] ('news', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:02,476 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:13,356 INFO sqlalchemy.engine.Engine [cached since 2.872s ago] ('news', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 2.872s ago] ('news', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:13,491 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:02,476 INFO sqlalchemy.engine.Engine [cached since 2.595s ago] ('documents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 2.595s ago] ('documents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:02,623 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:13,491 INFO sqlalchemy.engine.Engine [cached since 3.008s ago] ('documents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 3.008s ago] ('documents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:13,997 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:02,624 INFO sqlalchemy.engine.Engine [cached since 2.742s ago] ('processed_documents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 2.742s ago] ('processed_documents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:02,761 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:13,997 INFO sqlalchemy.engine.Engine [cached since 3.514s ago] ('processed_documents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 3.514s ago] ('processed_documents', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:14,203 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:02,762 INFO sqlalchemy.engine.Engine [cached since 2.881s ago] ('macro_data', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 2.881s ago] ('macro_data', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:03,245 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:14,203 INFO sqlalchemy.engine.Engine [cached since 3.719s ago] ('macro_data', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 3.719s ago] ('macro_data', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:14,737 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:03,245 INFO sqlalchemy.engine.Engine [cached since 3.364s ago] ('watchlists', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 3.364s ago] ('watchlists', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:03,379 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:14,737 INFO sqlalchemy.engine.Engine [cached since 4.253s ago] ('watchlists', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 4.253s ago] ('watchlists', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:14,878 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:03,380 INFO sqlalchemy.engine.Engine [cached since 3.498s ago] ('watchlist_items', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 3.498s ago] ('watchlist_items', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:03,518 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:14,878 INFO sqlalchemy.engine.Engine [cached since 4.394s ago] ('watchlist_items', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 4.394s ago] ('watchlist_items', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:15,017 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:03,518 INFO sqlalchemy.engine.Engine [cached since 3.637s ago] ('portfolios', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 3.637s ago] ('portfolios', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:03,657 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:15,017 INFO sqlalchemy.engine.Engine [cached since 4.533s ago] ('portfolios', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 4.533s ago] ('portfolios', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:15,154 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:03,657 INFO sqlalchemy.engine.Engine [cached since 3.776s ago] ('portfolio_holdings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 3.776s ago] ('portfolio_holdings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:03,791 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
+2026-08-10 12:12:15,154 INFO sqlalchemy.engine.Engine [cached since 4.671s ago] ('portfolio_holdings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 4.671s ago] ('portfolio_holdings', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:15,297 INFO sqlalchemy.engine.Engine SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
 INFO:sqlalchemy.engine.Engine:SELECT pg_catalog.pg_class.relname 
 FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
 WHERE pg_catalog.pg_class.relname = $1::VARCHAR AND pg_catalog.pg_class.relkind = ANY (ARRAY[$2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::VARCHAR]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != $7::VARCHAR
-2026-08-10 10:47:03,791 INFO sqlalchemy.engine.Engine [cached since 3.91s ago] ('research_history', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-INFO:sqlalchemy.engine.Engine:[cached since 3.91s ago] ('research_history', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
-2026-08-10 10:47:03,924 INFO sqlalchemy.engine.Engine COMMIT
+2026-08-10 12:12:15,297 INFO sqlalchemy.engine.Engine [cached since 4.813s ago] ('research_history', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+INFO:sqlalchemy.engine.Engine:[cached since 4.813s ago] ('research_history', 'r', 'p', 'f', 'v', 'm', 'pg_catalog')
+2026-08-10 12:12:15,431 INFO sqlalchemy.engine.Engine COMMIT
 INFO:sqlalchemy.engine.Engine:COMMIT
-WARNING:opensearch:HEAD http://localhost:9200/quantview_documents [status:N/A request:0.002s]
-Traceback (most recent call last):
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 174, in _new_conn
-    conn = connection.create_connection(
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/util/connection.py", line 95, in create_connection
-    raise err
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/util/connection.py", line 85, in create_connection
-    sock.connect(sa)
-ConnectionRefusedError: [Errno 61] Connection refused
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/opensearchpy/connection/http_urllib3.py", line 280, in perform_request
-    response = self.pool.urlopen(
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 802, in urlopen
-    retries = retries.increment(
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/util/retry.py", line 527, in increment
-    raise six.reraise(type(error), error, _stacktrace)
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/packages/six.py", line 770, in reraise
-    raise value
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 716, in urlopen
-    httplib_response = self._make_request(
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 416, in _make_request
-    conn.request(method, url, **httplib_request_kw)
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 244, in request
-    super(HTTPConnection, self).request(method, url, body=body, headers=headers)
-  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1257, in request
-    self._send_request(method, url, body, headers, encode_chunked)
-  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1303, in _send_request
-    self.endheaders(body, encode_chunked=encode_chunked)
-  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1252, in endheaders
-    self._send_output(message_body, encode_chunked=encode_chunked)
-  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1012, in _send_output
-    self.send(msg)
-  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 952, in send
-    self.connect()
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 205, in connect
-    conn = self._new_conn()
-  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 186, in _new_conn
-    raise NewConnectionError(
-urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x131034850>: Failed to establish a new connection: [Errno 61] Connection refused
 WARNING:opensearch:HEAD http://localhost:9200/quantview_documents [status:N/A request:0.001s]
 Traceback (most recent call last):
   File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 174, in _new_conn
@@ -293,7 +251,7 @@ Traceback (most recent call last):
     conn = self._new_conn()
   File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 186, in _new_conn
     raise NewConnectionError(
-urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x1310349a0>: Failed to establish a new connection: [Errno 61] Connection refused
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x1307ba1f0>: Failed to establish a new connection: [Errno 61] Connection refused
 WARNING:opensearch:HEAD http://localhost:9200/quantview_documents [status:N/A request:0.001s]
 Traceback (most recent call last):
   File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 174, in _new_conn
@@ -335,8 +293,8 @@ Traceback (most recent call last):
     conn = self._new_conn()
   File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 186, in _new_conn
     raise NewConnectionError(
-urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x131034be0>: Failed to establish a new connection: [Errno 61] Connection refused
-WARNING:opensearch:HEAD http://localhost:9200/quantview_documents [status:N/A request:0.001s]
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x1307b01f0>: Failed to establish a new connection: [Errno 61] Connection refused
+WARNING:opensearch:HEAD http://localhost:9200/quantview_documents [status:N/A request:0.000s]
 Traceback (most recent call last):
   File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 174, in _new_conn
     conn = connection.create_connection(
@@ -377,55 +335,67 @@ Traceback (most recent call last):
     conn = self._new_conn()
   File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 186, in _new_conn
     raise NewConnectionError(
-urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x130fe8700>: Failed to establish a new connection: [Errno 61] Connection refused
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x1307b0070>: Failed to establish a new connection: [Errno 61] Connection refused
+WARNING:opensearch:HEAD http://localhost:9200/quantview_documents [status:N/A request:0.000s]
+Traceback (most recent call last):
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/util/connection.py", line 95, in create_connection
+    raise err
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 61] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/opensearchpy/connection/http_urllib3.py", line 280, in perform_request
+    response = self.pool.urlopen(
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 802, in urlopen
+    retries = retries.increment(
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/util/retry.py", line 527, in increment
+    raise six.reraise(type(error), error, _stacktrace)
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/packages/six.py", line 770, in reraise
+    raise value
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 716, in urlopen
+    httplib_response = self._make_request(
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connectionpool.py", line 416, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 244, in request
+    super(HTTPConnection, self).request(method, url, body=body, headers=headers)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1257, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1303, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1252, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1012, in _send_output
+    self.send(msg)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 952, in send
+    self.connect()
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 205, in connect
+    conn = self._new_conn()
+  File "/Users/mahant/quantview/backend-india/venv/lib/python3.9/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x13076d550>: Failed to establish a new connection: [Errno 61] Connection refused
 INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
 INFO:apscheduler.scheduler:Added job "Nightly Filings Ingestion Bot" to job store "default"
 INFO:apscheduler.scheduler:Scheduler started
 INFO:knowledge_bot:Nightly Bot STARTED: Scheduled to run at 02:00 IST daily.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:nse_client:Initializing NSE session: visiting homepage for Akamai cookies...
+INFO:nse_client:NSE cookies captured: ['AKA_A2', '_abck', 'ak_bmsc', 'bm_sz']
   ✅ PostgreSQL tables created/verified
   ⚠️ Qdrant init failed (will retry on first use): [Errno 61] Connection refused
   ⚠️ Neo4j init failed (will retry on first use): Cannot resolve address 31f3e3a4.databases.neo4j.io:7687
-  ⚠️ OpenSearch init failed (will retry on first use): ConnectionError(<urllib3.connection.HTTPConnection object at 0x130fe8700>: Failed to establish a new connection: [Errno 61] Connection refused) caused by: NewConnectionError(<urllib3.connection.HTTPConnection object at 0x130fe8700>: Failed to establish a new connection: [Errno 61] Connection refused)
+  ⚠️ OpenSearch init failed (will retry on first use): ConnectionError(<urllib3.connection.HTTPConnection object at 0x13076d550>: Failed to establish a new connection: [Errno 61] Connection refused) caused by: NewConnectionError(<urllib3.connection.HTTPConnection object at 0x13076d550>: Failed to establish a new connection: [Errno 61] Connection refused)
   🤖 Nightly Ingestion Bot started (runs daily at 2:00 AM IST)
 ✅ QuantView India Backend ready!
-INFO:     127.0.0.1:54637 - "OPTIONS /api/v1/ai/research HTTP/1.1" 200 OK
-INFO:planner_agent:Planner: routing query 'is VRL stock investable?' → ['financial_agent', 'news_agent', 'filing_agent', 'valuation_agent']
-WARNING:financial_agent:DDGS financial search failed for NIFTY50: text() missing 1 required positional argument: 'query'
-INFO:news_agent:Live DDGS scraping news for NIFTY50
-ERROR:news_agent:Live news scraping failed for NIFTY50: news() missing 1 required positional argument: 'query'
-INFO:filing_agent:Querying Knowledge Platform RAG for INFY...
-INFO:knowledge_retrieval:Executing Hybrid Search for query: 'INFY is VRL stock investable?' (symbol=INFY, year=None)...
-INFO:knowledge_embeddings:Loading FastEmbed model: BAAI/bge-large-en-v1.5...
-Fetching 5 files:   0%|          | 0/5 [00:00<?, ?it/s]Fetching 5 files:  20%|██        | 1/5 [00:02<00:09,  2.43s/it]Fetching 5 files:  40%|████      | 2/5 [01:18<02:17, 45.79s/it]Fetching 5 files: 100%|██████████| 5/5 [01:18<00:00, 15.72s/it]
-INFO:knowledge_embeddings:FastEmbed model loaded successfully.
-INFO:knowledge_embeddings:Generating embeddings for 1 chunks using BAAI/bge-large-en-v1.5...
-INFO:knowledge_embeddings:Successfully generated embeddings for 1 chunks.
-INFO:knowledge_vector:Connecting to Qdrant server at http://10.250.101.68:6333...
-WARNING:knowledge_vector:Failed to connect to Qdrant server at 10.250.101.68:6333 ([Errno 61] Connection refused). Falling back to local embedded Qdrant database...
-INFO:knowledge_vector:Initialized local embedded Qdrant DB at /Users/mahant/quantview/documents/qdrant_storage
-INFO:knowledge_retrieval:Hybrid Search returned 0 hits in 85626.5 ms.
-INFO:filing_agent:No RAG chunks in Qdrant for 'INFY'. Triggering Real-Time Auto-Ingestion on-the-fly...
-INFO:knowledge_pipeline:=== Starting Knowledge Pipeline Ingestion for INFY ===
-INFO:nse_client:Discovering annual reports for INFY via NSE API...
-INFO:nse_client:Initializing NSE session: visiting homepage for Akamai cookies...
-INFO:nse_client:NSE cookies captured: ['AKA_A2', '_abck', 'ak_bmsc', 'bm_sz']
-INFO:nse_client:Discovered 17 annual reports for INFY
-INFO:nse_client:Downloading: https://nsearchives.nseindia.com/annual_reports/AR_29313_INFY_2025_2026_U_8985411_30052026200413.pdf
-INFO:nse_client:Downloaded 8985411 bytes (8.6 MB)
-INFO:nse_parser:PDF Validation Passed: SHA256=4fc4a071157f..., Size=8985411 bytes, Pages=384
-INFO:knowledge_storage:Saved raw PDF to /Users/mahant/quantview/documents/NSE/INFY/2026/annual_report/raw.pdf
-INFO:knowledge_parser:Parsing PDF document across 384 pages...
-INFO:knowledge_parser:PDF parsing complete: 1314625 characters generated.
-INFO:knowledge_storage:Saved parsed.md to /Users/mahant/quantview/documents/NSE/INFY/2026/annual_report/parsed.md
-INFO:knowledge_extractor:Extracting structured financials for INFY (2026)...
-INFO:knowledge_storage:Saved financials.json to /Users/mahant/quantview/documents/NSE/INFY/2026/annual_report/financials.json
-INFO:knowledge_chunker:Chunking document for INFY (2026) with 384 pages...
-INFO:knowledge_chunker:Generated 382 structural chunks for INFY (2026).
-INFO:knowledge_storage:Saved chunks.json to /Users/mahant/quantview/documents/NSE/INFY/2026/annual_report/chunks.json
-INFO:knowledge_embeddings:Loading FastEmbed model: BAAI/bge-large-en-v1.5...
-INFO:knowledge_embeddings:FastEmbed model loaded successfully.
-INFO:knowledge_embeddings:Generating embeddings for 382 chunks using BAAI/bge-large-en-v1.5...
-/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
-  warnings.warn('resource_tracker: There appear to be %d '
+INFO:     127.0.0.1:54838 - "GET /api/v1/market/indices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54852 - "GET /api/v1/broker-gateway/portfolio?broker=zerodha&connection_id=conn_zerodha_01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54853 - "GET /api/v1/broker-gateway/portfolio/intelligence?broker=zerodha&connection_id=conn_zerodha_01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54853 - "OPTIONS /api/v1/screener/filter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54852 - "POST /api/v1/screener/filter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54869 - "GET /api/v1/broker-gateway/portfolio?broker=zerodha&connection_id=conn_zerodha_01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54870 - "GET /api/v1/broker-gateway/portfolio/intelligence?broker=zerodha&connection_id=conn_zerodha_01 HTTP/1.1" 200 OK

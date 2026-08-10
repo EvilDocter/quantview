@@ -19,7 +19,7 @@ from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
 
 def clean_async_db_url(url: str) -> str:
     """Removes sslmode parameter from database URL since asyncpg does not support it."""
-    if not url:
+    if not url or "postgresql" not in url:
         return url
     parsed = urlparse(url)
     # Remove sslmode from query parameters

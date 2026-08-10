@@ -37,17 +37,19 @@ def clean_async_db_url(url: str) -> str:
         parsed.fragment
     ))
 
-db_url = clean_async_db_url(settings.database_url)
+is_sqlite = db_url.startswith("sqlite")
+
+async_kwargs = {"echo": settings.app_env == "development"}
+if not is_sqlite:
+    async_kwargs.update({
+        "pool_pre_ping": True,
+        "pool_size": 5,
+        "max_overflow": 10,
+        "connect_args": {"ssl": True} if "localhost" not in db_url and "127.0.0.1" not in db_url else {}
+    })
 
 # ── Async Engine (for FastAPI request handling) ──────────────────
-async_engine = create_async_engine(
-    db_url,
-    echo=settings.app_env == "development",
-    pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=10,
-    connect_args={"ssl": True} if "localhost" not in db_url and "127.0.0.1" not in db_url else {}
-)
+async_engine = create_async_engine(db_url, **async_kwargs)
 
 AsyncSessionLocal = async_sessionmaker(
     bind=async_engine,
@@ -55,12 +57,12 @@ AsyncSessionLocal = async_sessionmaker(
     expire_on_commit=False,
 )
 
+sync_kwargs = {"echo": False}
+if not is_sqlite:
+    sync_kwargs["pool_pre_ping"] = True
+
 # ── Sync Engine (for Alembic migrations & Celery tasks) ─────────
-sync_engine = create_engine(
-    settings.database_url_sync,
-    echo=False,
-    pool_pre_ping=True,
-)
+sync_engine = create_engine(settings.database_url_sync, **sync_kwargs)
 
 
 # ── Base Model ───────────────────────────────────────────────────

@@ -18,6 +18,8 @@ class BrokerCode(str, Enum):
     FYERS = "fyers"
     UPSTOX = "upstox"
     DHAN = "dhan"
+    GROWW = "groww"
+
 
 
 class Exchange(str, Enum):

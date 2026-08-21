@@ -6,7 +6,8 @@ Retrieves valuation multiples (PE Ratio, Price-to-Book, EPS) by querying DDGS.
 
 from app.agents.state import AgentState
 import logging
-from ddgs import DDGS
+from duckduckgo_search import DDGS
+
 
 logger = logging.getLogger("valuation_agent")
 

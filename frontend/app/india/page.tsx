@@ -6,67 +6,69 @@ import remarkGfm from "remark-gfm";
 import { useRouter } from "next/navigation";
 import { 
   Search, Brain, Activity, TrendingUp, TrendingDown, 
-  Layers, Users, ArrowUpRight, Flame 
+  Layers, Users, ArrowUpRight, Flame, Sparkles
 } from "lucide-react";
 import IndiaNavbar from "@/components/IndiaNavbar";
+import CopilotChat from "@/components/CopilotChat";
 
 export default function IndianMarketHome() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [aiResponse, setAiResponse] = useState<string>(
-    "Indian market indices closed near record territory today supported by heavy-weights purchasing. Auto stocks rallied on sales numbers, while IT stocks stabilized despite foreign currency headwinds."
-  );
+  const [activeSymbol, setActiveSymbol] = useState("RELIANCE");
+  const [showCopilot, setShowCopilot] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [agentsUsed, setAgentsUsed] = useState<string[]>([]);
 
   const quickPrompts = [
+    "Analyze Reliance Industries",
     "Should I invest in Tata Motors?",
-    "Compare Infosys vs TCS.",
-    "Explain Reliance Industries' Q4 profit margin.",
-    "Find undervalued small-caps."
+    "Compare Infosys vs TCS",
+    "Explain VRL Logistics cash flow",
   ];
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
-  const handleSearch = async (queryToSubmit?: string) => {
+  const detectCompanySymbol = (q: string): string => {
+    const qUpper = q.toUpperCase();
+    
+    // Explicit Alias Mappings
+    if (qUpper.includes("INFOSYS") || qUpper.includes("INFY")) return "INFY";
+    if (qUpper.includes("TATA CONSULTANCY") || qUpper.includes("TCS")) return "TCS";
+    if (qUpper.includes("TATA MOTORS") || qUpper.includes("TATAMOTORS")) return "TATAMOTORS";
+    if (qUpper.includes("RELIANCE")) return "RELIANCE";
+    if (qUpper.includes("VRL LOGISTICS") || qUpper.includes("VRLLOG") || qUpper.includes("VRL")) return "VRLLOG";
+    if (qUpper.includes("HINDUSTAN AERONAUTICS") || qUpper.includes("HAL")) return "HAL";
+    if (qUpper.includes("HDFC BANK") || qUpper.includes("HDFCBANK")) return "HDFCBANK";
+    if (qUpper.includes("ICICI BANK") || qUpper.includes("ICICIBANK")) return "ICICIBANK";
+    if (qUpper.includes("STATE BANK") || qUpper.includes("SBIN")) return "SBIN";
+    if (qUpper.includes("ZOMATO")) return "ZOMATO";
+    if (qUpper.includes("SUZLON")) return "SUZLON";
+    if (qUpper.includes("MRF")) return "MRF";
+    if (qUpper.includes("CDSL")) return "CDSL";
+
+    // Dynamic Extraction: Remove common prompt words and extract ticker candidate
+    const cleaned = qUpper
+      .replace(/\b(ANALYZE|EXPLAIN|COMPARE|VS|SHOULD|INVEST|IN|CASH|FLOW|MARGIN|VALUATION|SCENARIO|BULL|BEAR|FOR|STOCK|SHARE|COMPANY|LIMITED|LTD|WHAT|AM|I|MISSING|THE|TREND|AND)\b/g, " ")
+      .trim();
+
+    const matches = cleaned.match(/\b[A-Z0-9]{2,12}\b/g);
+    if (matches && matches.length > 0) {
+      return matches[0];
+    }
+
+    return "RELIANCE";
+  };
+
+
+  const handleSearch = (queryToSubmit?: string) => {
     const activeQuery = queryToSubmit || searchQuery;
     if (!activeQuery.trim()) return;
 
-    setIsLoading(true);
-    setAiResponse("Invoking Planning Coordinator... Searching Knowledge Vector DB & Scraping Evidence...");
-    setAgentsUsed(["planner", "filing_agent", "financial_agent", "synthesis_agent"]);
+    const sym = detectCompanySymbol(activeQuery);
+    setActiveSymbol(sym);
+    setShowCopilot(true);
 
-    const domainUrl = typeof window !== "undefined" && window.location.hostname.includes("quantview.in")
-      ? "https://quantview.in/api/v1/ai/research"
-      : null;
-
-    const endpoints = [
-      ...(domainUrl ? [domainUrl] : []),
-      "http://localhost:8000/api/v1/ai/research",
-      "/api/v1/ai/research"
-    ];
-
-    let res: Response | null = null;
-    for (const ep of endpoints) {
-      try {
-        res = await fetch(ep, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: activeQuery })
-        });
-        if (res.ok) break;
-      } catch (err) {}
+    // If searching explicit company query, navigate directly to company workspace
+    if (activeQuery.toLowerCase().includes("analyze") || activeQuery.toLowerCase().includes("company") || activeQuery.length < 10) {
+      router.push(`/india/company/${sym}`);
     }
-
-    if (res && res.ok) {
-      const data = await res.json();
-      setAiResponse(data.answer || "No response received from agents.");
-      setAgentsUsed(data.agents_used || ["planner", "filing_agent", "synthesis_agent"]);
-    } else if (res) {
-      setAiResponse(`AI research backend returned error HTTP ${res.status}. Please check backend logs.`);
-    } else {
-      setAiResponse("⚠️ Connection error: Could not reach QuantView Backend. Please ensure backend server is active.");
-    }
-    setIsLoading(false);
   };
 
   const [indices, setIndices] = useState<any[]>([]);
@@ -78,55 +80,46 @@ export default function IndianMarketHome() {
 
   React.useEffect(() => {
     const fetchLiveData = async () => {
-      const isQuantviewDomain = typeof window !== "undefined" && window.location.hostname.includes("quantview.in");
+      // Use relative URL first (Next.js proxy -> backend:8001), then same-host direct
       const baseEndpoints = [
-        ...(isQuantviewDomain ? ["https://quantview.in", "https://api.quantview.in"] : []),
-        process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000",
-        ""
+        "",
+        `${window.location.protocol}//${window.location.hostname}:8001`,
       ];
+
 
       const fetchEndpoint = async (path: string) => {
         for (const base of baseEndpoints) {
           try {
             const url = base ? `${base}${path}` : path;
-            const res = await fetch(url);
+            const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
             if (res.ok) return await res.json();
           } catch (e) {}
         }
         return null;
       };
 
-      try {
-        const idxData = await fetchEndpoint("/api/v1/market/indices");
-        if (idxData?.indices?.length) setIndices(idxData.indices);
+      const [indData, gainData, loseData, secData, fiiData] = await Promise.all([
+        fetchEndpoint("/api/v1/market/indices"),
+        fetchEndpoint("/api/v1/market/top-gainers"),
+        fetchEndpoint("/api/v1/market/top-losers"),
+        fetchEndpoint("/api/v1/market/sectors"),
+        fetchEndpoint("/api/v1/market/fii-dii-activity"),
+      ]);
 
-        const gainData = await fetchEndpoint("/api/v1/market/gainers");
-        if (gainData?.gainers?.length) setGainers(gainData.gainers);
-
-        const loseData = await fetchEndpoint("/api/v1/market/losers");
-        if (loseData?.losers?.length) setLosers(loseData.losers);
-
-        const secData = await fetchEndpoint("/api/v1/market/sectors");
-        if (secData?.sectors?.length) setSectors(secData.sectors);
-
-        const instData = await fetchEndpoint("/api/v1/market/fii-dii");
-        if (instData?.fii_net) setFiiNet(instData.fii_net);
-        if (instData?.dii_net) setDiiNet(instData.dii_net);
-      } catch (err) {
-        console.error("Failed to connect to India market tick API:", err);
-      }
+      if (indData?.indices) setIndices(indData.indices);
+      if (gainData?.gainers) setGainers(gainData.gainers);
+      if (loseData?.losers) setLosers(loseData.losers);
+      if (secData?.sectors) setSectors(secData.sectors);
+      if (fiiData?.fii_net) setFiiNet(fiiData.fii_net);
+      if (fiiData?.dii_net) setDiiNet(fiiData.dii_net);
     };
 
     fetchLiveData();
-    const interval = setInterval(fetchLiveData, 15000);
-    return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-slate-100 flex flex-col font-sans relative overflow-hidden">
-      {/* Glow Background */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Shared Navbar */}
       <IndiaNavbar />
@@ -138,10 +131,10 @@ export default function IndianMarketHome() {
         <div className="text-center space-y-6 max-w-3xl mx-auto pt-4">
           <div className="space-y-2">
             <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white">
-              AI Financial Research Platform
+              AI Financial Research Copilot
             </h1>
             <p className="text-xs md:text-sm text-slate-400">
-              Assign comprehensive research tasks to autonomous agents analyzing real-time financial data.
+              Persistent AI equity research copilot analyzing 5,000+ Indian listed equities with Baidu Unlimited-OCR.
             </p>
           </div>
 
@@ -151,7 +144,7 @@ export default function IndianMarketHome() {
               <Search className="w-5 h-5 text-slate-500 ml-4" />
               <input
                 type="text"
-                placeholder="Ask anything about Indian markets (e.g., 'Analyze Reliance Industries')..."
+                placeholder="Ask anything about Indian markets (e.g., 'Analyze Reliance Industries', 'VRLLOG')..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
@@ -162,7 +155,7 @@ export default function IndianMarketHome() {
                 disabled={isLoading}
                 className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-lg"
               >
-                {isLoading ? "Searching..." : "Ask Agent"}
+                Launch Copilot
               </button>
             </div>
           </div>
@@ -184,168 +177,84 @@ export default function IndianMarketHome() {
           </div>
         </div>
 
-        {/* AI Agent Research Chat Response */}
-        {aiResponse && (
-          <div className="w-full bg-[#12121a]/80 border border-indigo-500/20 rounded-[24px] p-8 shadow-2xl backdrop-blur-md relative overflow-hidden transition-all duration-500 max-w-4xl mx-auto">
-            {isLoading && (
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 animate-pulse" />
-            )}
-            
-            <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                <Brain className="w-5 h-5 text-indigo-400" /> AI Agent Research Output
-              </h3>
-              {isLoading && (
-                <span className="flex h-3 w-3 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
-                </span>
-              )}
-            </div>
-            
-            <div className="prose prose-invert prose-indigo max-w-none text-slate-200 text-sm md:text-base leading-relaxed">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {aiResponse}
-              </ReactMarkdown>
-            </div>
-
-            {agentsUsed.length > 0 && (
-              <div className="mt-8 pt-4 border-t border-white/5 space-y-3">
-                <div className="text-xs uppercase tracking-wider font-bold text-slate-500">Specialist Agents Invoked</div>
-                <div className="flex flex-wrap gap-2">
-                  {agentsUsed.map((agent, i) => (
-                    <span key={i} className="text-[10px] font-bold px-3 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 uppercase tracking-wide">
-                      {agent}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+        {/* Phase IX Embedded Copilot Research Workspace */}
+        {showCopilot && (
+          <div className="w-full max-w-5xl mx-auto">
+            <CopilotChat symbol={activeSymbol} companyName={activeSymbol} />
           </div>
         )}
 
-        {/* Market Overview Dashboards Grid */}
-        <div className="grid md:grid-cols-3 gap-6">
-          
-          {/* Column 1: Market Pulse & Institutional */}
-          <div className="space-y-6">
-            <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 space-y-4 backdrop-blur-md">
-              <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+        {/* Market Data Grid */}
+        {!showCopilot && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Market Pulse Card */}
+            <div className="bg-white/[0.01] border border-white/5 rounded-3xl p-6 space-y-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                 <Activity className="w-4 h-4 text-indigo-400" /> Market Pulse
               </h3>
-              <div className="space-y-4">
-                {indices.map((idx, i) => (
-                  <div key={i} className="flex justify-between items-center border-b border-white/5 pb-2 last:border-0 last:pb-0">
-                    <span className="text-xs text-slate-400 font-medium">{idx.name}</span>
-                    <div className="text-right">
-                      <div className="text-xs font-bold text-white">{idx.value}</div>
-                      <div className={`text-[10px] font-semibold ${idx.status === "up" ? "text-emerald-400" : "text-rose-400"}`}>
-                        {idx.pct}
-                      </div>
+              <div className="space-y-3">
+                {indices.length === 0 ? (
+                  <p className="text-xs text-slate-500">Loading benchmark indices...</p>
+                ) : (
+                  indices.map((ind, i) => (
+                    <div key={i} className="flex justify-between items-center border-b border-white/5 pb-2">
+                      <span className="text-xs font-bold text-white">{ind.name}</span>
+                      <span className={`text-xs font-mono font-bold ${ind.change >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                        {ind.price?.toLocaleString("en-IN")} ({ind.change >= 0 ? "+" : ""}{ind.change_pct}%)
+                      </span>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 
-            <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 space-y-4 backdrop-blur-md">
-              <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                <Users className="w-4 h-4 text-indigo-400" /> Institutional Activity
-              </h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-black/30 rounded-2xl p-3 border border-white/5 text-center">
-                  <div className="text-[10px] text-slate-400 font-bold uppercase">FII Net Flow</div>
-                  <div className="text-sm font-black text-emerald-400 mt-1">{fiiNet}</div>
-                </div>
-                <div className="bg-black/30 rounded-2xl p-3 border border-white/5 text-center">
-                  <div className="text-[10px] text-slate-400 font-bold uppercase">DII Net Flow</div>
-                  <div className="text-sm font-black text-emerald-400 mt-1">{diiNet}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Column 2: Gainers & Losers (Clickable to Deep Dive) */}
-          <div className="space-y-6">
-            <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 space-y-4 backdrop-blur-md">
-              <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+            {/* Top Gainers Card */}
+            <div className="bg-white/[0.01] border border-white/5 rounded-3xl p-6 space-y-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-emerald-400" /> Top Gainers
               </h3>
               <div className="space-y-3">
-                {gainers.map((stock, i) => (
-                  <div 
-                    key={i} 
-                    onClick={() => router.push(`/india/company/${stock.symbol}`)}
-                    className="flex justify-between items-center text-xs hover:bg-white/[0.04] p-2 rounded-xl cursor-pointer transition"
-                  >
-                    <span className="text-slate-300 font-semibold flex items-center gap-1">
-                      {stock.symbol} <ArrowUpRight className="w-3 h-3 text-indigo-400" />
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-slate-400">{stock.price}</span>
-                      <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px]">
-                        {stock.change}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                {gainers.length === 0 ? (
+                  <p className="text-xs text-slate-500">Loading market gainers...</p>
+                ) : (
+                  gainers.slice(0, 5).map((g, i) => (
+                    <button
+                      key={i}
+                      onClick={() => router.push(`/india/company/${g.symbol}`)}
+                      className="w-full flex justify-between items-center border-b border-white/5 pb-2 hover:bg-white/[0.02] transition text-left"
+                    >
+                      <span className="text-xs font-bold text-white">{g.symbol}</span>
+                      <span className="text-xs font-mono font-bold text-emerald-400">+{g.change_pct}%</span>
+                    </button>
+                  ))
+                )}
               </div>
             </div>
 
-            <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 space-y-4 backdrop-blur-md">
-              <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+            {/* Top Losers Card */}
+            <div className="bg-white/[0.01] border border-white/5 rounded-3xl p-6 space-y-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                 <TrendingDown className="w-4 h-4 text-rose-400" /> Top Losers
               </h3>
               <div className="space-y-3">
-                {losers.map((stock, i) => (
-                  <div 
-                    key={i} 
-                    onClick={() => router.push(`/india/company/${stock.symbol}`)}
-                    className="flex justify-between items-center text-xs hover:bg-white/[0.04] p-2 rounded-xl cursor-pointer transition"
-                  >
-                    <span className="text-slate-300 font-semibold flex items-center gap-1">
-                      {stock.symbol} <ArrowUpRight className="w-3 h-3 text-indigo-400" />
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-slate-400">{stock.price}</span>
-                      <span className="text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded-full text-[10px]">
-                        {stock.change}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                {losers.length === 0 ? (
+                  <p className="text-xs text-slate-500">Loading market losers...</p>
+                ) : (
+                  losers.slice(0, 5).map((l, i) => (
+                    <button
+                      key={i}
+                      onClick={() => router.push(`/india/company/${l.symbol}`)}
+                      className="w-full flex justify-between items-center border-b border-white/5 pb-2 hover:bg-white/[0.02] transition text-left"
+                    >
+                      <span className="text-xs font-bold text-white">{l.symbol}</span>
+                      <span className="text-xs font-mono font-bold text-rose-400">{l.change_pct}%</span>
+                    </button>
+                  ))
+                )}
               </div>
             </div>
           </div>
-
-          {/* Column 3: Sector Heatmap */}
-          <div className="space-y-6">
-            <div className="bg-white/[0.02] border border-white/5 rounded-[24px] p-6 space-y-4 backdrop-blur-md">
-              <div className="flex justify-between items-center">
-                <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                  <Layers className="w-4 h-4 text-indigo-400" /> Sector Performance
-                </h3>
-                <button 
-                  onClick={() => router.push("/india/sectors")}
-                  className="text-[10px] text-indigo-400 font-bold hover:underline"
-                >
-                  View All →
-                </button>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {sectors.map((sec, i) => (
-                  <div key={i} className="bg-black/20 rounded-xl p-3 border border-white/5 flex flex-col justify-between">
-                    <span className="text-[10px] text-slate-400 truncate">{sec.name}</span>
-                    <span className={`text-xs font-bold mt-1 ${sec.status === "up" || (sec.change && sec.change.includes("+")) ? "text-emerald-400" : "text-rose-400"}`}>
-                      {sec.change || sec.perf}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-        </div>
+        )}
 
       </main>
     </div>

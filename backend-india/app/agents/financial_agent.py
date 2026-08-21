@@ -11,7 +11,8 @@ import urllib.request
 import json
 import os
 from pathlib import Path
-from ddgs import DDGS
+from duckduckgo_search import DDGS
+
 from app.config import get_settings
 
 logger = logging.getLogger("financial_agent")

@@ -1,16 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { useParams } from "next/navigation";
 import {
-  Activity, TrendingUp, Brain, Building2,
-  BarChart3, Newspaper, DollarSign, Shield
+  TrendingUp, TrendingDown, Building2, BarChart3, Shield,
+  Layers, PieChart, Landmark, Percent, Award, ArrowUpRight, Clock
 } from "lucide-react";
 import IndiaNavbar from "@/components/IndiaNavbar";
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL_INDIA || "http://localhost:8000";
+import CopilotChat from "@/components/CopilotChat";
 
 interface CompanyData {
   symbol: string;
@@ -33,15 +30,48 @@ interface CompanyData {
   revenue: number;
   net_income: number;
   ebitda: number;
-  summary: string;
 }
 
-interface NewsItem {
-  title: string;
-  url: string;
-  source: string;
-  date: string;
-  body: string;
+interface PricePoint {
+  time: string;
+  price: number;
+}
+
+interface TijoriData {
+  symbol: string;
+  company_name: string;
+  sector: string;
+  business_segments: Array<{
+    segment: string;
+    revenue_cr: number;
+    pct_share: number;
+    yoy_growth_pct: number;
+    description: string;
+  }>;
+  loan_portfolio_mix: Array<{
+    category: string;
+    amount_cr: number;
+    pct_share: number;
+    asset_quality: string;
+  }>;
+  market_share_metrics: Array<{
+    metric: string;
+    value: string;
+    industry_rank: string;
+    trend: string;
+  }>;
+  banking_operational_kpis: Array<{
+    kpi: string;
+    value: string;
+    benchmark: string;
+    status: string;
+  }>;
+  key_subsidiaries: Array<{
+    subsidiary: string;
+    stake_pct: string;
+    business: string;
+    valuation_est_cr: number;
+  }>;
 }
 
 function formatCurrency(val: number): string {
@@ -53,290 +83,448 @@ function formatCurrency(val: number): string {
   return `₹${val.toLocaleString("en-IN")}`;
 }
 
-function formatNum(val: number | undefined, suffix = ""): string {
-  if (!val || val === 0) return "—";
-  return `${Number(val).toFixed(2)}${suffix}`;
-}
+// No hardcoded defaults — all data comes from the live backend (Google Finance)
 
-export default function CompanyPortal() {
+export default function DedicatedCompanyPortal() {
   const params = useParams();
-  const router = useRouter();
-  const symbol = (params.symbol as string)?.toUpperCase() || "";
+  const rawSymbol = (params?.symbol as string)?.toUpperCase() || "HDFCBANK";
+  const symbol = rawSymbol === "HDFC" ? "HDFCBANK" : rawSymbol;
 
   const [company, setCompany] = useState<CompanyData | null>(null);
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [aiReport, setAiReport] = useState<string>("");
-  const [aiLoading, setAiLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<"overview" | "financials" | "news" | "ai">("overview");
+  const [tijori, setTijori] = useState<TijoriData | null>(null);
+  const [priceSeries, setPriceSeries] = useState<PricePoint[]>([]);
+  const [timeSpan, setTimeSpan] = useState<string>("1Y");
+  const [hoveredPrice, setHoveredPrice] = useState<PricePoint | null>(null);
   const [loading, setLoading] = useState(true);
+  const [dataSource, setDataSource] = useState<string>("");
 
-  // Load TradingView Widget
+  // Fetch real data from backend (Google Finance scraping)
   useEffect(() => {
-    if (activeTab !== "overview") return;
-    const container = document.getElementById("tradingview_chart");
-    if (!container) return;
-    container.innerHTML = "";
-    const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/tv.js";
-    script.async = true;
-    script.onload = () => {
-      if (typeof window !== "undefined" && (window as any).TradingView) {
-        new (window as any).TradingView.widget({
-          width: "100%",
-          height: 380,
-          symbol: `BSE:${symbol}`,
-          interval: "D",
-          timezone: "Asia/Kolkata",
-          theme: "dark",
-          style: "1",
-          locale: "en",
-          toolbar_bg: "#0a0a0f",
-          enable_publishing: false,
-          hide_side_toolbar: false,
-          allow_symbol_change: true,
-          container_id: "tradingview_chart",
-        });
-      }
-    };
-    document.head.appendChild(script);
-    return () => { script.remove(); };
-  }, [symbol, activeTab]);
-
-  // Fetch company data
-  useEffect(() => {
+    let isMounted = true;
     const fetchData = async () => {
       setLoading(true);
-      try {
-        const [compRes, newsRes] = await Promise.all([
-          fetch(`${BACKEND_URL}/api/v1/company/${symbol}`),
-          fetch(`${BACKEND_URL}/api/v1/company/${symbol}/news?limit=5`),
-        ]);
-        if (compRes.ok) setCompany(await compRes.json());
-        if (newsRes.ok) {
-          const data = await newsRes.json();
-          setNews(data.news || []);
-        }
-      } catch (err) {
-        console.error("Failed to fetch company data:", err);
-      } finally {
-        setLoading(false);
+      const baseEndpoints = [
+        "",
+        typeof window !== "undefined" ? `${window.location.protocol}//${window.location.hostname}:8001` : "",
+      ].filter(Boolean);
+
+      for (const base of baseEndpoints) {
+        try {
+          const url = base ? `${base}/api/v1/company/${symbol}/full` : `/api/v1/company/${symbol}/full`;
+          const res = await fetch(url);
+          if (res.ok && isMounted) {
+            const data = await res.json();
+            const md = data.market_data || {};
+            const fin = data.financials || {};
+            const comp = data.company || {};
+            setCompany({
+              symbol: data.symbol || symbol,
+              name: comp.name || md.name || symbol,
+              sector: comp.sector || md.sector || "",
+              industry: comp.industry || md.industry || "",
+              market_cap: md.market_cap || 0,
+              current_price: md.current_price || 0,
+              previous_close: md.previous_close || 0,
+              day_high: md.day_high || 0,
+              day_low: md.day_low || 0,
+              fifty_two_week_high: md.fifty_two_week_high || 0,
+              fifty_two_week_low: md.fifty_two_week_low || 0,
+              pe_ratio: md.pe_ratio || 0,
+              eps: md.eps || 0,
+              book_value: md.book_value || 0,
+              dividend_yield: md.dividend_yield || 0,
+              roe: md.roe || 0,
+              debt_to_equity: md.debt_to_equity || 0,
+              revenue: fin.revenue || 0,
+              net_income: fin.net_income || 0,
+              ebitda: fin.ebitda || 0,
+            });
+            setDataSource(data.data_source || "backend");
+            break;
+          }
+        } catch (e) {}
       }
+
+      for (const base of baseEndpoints) {
+        try {
+          const tUrl = base ? `${base}/api/v1/company/${symbol}/tijori` : `/api/v1/company/${symbol}/tijori`;
+          const tRes = await fetch(tUrl);
+          if (tRes.ok && isMounted) {
+            const tData = await tRes.json();
+            if (tData && tData.business_segments) {
+              setTijori(tData);
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (isMounted) setLoading(false);
     };
-    if (symbol) fetchData();
+
+    fetchData();
+    return () => { isMounted = false; };
   }, [symbol]);
 
-  const handleAiAnalysis = async () => {
-    setAiLoading(true);
-    setActiveTab("ai");
-    setAiReport("Analyzing...");
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/v1/ai/research`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: `Deep analysis of ${symbol} stock` }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAiReport(data.answer || "No report generated.");
-      } else {
-        setAiReport("Failed to generate AI report.");
+  // Fetch YFinance price series on span change
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPrices = async () => {
+      const baseEndpoints = [
+        "",
+        typeof window !== "undefined" ? `${window.location.protocol}//${window.location.hostname}:8001` : "",
+      ].filter(Boolean);
+
+      for (const base of baseEndpoints) {
+        try {
+          const url = base ? `${base}/api/v1/company/${symbol}/prices?span=${timeSpan}` : `/api/v1/company/${symbol}/prices?span=${timeSpan}`;
+          const res = await fetch(url);
+          if (res.ok && isMounted) {
+            const data = await res.json();
+            if (data.series && data.series.length > 0) {
+              setPriceSeries(data.series);
+              break;
+            }
+          }
+        } catch (e) {}
       }
-    } catch {
-      setAiReport("Connection error. Is the backend running?");
-    } finally {
-      setAiLoading(false);
-    }
-  };
+    };
+    fetchPrices();
+    return () => { isMounted = false; };
+  }, [symbol, timeSpan]);
 
   const priceChange = company ? company.current_price - company.previous_close : 0;
   const pricePct = company && company.previous_close ? (priceChange / company.previous_close) * 100 : 0;
 
-  return (
-    <div className="min-h-screen bg-[#0a0a0f] text-slate-100 flex flex-col font-sans relative overflow-hidden">
-      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[150px] pointer-events-none" />
+  // Custom SVG Chart Calculation
+  const minPrice = priceSeries.length ? Math.min(...priceSeries.map(p => p.price)) * 0.98 : 1400;
+  const maxPrice = priceSeries.length ? Math.max(...priceSeries.map(p => p.price)) * 1.02 : 1750;
+  const priceRange = maxPrice - minPrice || 1;
 
-      {/* Shared Navbar */}
+  const svgWidth = 800;
+  const svgHeight = 220;
+
+  const pointsString = priceSeries.map((p, idx) => {
+    const x = (idx / (priceSeries.length - 1)) * svgWidth;
+    const y = svgHeight - ((p.price - minPrice) / priceRange) * svgHeight;
+    return `${x},${y}`;
+  }).join(" ");
+
+  const areaPoints = priceSeries.length > 0
+    ? `0,${svgHeight} ${pointsString} ${svgWidth},${svgHeight}`
+    : "";
+
+  return (
+    <div className="min-h-screen bg-[#06070a] text-slate-100 flex flex-col font-sans relative">
       <IndiaNavbar />
 
-      <main className="max-w-6xl w-full mx-auto px-6 py-8 space-y-8 flex-1 z-10">
-        {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-pulse text-slate-400">Loading company data...</div>
+      {loading && !company ? (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center space-y-3">
+            <div className="w-10 h-10 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-sm text-slate-400 font-bold">Loading live data for {symbol}...</p>
+            <p className="text-xs text-slate-500">Fetching from Google Finance</p>
           </div>
-        ) : (
-          <>
-            {/* Price header card */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white/[0.01] border border-white/5 rounded-3xl p-6 gap-4">
+        </div>
+      ) : (
+
+      <main className="max-w-[1850px] w-full mx-auto px-4 py-4 flex-1 z-10 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* ================================================================= */}
+        {/* LEFT PANE (70% Width): Live Data, YFinance Chart, Tijori Tables  */}
+        {/* ================================================================= */}
+        <div className="lg:col-span-8 space-y-5 overflow-y-auto max-h-[calc(100vh-90px)] pr-2 scrollbar-thin scrollbar-thumb-white/10">
+          
+          {/* 1. STOCK HEADER CARD */}
+          <div className="bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-4 shadow-xl">
+            <div className="flex flex-wrap justify-between items-start gap-4">
               <div>
-                <h1 className="text-3xl font-black tracking-tight text-white">
-                  {company?.name || symbol}
-                </h1>
-                <p className="text-xs text-slate-400 mt-1">
-                  {company?.sector || "—"} • {company?.industry || "—"} • MCap: {formatCurrency(company?.market_cap || 0)}
+                <div className="flex items-center gap-3">
+                  <span className="px-2.5 py-1 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-mono font-bold text-xs rounded-lg">
+                    {company?.symbol || symbol}
+                  </span>
+                  <h1 className="text-2xl font-black text-white tracking-tight">{company?.name || symbol}</h1>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 flex items-center gap-2">
+                  {company?.sector && <span>{company.sector}</span>}
+                  {company?.sector && company?.industry && <span> • </span>}
+                  {company?.industry && <span>{company.industry}</span>}
+                  {dataSource && <span className="ml-2 px-1.5 py-0.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[9px] font-bold rounded uppercase">Live: {dataSource}</span>}
                 </p>
               </div>
+
               <div className="text-right">
-                <div className="text-3xl font-black text-white">
-                  ₹{company?.current_price?.toLocaleString("en-IN") || "—"}
+                <div className="text-3xl font-black text-white tracking-tight">
+                  {company?.current_price ? `₹${company.current_price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}` : "--"}
                 </div>
-                <div className={`text-xs font-bold mt-1 ${priceChange >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-                  {priceChange >= 0 ? "+" : ""}₹{priceChange.toFixed(2)} ({pricePct >= 0 ? "+" : ""}{pricePct.toFixed(2)}%)
+                <div className={`text-xs font-bold mt-1 flex items-center justify-end gap-1 ${priceChange >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                  {priceChange >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                  <span>{priceChange >= 0 ? "+" : ""}₹{priceChange.toFixed(2)} ({pricePct >= 0 ? "+" : ""}{pricePct.toFixed(2)}%)</span>
                 </div>
               </div>
             </div>
 
-            {/* Navigation Tabs */}
-            <div className="flex gap-2 border-b border-white/5 pb-2 overflow-x-auto">
-              {(["overview", "financials", "news", "ai"] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => {
-                    setActiveTab(tab);
-                    if (tab === "ai" && !aiReport) handleAiAnalysis();
-                  }}
-                  className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition ${
-                    activeTab === tab
-                      ? "bg-indigo-600 text-white shadow-lg"
-                      : "text-slate-400 hover:text-white bg-white/[0.02]"
-                  }`}
-                >
-                  {tab === "ai" ? "AI Analysis" : tab}
-                </button>
-              ))}
+            {/* Core Metrics Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 pt-2 border-t border-white/5">
+              <div className="bg-black/30 border border-white/5 rounded-xl p-2.5 text-center">
+                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Market Cap</div>
+                <div className="text-xs font-black text-white mt-1">{formatCurrency(company?.market_cap || 0)}</div>
+              </div>
+              <div className="bg-black/30 border border-white/5 rounded-xl p-2.5 text-center">
+                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">P/E Ratio</div>
+                <div className="text-xs font-black text-white mt-1">{company?.pe_ratio ? `${company.pe_ratio}x` : "—"}</div>
+              </div>
+              <div className="bg-black/30 border border-white/5 rounded-xl p-2.5 text-center">
+                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">52W High</div>
+                <div className="text-xs font-black text-emerald-400 mt-1">₹{company?.fifty_two_week_high || "—"}</div>
+              </div>
+              <div className="bg-black/30 border border-white/5 rounded-xl p-2.5 text-center">
+                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">52W Low</div>
+                <div className="text-xs font-black text-rose-400 mt-1">₹{company?.fifty_two_week_low || "—"}</div>
+              </div>
+              <div className="bg-black/30 border border-white/5 rounded-xl p-2.5 text-center">
+                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Book Value</div>
+                <div className="text-xs font-black text-white mt-1">₹{company?.book_value || "—"}</div>
+              </div>
+              <div className="bg-black/30 border border-white/5 rounded-xl p-2.5 text-center">
+                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Div Yield</div>
+                <div className="text-xs font-black text-indigo-400 mt-1">{company?.dividend_yield ? `${(company.dividend_yield * 100).toFixed(2)}%` : "—"}</div>
+              </div>
             </div>
+          </div>
 
-            {/* Tab: Overview */}
-            {activeTab === "overview" && (
-              <div className="space-y-6">
-                <div className="bg-white/[0.01] border border-white/5 rounded-3xl overflow-hidden p-6">
-                  <div id="tradingview_chart" className="w-full" />
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {[
-                    { label: "P/E Ratio", value: formatNum(company?.pe_ratio, "x") },
-                    { label: "EPS", value: formatNum(company?.eps) },
-                    { label: "ROE", value: company?.roe ? `${(company.roe * 100).toFixed(1)}%` : "—" },
-                    { label: "Debt/Equity", value: formatNum(company?.debt_to_equity) },
-                    { label: "Book Value", value: formatNum(company?.book_value) },
-                    { label: "Div Yield", value: company?.dividend_yield ? `${(company.dividend_yield * 100).toFixed(2)}%` : "—" },
-                    { label: "52W High", value: company?.fifty_two_week_high ? `₹${company.fifty_two_week_high.toLocaleString("en-IN")}` : "—" },
-                    { label: "52W Low", value: company?.fifty_two_week_low ? `₹${company.fifty_two_week_low.toLocaleString("en-IN")}` : "—" },
-                  ].map((item, i) => (
-                    <div key={i} className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 text-center">
-                      <div className="text-[10px] text-slate-400 uppercase font-bold">{item.label}</div>
-                      <div className="text-lg font-black text-white mt-1">{item.value}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {company?.summary && (
-                  <div className="bg-white/[0.01] border border-white/5 rounded-3xl p-6 space-y-3">
-                    <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-indigo-400" /> About {company.name}
-                    </h3>
-                    <p className="text-sm text-slate-300 leading-relaxed">{company.summary}</p>
-                  </div>
+          {/* 2. CUSTOM YFINANCE PRICE CHART (No TradingView) */}
+          <div className="bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-3 shadow-xl">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-indigo-400" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">YFinance Historical Price Chart</h3>
+                {hoveredPrice && (
+                  <span className="text-xs font-mono font-bold text-emerald-400 ml-2">
+                    {hoveredPrice.time}: ₹{hoveredPrice.price}
+                  </span>
                 )}
               </div>
-            )}
 
-            {/* Tab: Financials */}
-            {activeTab === "financials" && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {[
-                    { label: "Revenue", value: formatCurrency(company?.revenue || 0), icon: DollarSign },
-                    { label: "Net Income", value: formatCurrency(company?.net_income || 0), icon: BarChart3 },
-                    { label: "EBITDA", value: formatCurrency(company?.ebitda || 0), icon: TrendingUp },
-                  ].map((item, i) => (
-                    <div key={i} className="bg-white/[0.01] border border-white/5 rounded-3xl p-6 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <item.icon className="w-4 h-4 text-indigo-400" />
-                        <span className="text-xs text-slate-400 uppercase font-bold">{item.label}</span>
-                      </div>
-                      <div className="text-2xl font-black text-white">{item.value}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="bg-white/[0.01] border border-white/5 rounded-3xl p-6 space-y-4">
-                  <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-indigo-400" /> Key Ratios
-                  </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                    {[
-                      { label: "P/E Ratio", value: formatNum(company?.pe_ratio, "x") },
-                      { label: "EPS", value: `₹${formatNum(company?.eps)}` },
-                      { label: "Book Value", value: `₹${formatNum(company?.book_value)}` },
-                      { label: "Debt/Equity", value: formatNum(company?.debt_to_equity) },
-                      { label: "ROE", value: company?.roe ? `${(company.roe * 100).toFixed(1)}%` : "—" },
-                      { label: "Div Yield", value: company?.dividend_yield ? `${(company.dividend_yield * 100).toFixed(2)}%` : "—" },
-                    ].map((item, i) => (
-                      <div key={i} className="flex justify-between border-b border-white/5 pb-2">
-                        <span className="text-slate-400">{item.label}</span>
-                        <span className="text-white font-bold">{item.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Tab: News */}
-            {activeTab === "news" && (
-              <div className="bg-white/[0.01] border border-white/5 rounded-3xl p-6 space-y-4">
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <Newspaper className="w-4 h-4 text-indigo-400" /> Latest News
-                </h3>
-                {news.length === 0 ? (
-                  <p className="text-sm text-slate-400">No news available.</p>
-                ) : (
-                  <div className="space-y-4">
-                    {news.map((item, i) => (
-                      <a
-                        key={i}
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition"
-                      >
-                        <h4 className="font-bold text-white text-sm leading-relaxed">{item.title}</h4>
-                        <p className="text-[10px] text-slate-500 mt-1">{item.source} • {item.date}</p>
-                        {item.body && <p className="text-xs text-slate-400 mt-2 line-clamp-2">{item.body}</p>}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Tab: AI Analysis */}
-            {activeTab === "ai" && (
-              <div className="w-full bg-[#12121a]/80 border border-indigo-500/20 rounded-3xl p-8 shadow-2xl backdrop-blur-md relative overflow-hidden">
-                {aiLoading && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 animate-pulse" />
-                )}
-                <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                    <Brain className="w-5 h-5 text-indigo-400" /> AI Deep Analysis
-                  </h3>
+              {/* Span Selector */}
+              <div className="flex items-center gap-1 bg-black/50 border border-white/10 rounded-xl p-1">
+                {["1W", "1M", "1Y", "5Y"].map((span) => (
                   <button
-                    onClick={handleAiAnalysis}
-                    disabled={aiLoading}
-                    className="text-[10px] uppercase tracking-wider font-bold px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 text-white transition"
+                    key={span}
+                    onClick={() => setTimeSpan(span)}
+                    className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                      timeSpan === span
+                        ? "bg-indigo-600 text-white shadow-lg"
+                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                    }`}
                   >
-                    {aiLoading ? "Analyzing..." : "Re-analyze"}
+                    {span}
                   </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Custom Interactive SVG Chart */}
+            <div className="relative w-full h-[220px] bg-black/40 border border-white/5 rounded-xl overflow-hidden p-2">
+              <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-full overflow-visible">
+                <defs>
+                  <linearGradient id="priceGradientIndia" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#6366f1" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#6366f1" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+
+                {/* Gradient Area */}
+                <polygon points={areaPoints} fill="url(#priceGradientIndia)" />
+
+                {/* Price Line */}
+                <polyline
+                  fill="none"
+                  stroke="#818cf8"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  points={pointsString}
+                />
+
+                {/* Interactive Dots */}
+                {priceSeries.map((p, idx) => {
+                  const x = (idx / (priceSeries.length - 1)) * svgWidth;
+                  const y = svgHeight - ((p.price - minPrice) / priceRange) * svgHeight;
+                  return (
+                    <circle
+                      key={idx}
+                      cx={x}
+                      cy={y}
+                      r="3.5"
+                      className="fill-indigo-400 stroke-slate-900 stroke-2 hover:r-6 cursor-pointer transition-all"
+                      onMouseEnter={() => setHoveredPrice(p)}
+                      onMouseLeave={() => setHoveredPrice(null)}
+                    />
+                  );
+                })}
+              </svg>
+            </div>
+          </div>
+
+          {/* 3. TIJORI SCRAPED TABLES SECTION */}
+          {tijori && (
+            <div className="space-y-5">
+              
+              {/* Table A: Business Segment Breakdown */}
+              <div className="bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-3 shadow-xl">
+                <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                  <Layers className="w-4 h-4 text-indigo-400" />
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">Tijori Scraped: Business Segment Revenue Distribution</h3>
                 </div>
-                <div className="prose prose-invert prose-indigo max-w-none text-slate-200 text-sm leading-relaxed">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{aiReport}</ReactMarkdown>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-white/10 text-slate-400 font-mono text-[10px] uppercase">
+                        <th className="py-2.5 px-3">Business Segment</th>
+                        <th className="py-2.5 px-3 text-right">Revenue (₹ Cr)</th>
+                        <th className="py-2.5 px-3 text-right">Share (%)</th>
+                        <th className="py-2.5 px-3 text-right">YoY Growth</th>
+                        <th className="py-2.5 px-3">Operational Scope</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {tijori.business_segments.map((seg, idx) => (
+                        <tr key={idx} className="hover:bg-white/[0.02]">
+                          <td className="py-2.5 px-3 font-bold text-white">{seg.segment}</td>
+                          <td className="py-2.5 px-3 text-right font-mono text-indigo-300 font-bold">₹{seg.revenue_cr.toLocaleString("en-IN")}</td>
+                          <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">{seg.pct_share}%</td>
+                          <td className="py-2.5 px-3 text-right font-mono text-slate-300">+{seg.yoy_growth_pct}%</td>
+                          <td className="py-2.5 px-3 text-slate-400 text-[11px]">{seg.description}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-            )}
-          </>
-        )}
+
+              {/* Table B: Loan Portfolio Composition (If Banking/Financials) */}
+              {tijori.loan_portfolio_mix && tijori.loan_portfolio_mix.length > 0 && (
+                <div className="bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-3 shadow-xl">
+                  <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                    <PieChart className="w-4 h-4 text-emerald-400" />
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Tijori Scraped: Loan Portfolio Mix & Asset Quality</h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-white/10 text-slate-400 font-mono text-[10px] uppercase">
+                          <th className="py-2.5 px-3">Loan Category</th>
+                          <th className="py-2.5 px-3 text-right">Advances (₹ Cr)</th>
+                          <th className="py-2.5 px-3 text-right">Portfolio Share</th>
+                          <th className="py-2.5 px-3 text-right">Asset Quality (NPA)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {tijori.loan_portfolio_mix.map((loan, idx) => (
+                          <tr key={idx} className="hover:bg-white/[0.02]">
+                            <td className="py-2.5 px-3 font-bold text-white">{loan.category}</td>
+                            <td className="py-2.5 px-3 text-right font-mono text-indigo-300 font-bold">₹{loan.amount_cr.toLocaleString("en-IN")}</td>
+                            <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">{loan.pct_share}%</td>
+                            <td className="py-2.5 px-3 text-right font-mono text-slate-300">{loan.asset_quality}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Grid C: Market Share & Banking Operational KPIs */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Market Share Table */}
+                <div className="bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-3 shadow-xl">
+                  <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                    <Award className="w-4 h-4 text-amber-400" />
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Tijori Scraped: Market Share</h3>
+                  </div>
+                  <div className="space-y-2">
+                    {tijori.market_share_metrics.map((m, idx) => (
+                      <div key={idx} className="bg-black/30 border border-white/5 rounded-xl p-3 flex justify-between items-center">
+                        <div>
+                          <div className="text-xs font-bold text-white">{m.metric}</div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">{m.industry_rank} • {m.trend}</div>
+                        </div>
+                        <div className="text-base font-black font-mono text-amber-400">{m.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Operational KPIs Table */}
+                <div className="bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-3 shadow-xl">
+                  <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                    <Shield className="w-4 h-4 text-indigo-400" />
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Tijori Scraped: Banking Ratios & KPIs</h3>
+                  </div>
+                  <div className="space-y-2">
+                    {tijori.banking_operational_kpis.map((kpi, idx) => (
+                      <div key={idx} className="bg-black/30 border border-white/5 rounded-xl p-2.5 flex justify-between items-center text-xs">
+                        <div>
+                          <div className="font-bold text-slate-200">{kpi.kpi}</div>
+                          <div className="text-[10px] text-slate-400">Bench: {kpi.benchmark}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-mono font-black text-emerald-400">{kpi.value}</div>
+                          <div className="text-[9px] text-slate-400">{kpi.status}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Table D: Subsidiaries & Investments */}
+              {tijori.key_subsidiaries && tijori.key_subsidiaries.length > 0 && (
+                <div className="bg-[#0e1017] border border-white/10 rounded-2xl p-5 space-y-3 shadow-xl">
+                  <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                    <Landmark className="w-4 h-4 text-purple-400" />
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Tijori Scraped: Key Subsidiaries & Investments</h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-white/10 text-slate-400 font-mono text-[10px] uppercase">
+                          <th className="py-2.5 px-3">Subsidiary Company</th>
+                          <th className="py-2.5 px-3 text-right">Equity Stake</th>
+                          <th className="py-2.5 px-3">Business Line</th>
+                          <th className="py-2.5 px-3 text-right">Est. Valuation (₹ Cr)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {tijori.key_subsidiaries.map((sub, idx) => (
+                          <tr key={idx} className="hover:bg-white/[0.02]">
+                            <td className="py-2.5 px-3 font-bold text-white">{sub.subsidiary}</td>
+                            <td className="py-2.5 px-3 text-right font-mono font-bold text-purple-400">{sub.stake_pct}</td>
+                            <td className="py-2.5 px-3 text-slate-300">{sub.business}</td>
+                            <td className="py-2.5 px-3 text-right font-mono text-indigo-300 font-bold">₹{sub.valuation_est_cr.toLocaleString("en-IN")}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          )}
+
+        </div>
+
+        {/* ================================================================= */}
+        {/* RIGHT PANE (30% Width): Clean AI Research Copilot Desk           */}
+        {/* ================================================================= */}
+        <div className="lg:col-span-4 sticky top-4 self-start">
+          <CopilotChat symbol={symbol} companyName={company?.name || symbol} />
+        </div>
+
       </main>
+      )}
     </div>
   );
 }

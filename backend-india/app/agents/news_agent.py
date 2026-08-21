@@ -7,7 +7,8 @@ Uses DDGS to find and read the latest news articles from the live internet.
 from app.agents.state import AgentState
 import logging
 import asyncio
-from ddgs import DDGS
+from duckduckgo_search import DDGS
+
 import trafilatura
 
 logger = logging.getLogger("news_agent")

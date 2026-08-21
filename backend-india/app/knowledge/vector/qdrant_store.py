@@ -139,12 +139,25 @@ class QdrantVectorStore:
 
         query_filter = rest_models.Filter(must=must_filters) if must_filters else None
 
-        search_results = self._client.search(
-            collection_name=self.collection_name,
-            query_vector=query_vector,
-            query_filter=query_filter,
-            limit=top_k,
-        )
+        search_results = []
+        try:
+            if hasattr(self._client, "query_points"):
+                res = self._client.query_points(
+                    collection_name=self.collection_name,
+                    query=query_vector,
+                    query_filter=query_filter,
+                    limit=top_k,
+                )
+                search_results = res.points
+            elif hasattr(self._client, "search"):
+                search_results = self._client.search(
+                    collection_name=self.collection_name,
+                    query_vector=query_vector,
+                    query_filter=query_filter,
+                    limit=top_k,
+                )
+        except Exception as e:
+            logger.warning(f"Qdrant vector search failed: {e}")
 
         hits: List[SearchHit] = []
         for res in search_results:

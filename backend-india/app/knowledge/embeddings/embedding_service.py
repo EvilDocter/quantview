@@ -38,8 +38,26 @@ class EmbeddingService:
                 self._model = SentenceTransformer(self.model_name)
                 logger.info("SentenceTransformers model loaded successfully.")
             except Exception as e2:
-                logger.error(f"Failed to load embedding model: {e2}")
-                raise RuntimeError(f"Embedding model failure: {e2}")
+                logger.warning(f"SentenceTransformers unavailable ({e2}). Using deterministic term-vector fallback.")
+                self._model = "TERM_VECTOR_FALLBACK"
+
+    def _generate_term_vector(self, text: str) -> List[float]:
+        """Generate deterministic 1024-dim term vector from string hash for fallback execution."""
+        import hashlib
+        import math
+        vec = [0.0] * self.dimension
+        words = text.lower().split()
+        if not words:
+            return vec
+
+        for idx, word in enumerate(words):
+            h_int = int(hashlib.md5(word.encode("utf-8")).hexdigest(), 16)
+            pos = h_int % self.dimension
+            vec[pos] += 1.0 / (idx + 1.0)**0.5
+
+        # L2 normalize
+        norm = math.sqrt(sum(v*v for v in vec)) or 1.0
+        return [round(v / norm, 5) for v in vec]
 
     def generate_chunk_embeddings(self, chunks: List[DocumentChunk]) -> List[DocumentChunk]:
         """Generate and attach 1024-dimensional vector embeddings to each DocumentChunk."""
@@ -48,6 +66,12 @@ class EmbeddingService:
 
         self._ensure_model()
         texts = [c.text for c in chunks]
+
+        if self._model == "TERM_VECTOR_FALLBACK":
+            for chunk in chunks:
+                chunk.embedding = self._generate_term_vector(chunk.text)
+            return chunks
+
         logger.info(f"Generating embeddings for {len(chunks)} chunks using {self.model_name}...")
 
         try:

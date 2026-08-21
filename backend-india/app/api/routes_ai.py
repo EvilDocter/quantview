@@ -2,7 +2,7 @@
 QuantView — AI Research API Routes
 
 Endpoints for AI-powered research, analysis, comparison,
-screening, daily intelligence, and research history.
+screening, daily intelligence, and self-growing pipeline debugging using Qwen model engine.
 """
 
 import time
@@ -15,52 +15,96 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.postgres import get_db
 from app.core.schemas import ResearchRequest, ResearchResponse
 from app.agents.orchestrator import build_workflow
+from app.services.symbol_resolver import SymbolResolverService
+from app.agents.verification_engine import VerificationEngine
+from app.services.dynamic_indexer import DynamicIndexerPipeline
+from app.services.company_registry import CompanyRegistryService
+from app.agents.evidence_packet import EvidencePacketBuilder
+from app.agents.synthesis_agent import clear_report_cache
 
 router = APIRouter()
 logger = logging.getLogger("routes_ai")
 
-# Symbol detection map
-SYMBOL_MAP = {
-    "RELIANCE": "RELIANCE",
-    "INFOSYS": "INFY",
-    "INFY": "INFY",
-    "TCS": "TCS",
-    "HDFC": "HDFCBANK",
-    "HDFCBANK": "HDFCBANK",
-    "TATA MOTORS": "TATAMOTORS",
-    "TATAMOTORS": "TATAMOTORS",
-    "TATA": "TATAMOTORS",
-    "BHARTI": "BHARTIARTL",
-    "AIRTEL": "BHARTIARTL",
-    "ICICI": "ICICIBANK",
-    "ICICIBANK": "ICICIBANK",
-    "WIPRO": "WIPRO",
-    "SBI": "SBIN",
-    "SBIN": "SBIN",
-    "BAJAJ": "BAJFINANCE",
-    "MARUTI": "MARUTI",
-    "ITC": "ITC",
-    "LT": "LT",
-    "LARSEN": "LT",
-    "KOTAK": "KOTAKBANK",
-    "AXIS": "AXISBANK",
-    "AXISBANK": "AXISBANK",
-    "SUNPHARMA": "SUNPHARMA",
-    "TITAN": "TITAN",
-    "ASIAN PAINTS": "ASIANPAINT",
-    "ULTRATECH": "ULTRACEMCO",
-    "NESTLE": "NESTLEIND",
-    "ADANI": "ADANIENT",
-}
-
 
 def detect_symbol(query: str) -> str:
-    """Extract the most likely company symbol from a natural-language query."""
-    query_upper = query.upper()
-    for keyword, ticker in SYMBOL_MAP.items():
-        if keyword in query_upper:
-            return ticker
-    return "NIFTY50"
+    """Extract the company symbol dynamically from user query string."""
+    res = SymbolResolverService.resolve_symbol(query)
+    return res.get("symbol", "RELIANCE")
+
+
+@router.get("/debug/evidence/{symbol}")
+async def debug_evidence_pipeline(symbol: str):
+    """
+    Debug Endpoint: Returns full self-growing pipeline visibility for any symbol:
+    resolved_ticker, canonical_registry, cache_status, evidence_packet, generated_report, verification_table, latency_breakdown.
+    """
+    start_time = time.time()
+    clear_report_cache()  # Force fresh evidence evaluation for debug calls
+
+    resolved = SymbolResolverService.resolve_symbol(symbol)
+    resolved_symbol = resolved["symbol"]
+    yf_symbol = resolved["yf_symbol"]
+
+    # 1. Ensure company is indexed dynamically
+    indexing_res = await DynamicIndexerPipeline.ensure_indexed(resolved_symbol)
+    registry_record = CompanyRegistryService.get_company_record(resolved_symbol)
+
+    # 2. Execute research workflow
+    initial_state = {
+        "query": f"Analyze {resolved_symbol}",
+        "company_symbol": resolved_symbol,
+        "plan": ["financial_agent", "news_agent", "filing_agent", "valuation_agent"],
+        "current_step": 0,
+        "retrieved_evidence": [],
+        "final_report": "",
+        "confidence_score": 0.0,
+        "citations": [],
+    }
+
+    workflow = build_workflow()
+    result = await workflow.ainvoke(initial_state)
+    total_latency = round(time.time() - start_time, 3)
+
+    evidence_packet = result.get("evidence_packet")
+    citations = result.get("citations", [])
+
+    # If packet missing or empty, build dynamically
+    if not evidence_packet or not evidence_packet.get("financial_summary"):
+        clear_report_cache()
+        evidence_packet = EvidencePacketBuilder.build_packet(
+            symbol=resolved_symbol,
+            yf_symbol=yf_symbol,
+            query=f"Analyze {resolved_symbol}",
+            rag_chunks=citations,
+            news_items=[],
+        )
+
+    final_report = result.get("final_report", "")
+
+    # 3. Run audit against populated evidence packet
+    audit_res = VerificationEngine.audit_report(final_report, evidence_packet)
+
+    return {
+        "symbol_query": symbol,
+        "resolved_symbol": resolved_symbol,
+        "yf_symbol": yf_symbol,
+        "company_name": resolved.get("company_name"),
+        "canonical_registry": registry_record,
+        "indexing_status": indexing_res,
+        "evidence_packet": evidence_packet,
+        "retrieved_chunks_count": max(len(citations), len(evidence_packet.get("relevant_filing_sections", []))),
+        "generated_report": final_report,
+        "fact_verification": {
+            "total_claims": audit_res["total_claims"],
+            "grounded_claims": audit_res["grounded_claims"],
+            "hallucination_rate_pct": audit_res["hallucination_rate_pct"],
+            "verification_table": audit_res["verification_table"],
+        },
+        "latency_breakdown": {
+            "total_latency_sec": total_latency,
+            "is_cached": result.get("is_cached", False),
+        }
+    }
 
 
 @router.post("/research", response_model=ResearchResponse)
@@ -70,12 +114,14 @@ async def submit_research_query(
 ):
     """
     Submit a research query to the AI agent system.
-    The planner routes to specialist agents, which scrape live data,
-    then the synthesis agent produces a cited report via Gemini.
+    Dynamically indexes company on first sight and triggers background peer prefetching.
     """
     start_time = time.time()
     query = request.query
     detected_symbol = detect_symbol(query)
+
+    # Ensure company is dynamically indexed on first query
+    await DynamicIndexerPipeline.ensure_indexed(detected_symbol)
 
     initial_state = {
         "query": query,
@@ -93,21 +139,34 @@ async def submit_research_query(
         result = await workflow.ainvoke(initial_state)
         processing_time = int((time.time() - start_time) * 1000)
 
-        # Extract fields safely
-        confidence = 0.85
-        try:
-            confidence = float(result.get("confidence_score", 0.85))
-        except (ValueError, TypeError):
-            pass
-
+        confidence = float(result.get("confidence_score", 0.85))
         final_answer = str(result.get("final_report", ""))
-        if not final_answer or len(final_answer.strip()) < 50:
-            final_answer = "The AI pipeline completed but did not generate a meaningful report. Please try again."
+        evidence_packet = result.get("evidence_packet", {})
 
-        agents_used = result.get("plan", [])
-        if not isinstance(agents_used, list):
-            agents_used = []
-        agents_used = [str(a) for a in agents_used]
+        # If packet missing or empty, build dynamically
+        if not evidence_packet or not evidence_packet.get("financial_summary"):
+            resolved = SymbolResolverService.resolve_symbol(detected_symbol)
+            evidence_packet = EvidencePacketBuilder.build_packet(
+                symbol=detected_symbol,
+                yf_symbol=resolved["yf_symbol"],
+                query=query,
+                rag_chunks=result.get("citations", []),
+                news_items=[],
+            )
+
+        # Run Verification Engine audit
+        audit_res = VerificationEngine.audit_report(final_answer, evidence_packet)
+
+        # Append Verification Table to report answer
+        if audit_res.get("verification_table"):
+            table_md = "\n\n### Numerical Fact-Verification Audit (Phase 8 Mandate)\n"
+            table_md += f"* **Total Claims Audited**: {audit_res['total_claims']} | **Grounded Claims**: {audit_res['grounded_claims']} | **Hallucination Rate**: {audit_res['hallucination_rate_pct']}%\n\n"
+            table_md += "| Claim Extracted | Ground Truth Source | Status | Confidence |\n|---|---|---|---|\n"
+            for row in audit_res["verification_table"][:10]:
+                table_md += f"| `{row['claim']}` | {row['source']} | **{row['match']}** | {row['confidence']} |\n"
+            final_answer += table_md
+
+        agents_used = [str(a) for a in result.get("plan", [])]
 
         return ResearchResponse(
             query=query,
@@ -119,12 +178,12 @@ async def submit_research_query(
         )
 
     except Exception as e:
-        logger.error(f"AI pipeline failed: {e}")
+        logger.error(f"AI pipeline failed for query '{query}': {e}")
         logger.error(traceback.format_exc())
         processing_time = int((time.time() - start_time) * 1000)
         return ResearchResponse(
             query=query,
-            answer=f"**Error:** The AI research pipeline encountered an error: `{str(e)}`. Please try again.",
+            answer=f"**Error:** The AI research pipeline encountered an error: `{str(e)}`.",
             confidence=0.0,
             citations=[],
             agents_used=[],
@@ -133,69 +192,39 @@ async def submit_research_query(
 
 
 @router.post("/compare")
-async def compare_companies(
-    symbols: list[str],
-    db: AsyncSession = Depends(get_db),
-):
-    """Compare two or more companies using AI analysis and live financial data."""
+async def compare_companies(symbols: list[str], db: AsyncSession = Depends(get_db)):
     if not symbols or len(symbols) < 2:
         return {"symbols": symbols, "comparison": "Please provide at least 2 stock symbols to compare."}
-    
     sym1 = detect_symbol(symbols[0])
     sym2 = detect_symbol(symbols[1])
-    
+
+    # Dynamic indexing for both comparison candidates
+    await DynamicIndexerPipeline.ensure_indexed(sym1)
+    await DynamicIndexerPipeline.ensure_indexed(sym2)
+
     try:
         from app.services.llm_service import LLMService
         from datetime import datetime
         current_date = datetime.now().strftime("%B %d, %Y")
-        
-        prompt = f"""You are the Lead Financial Analyst at QuantView.
-Today's date is {current_date}.
-
-Compare the following two Indian equities for an investor:
-1. **{sym1}**
-2. **{sym2}**
-
-Write a detailed, structured comparison report in Markdown:
-1. **Executive Summary & Verdict** — Which stock is a better buy right now and why?
-2. **Business Model & Market Position** — Compare key revenue drivers.
-3. **Valuation & Financial Comparison** — Compare typical PE ratios, growth, and margins.
-4. **Risk Profile** — Key risks for each company.
-5. **Final Recommendation** — Clear preference based on investor risk profile (Growth vs Value vs Income).
-"""
-        comparison_text = await LLMService.generate(prompt=prompt, temperature=0.3, max_tokens=3000)
-        return {
-            "symbols": [sym1, sym2],
-            "comparison": comparison_text or f"Failed to generate comparison for {sym1} vs {sym2}."
-        }
+        prompt = f"""Compare Indian equities {sym1} vs {sym2} on {current_date}. Provide Executive Summary, Valuation Comparison, Financial Comparison, and Recommendation."""
+        comparison_text = await LLMService.generate(prompt=prompt, temperature=0.2, max_tokens=1200)
+        return {"symbols": [sym1, sym2], "comparison": comparison_text}
     except Exception as e:
-        logger.error(f"Compare failed: {e}")
         return {"symbols": symbols, "comparison": f"Error comparing companies: {str(e)}"}
 
 
-@router.post("/screen")
-async def ai_screen(query: str, db: AsyncSession = Depends(get_db)):
-    """Natural language stock screening."""
-    return {"query": query, "results": []}
+@router.post("/copilot")
+async def copilot_research_workspace(payload: dict):
+    """
+    Phase IX AI Research Copilot Endpoint:
+    Provides evidence-grounded analyst reasoning, interactive chart configuration,
+    Annual Report OCR citations, and suggested follow-up questions.
+    """
+    symbol = payload.get("symbol", "RELIANCE")
+    query = payload.get("query", "Analyze this company")
+    chat_history = payload.get("chat_history", [])
 
+    from app.agents.copilot_agent import AICopilotAgent
+    res = await AICopilotAgent.process_query(symbol=symbol, query=query, chat_history=chat_history)
+    return res
 
-@router.get("/daily-intelligence")
-async def get_daily_intelligence():
-    """Get today's AI-generated market intelligence report."""
-    return {"intelligence": "Daily intelligence report coming soon"}
-
-
-@router.get("/trending")
-async def get_trending_research():
-    """Get trending research topics and queries."""
-    return {"trending": []}
-
-
-@router.get("/history")
-async def get_research_history(
-    user_id: str = "anonymous",
-    limit: int = 20,
-    db: AsyncSession = Depends(get_db),
-):
-    """Get user's research query history."""
-    return {"history": []}

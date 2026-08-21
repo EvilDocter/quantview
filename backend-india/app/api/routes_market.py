@@ -5,6 +5,8 @@ Endpoints for real-time market overview, indices, gainers/losers,
 sector performance, FII/DII activity, and daily intelligence.
 """
 
+import logging
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -15,6 +17,7 @@ from app.services.live_market_service import LiveMarketService
 from seed import seed_companies
 from app.ingestion.index_collector import IndexCollector
 
+logger = logging.getLogger("routes_market")
 router = APIRouter()
 
 

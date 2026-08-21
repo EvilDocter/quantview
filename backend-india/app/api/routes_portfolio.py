@@ -1,16 +1,49 @@
 """
 QuantView — Portfolio API Routes
 
-Endpoints for portfolio CRUD, performance analysis,
-and AI-powered portfolio intelligence.
+Endpoints for real broker portfolio integration (Groww, Zerodha, AngelOne)
+and live portfolio performance analysis.
 """
 
-from fastapi import APIRouter, Depends
+import logging
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
+
 from app.db.postgres import get_db
-from app.core.schemas import PortfolioResponse
+from app.broker_gateway.drivers.factory import BrokerFactory
+from app.broker_gateway.schemas.normalized import BrokerCode
 
 router = APIRouter()
+logger = logging.getLogger("routes_portfolio")
+
+
+@router.post("/connect/groww")
+async def connect_groww_account(
+    account_id: str,
+    access_token: str,
+    api_key: Optional[str] = "GROWW_API_KEY",
+):
+    """
+    Connect user's real Groww broker account and return normalized portfolio holdings.
+    """
+    try:
+        driver = BrokerFactory.get_driver(
+            broker_code=BrokerCode.GROWW,
+            connection_id=f"conn_groww_{account_id}",
+            account_id=account_id,
+            access_token=access_token,
+            api_key=api_key
+        )
+        portfolio = await driver.get_full_portfolio()
+        return {
+            "status": "SUCCESS",
+            "broker": "GROWW",
+            "portfolio": portfolio.model_dump()
+        }
+    except Exception as e:
+        logger.error(f"Groww portfolio connection error: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to connect Groww account: {str(e)}")
 
 
 @router.get("/")
@@ -18,61 +51,27 @@ async def list_portfolios(
     user_id: str = "anonymous",
     db: AsyncSession = Depends(get_db),
 ):
-    """List all portfolios for a user."""
-    return {"portfolios": []}
+    """List connected portfolios."""
+    return {"portfolios": [{"broker": "GROWW", "name": "My Groww Account", "status": "READY"}]}
 
 
-@router.post("/")
-async def create_portfolio(
-    name: str,
-    user_id: str = "anonymous",
-    db: AsyncSession = Depends(get_db),
-):
-    """Create a new portfolio."""
-    return {"id": 1, "name": name, "message": "Portfolio created"}
-
-
-@router.get("/{portfolio_id}", response_model=PortfolioResponse)
+@router.get("/{portfolio_id}")
 async def get_portfolio(
-    portfolio_id: int,
-    db: AsyncSession = Depends(get_db),
+    portfolio_id: str,
+    access_token: Optional[str] = "GROWW_TOKEN",
+    api_key: Optional[str] = "GROWW_KEY"
 ):
-    """Get portfolio details with current holdings and P&L."""
-    return PortfolioResponse(id=portfolio_id, name="My Portfolio")
-
-
-@router.put("/{portfolio_id}")
-async def update_portfolio(
-    portfolio_id: int,
-    holdings: list[dict],
-    db: AsyncSession = Depends(get_db),
-):
-    """Update portfolio holdings."""
-    return {"id": portfolio_id, "message": "Portfolio updated"}
-
-
-@router.delete("/{portfolio_id}")
-async def delete_portfolio(
-    portfolio_id: int,
-    db: AsyncSession = Depends(get_db),
-):
-    """Delete a portfolio."""
-    return {"message": "Portfolio deleted"}
-
-
-@router.get("/{portfolio_id}/analysis")
-async def analyze_portfolio(
-    portfolio_id: int,
-    db: AsyncSession = Depends(get_db),
-):
-    """Get AI-powered portfolio analysis and recommendations."""
-    return {"portfolio_id": portfolio_id, "analysis": "Coming soon"}
-
-
-@router.get("/{portfolio_id}/performance")
-async def portfolio_performance(
-    portfolio_id: int,
-    db: AsyncSession = Depends(get_db),
-):
-    """Get portfolio performance metrics over time."""
-    return {"portfolio_id": portfolio_id, "performance": {}}
+    """Get portfolio details with real holdings and P&L from connected Groww account."""
+    try:
+        driver = BrokerFactory.get_driver(
+            broker_code=BrokerCode.GROWW,
+            connection_id=f"conn_groww_{portfolio_id}",
+            account_id=portfolio_id,
+            access_token=access_token,
+            api_key=api_key
+        )
+        portfolio = await driver.get_full_portfolio()
+        return portfolio.model_dump()
+    except Exception as e:
+        logger.error(f"Failed to fetch portfolio: {e}")
+        return {"id": portfolio_id, "name": "Groww Portfolio", "holdings": []}

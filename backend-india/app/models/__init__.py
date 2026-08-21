@@ -1,61 +1,38 @@
 """
-QuantView — SQLAlchemy Model Registry
-
-Imports all models so Alembic and the app can discover them.
+QuantView Database Models Package
 """
 
 from app.models.company import Company
-from app.models.financial import (
-    FinancialStatement,
-    FinancialRatio,
-    ShareholdingPattern,
-    CorporateAction,
-    InsiderTrade,
-    MutualFundHolding,
-    InstitutionalActivity,
-    AIScore,
-)
-from app.models.price import (
-    StockPrice,
-    IndexMaster,
-    IndexPrice,
-    IndexConstituent,
-)
-from app.models.document import (
-    News,
-    Document,
-    ProcessedDocument,
-    MacroData,
-)
-from app.models.user import (
-    Watchlist,
-    WatchlistItem,
-    Portfolio,
-    PortfolioHolding,
-    ResearchHistory,
-)
+from app.models.financial import FinancialStatement, FinancialRatio
+from app.models.document import Document
+from app.models.price import StockPrice
+from app.models.user import Watchlist, WatchlistItem, Portfolio, ResearchHistory
+from app.models.news import NewsArticle
+from app.models.shareholding import ShareholdingPattern
+from app.models.segment import SegmentReporting
+from app.models.corporate_action import CorporateAction
+from app.models.timeline import TimelineEvent
+from app.models.ocr_data import OCRPage, OCRTable
+from app.models.insight import HiddenInsight
+from app.models.peer import PeerMapping
 
 __all__ = [
     "Company",
     "FinancialStatement",
     "FinancialRatio",
-    "ShareholdingPattern",
-    "CorporateAction",
-    "InsiderTrade",
-    "MutualFundHolding",
-    "InstitutionalActivity",
-    "AIScore",
-    "StockPrice",
-    "IndexMaster",
-    "IndexPrice",
-    "IndexConstituent",
-    "News",
     "Document",
-    "ProcessedDocument",
-    "MacroData",
+    "StockPrice",
     "Watchlist",
     "WatchlistItem",
     "Portfolio",
-    "PortfolioHolding",
     "ResearchHistory",
+    "NewsArticle",
+    "ShareholdingPattern",
+    "SegmentReporting",
+    "CorporateAction",
+    "TimelineEvent",
+    "OCRPage",
+    "OCRTable",
+    "HiddenInsight",
+    "PeerMapping",
 ]

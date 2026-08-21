@@ -1,14 +1,14 @@
 """
-QuantView — LangGraph Orchestration Workspace
+QuantView — High-Performance Parallel Orchestrator
 
-Builds and compiles the multi-agent execution state chart using LangGraph.
-Only includes agents that have live data sources (no empty-DB agents).
+Executes all specialist evidence gathering agents concurrently via asyncio.gather()
+for sub-3 second evidence retrieval latency, followed by synthesis.
 """
 
+import asyncio
 import logging
 from langgraph.graph import StateGraph, END
 from app.agents.state import AgentState
-from app.agents.planner import PlannerAgent
 from app.agents.financial_agent import FinancialAgent
 from app.agents.filing_agent import FilingAgent
 from app.agents.news_agent import NewsAgent
@@ -18,62 +18,44 @@ from app.agents.synthesis_agent import SynthesisAgent
 logger = logging.getLogger("agent_orchestrator")
 
 
-def build_workflow() -> StateGraph:
-    """Compiles the routing graph: planner → specialists → synthesis → END."""
-    workflow = StateGraph(AgentState)
+async def run_parallel_evidence_gatherer(state: AgentState) -> dict:
+    """Run all 4 specialist evidence agents concurrently in parallel."""
+    query = state["query"]
+    symbol = state["company_symbol"]
+    logger.info(f"Triggering parallel evidence gathering for '{symbol}'...")
 
-    # Register nodes
-    workflow.add_node("planner", PlannerAgent.route_query)
-
-    async def wrap_agent(agent_cls, state: AgentState):
-        res = await agent_cls.execute(state)
-        res["current_step"] = state.get("current_step", 0) + 1
-        return res
-
-    async def run_financial(state: AgentState):
-        return await wrap_agent(FinancialAgent, state)
-
-    async def run_filing(state: AgentState):
-        return await wrap_agent(FilingAgent, state)
-
-    async def run_news(state: AgentState):
-        return await wrap_agent(NewsAgent, state)
-
-    async def run_valuation(state: AgentState):
-        return await wrap_agent(ValuationAgent, state)
-
-    workflow.add_node("financial_agent", run_financial)
-    workflow.add_node("filing_agent", run_filing)
-    workflow.add_node("news_agent", run_news)
-    workflow.add_node("valuation_agent", run_valuation)
-    workflow.add_node("synthesis_agent", SynthesisAgent.execute)
-
-    # Entry point
-    workflow.set_entry_point("planner")
-
-    # Dynamic router: walk through the plan list, then go to synthesis
-    def router_transition(state: AgentState):
-        plan = state.get("plan", [])
-        current_step = state.get("current_step", 0)
-        if current_step < len(plan):
-            return plan[current_step]
-        return "synthesis_agent"
-
-    # All possible targets from the router
-    all_nodes = [
-        "financial_agent", "filing_agent", "news_agent",
-        "valuation_agent", "synthesis_agent",
-    ]
-
-    workflow.add_conditional_edges(
-        "planner", router_transition, {n: n for n in all_nodes}
+    # Execute all specialist agents in parallel
+    results = await asyncio.gather(
+        FinancialAgent.execute(state),
+        NewsAgent.execute(state),
+        FilingAgent.execute(state),
+        ValuationAgent.execute(state),
+        return_exceptions=True
     )
 
-    for specialist in all_nodes[:-1]:  # everything except synthesis
-        workflow.add_conditional_edges(
-            specialist, router_transition, {n: n for n in all_nodes}
-        )
+    combined_evidence = []
+    for res in results:
+        if isinstance(res, dict) and "retrieved_evidence" in res:
+            combined_evidence.extend(res["retrieved_evidence"])
+        elif isinstance(res, Exception):
+            logger.warning(f"Specialist agent threw exception during parallel gather: {res}")
 
+    return {
+        "retrieved_evidence": combined_evidence,
+        "plan": ["financial_agent", "news_agent", "filing_agent", "valuation_agent"],
+        "current_step": 4,
+    }
+
+
+def build_workflow() -> StateGraph:
+    """Compiles high-speed workflow: parallel_gatherer → synthesis → END."""
+    workflow = StateGraph(AgentState)
+
+    workflow.add_node("parallel_gatherer", run_parallel_evidence_gatherer)
+    workflow.add_node("synthesis_agent", SynthesisAgent.execute)
+
+    workflow.set_entry_point("parallel_gatherer")
+    workflow.add_edge("parallel_gatherer", "synthesis_agent")
     workflow.add_edge("synthesis_agent", END)
 
     return workflow.compile()

@@ -6,8 +6,10 @@ ready for vector embeddings and Qdrant ingestion.
 """
 
 import logging
+from app.knowledge.chunker.structural_chunker import StructuralChunker
 
 logger = logging.getLogger("chunker")
+logger.warning("app.extraction.chunker is deprecated. Use app.knowledge.chunker.StructuralChunker instead.")
 
 class DocumentChunker:
     """Splits raw text strings into overlapping chunks based on character/token count."""

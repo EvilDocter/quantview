@@ -51,12 +51,14 @@ interface IntelligenceData {
 }
 
 const BROKERS = [
+  { id: "groww", name: "Groww App", connId: "conn_groww_01", logo: "G", color: "from-emerald-500 to-teal-500" },
   { id: "zerodha", name: "Zerodha Kite", connId: "conn_zerodha_01", logo: "Z", color: "from-amber-500 to-orange-500" },
   { id: "angel", name: "Angel One", connId: "conn_angel_01", logo: "A", color: "from-blue-500 to-indigo-500" },
   { id: "fyers", name: "FYERS", connId: "conn_fyers_01", logo: "F", color: "from-teal-500 to-emerald-500" },
   { id: "upstox", name: "Upstox", connId: "conn_upstox_01", logo: "U", color: "from-purple-500 to-indigo-500" },
   { id: "dhan", name: "DhanHQ", connId: "conn_dhan_01", logo: "D", color: "from-rose-500 to-pink-500" },
 ];
+
 
 function fmtVal(val: any, decimals = 2): string {
   if (val === undefined || val === null) return "0.00";

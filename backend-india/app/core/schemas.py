@@ -287,3 +287,61 @@ class ErrorResponse(BaseModel):
     success: bool = False
     error_code: str
     message: str
+
+
+# ── Phase X Unified Contracts ────────────────────────────────────
+
+
+class CompanyMarketData(BaseModel):
+    symbol: str
+    name: str
+    sector: Optional[str] = None
+    industry: Optional[str] = None
+    current_price: float = 0.0
+    previous_close: float = 0.0
+    price_change: float = 0.0
+    price_change_pct: float = 0.0
+    market_cap: float = 0.0
+    day_high: Optional[float] = None
+    day_low: Optional[float] = None
+    fifty_two_week_high: Optional[float] = None
+    fifty_two_week_low: Optional[float] = None
+    pe_ratio: Optional[float] = None
+    eps: Optional[float] = None
+    book_value: Optional[float] = None
+    dividend_yield: Optional[float] = None
+    roe: Optional[float] = None
+    debt_to_equity: Optional[float] = None
+
+
+class CompanyFinancials(BaseModel):
+    revenue: float = 0.0
+    ebitda: float = 0.0
+    net_income: float = 0.0
+    operating_income: float = 0.0
+    total_debt: float = 0.0
+    cash_and_equivalents: float = 0.0
+    free_cash_flow: float = 0.0
+
+
+class CompanyRatios(BaseModel):
+    operating_margin_pct: float = 0.0
+    net_margin_pct: float = 0.0
+    roe_pct: float = 0.0
+    roce_pct: float = 0.0
+    net_debt_to_ebitda: float = 0.0
+    asset_turnover: float = 0.0
+
+
+class UnifiedCompanyResponse(BaseModel):
+    symbol: str
+    company: CompanyBase
+    market_data: CompanyMarketData
+    financials: CompanyFinancials
+    ratios: CompanyRatios
+    timeline: list[dict] = []
+    news: list[dict] = []
+    documents: list[dict] = []
+    charts: dict = {}
+    ai_context: dict = {}
+

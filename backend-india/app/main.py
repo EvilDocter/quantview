@@ -32,6 +32,8 @@ from app.api.routes_quant import router as quant_router
 from app.api.routes_portfolio import router as portfolio_router
 from app.api.routes_watchlist import router as watchlist_router
 from app.api.routes_sectors import router as sectors_router
+from app.api.routes_warehouse import router as warehouse_router
+
 
 settings = get_settings()
 
@@ -148,6 +150,8 @@ app.include_router(quant_router, prefix="/api/v1/quant", tags=["Quant Lab"])
 app.include_router(portfolio_router, prefix="/api/v1/portfolio", tags=["Portfolio"])
 app.include_router(watchlist_router, prefix="/api/v1/watchlist", tags=["Watchlist"])
 app.include_router(sectors_router, prefix="/api/v1/sectors", tags=["Sectors"])
+app.include_router(warehouse_router)
+
 
 # ── Mount Broker Gateway Microservice Routers ────────────────────
 from app.broker_gateway.api.routes_portfolio import router as bg_portfolio_router
